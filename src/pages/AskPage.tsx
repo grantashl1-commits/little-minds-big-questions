@@ -48,7 +48,7 @@ const AskPage = () => {
 
     setLoading(true);
     try {
-      const { data: aiData, error: aiError } = await supabase.functions.invoke("generate-answer", {
+      const { data: aiData, error: aiError } = await supabase.functions.invoke<any>("generate-answer", {
         body: {
           child_name: form.child_name.trim(),
           child_age: form.child_age,

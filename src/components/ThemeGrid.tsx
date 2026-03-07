@@ -24,7 +24,7 @@ const ThemeGrid = () => {
                 <img
                   src={theme.image}
                   alt={theme.name}
-                  className="w-28 h-28 object-contain"
+                  className="w-56 h-56 object-contain"
                 />
               </div>
               <span className="font-display font-semibold text-sm">{theme.name}</span>

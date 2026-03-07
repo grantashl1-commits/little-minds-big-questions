@@ -90,6 +90,13 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        "orbit": {
+          "0%": { transform: "translate(0, 0) scale(1)" },
+          "25%": { transform: "translate(12px, -18px) scale(1.1)" },
+          "50%": { transform: "translate(-8px, -24px) scale(0.9)" },
+          "75%": { transform: "translate(-16px, -6px) scale(1.05)" },
+          "100%": { transform: "translate(0, 0) scale(1)" },
+        },
         "fade-in-up": {
           from: { opacity: "0", transform: "translateY(20px)" },
           to: { opacity: "1", transform: "translateY(0)" },

@@ -33,20 +33,19 @@ const HeroSection = () => {
             </Button>
           </div>
         </div>
-        <div className="hidden md:flex justify-end animate-fade-in-up relative" style={{ animationDelay: "0.3s" }}>
-          {/* Floating colored dots around the boy */}
-          <div className="absolute -top-4 -left-6 w-10 h-10 rounded-full bg-primary opacity-30 animate-float pointer-events-none" style={{ animationDelay: "0s" }} />
-          <div className="absolute top-12 -right-8 w-7 h-7 rounded-full bg-secondary opacity-30 animate-float pointer-events-none" style={{ animationDelay: "1.2s" }} />
-          <div className="absolute bottom-16 -left-10 w-8 h-8 rounded-full bg-accent opacity-25 animate-float pointer-events-none" style={{ animationDelay: "0.6s" }} />
-          <div className="absolute -bottom-2 right-8 w-6 h-6 rounded-full bg-sage opacity-30 animate-float pointer-events-none" style={{ animationDelay: "1.8s" }} />
-          <div className="absolute top-1/3 -left-12 w-5 h-5 rounded-full bg-peach opacity-35 animate-float pointer-events-none" style={{ animationDelay: "2.4s" }} />
-          <div className="absolute top-4 left-1/4 w-4 h-4 rounded-full bg-primary opacity-20 animate-float pointer-events-none" style={{ animationDelay: "0.8s" }} />
-          <div className="absolute bottom-1/3 -right-6 w-9 h-9 rounded-full bg-secondary opacity-20 animate-float pointer-events-none" style={{ animationDelay: "1.5s" }} />
+        <div className="hidden md:flex justify-center items-center animate-fade-in-up relative w-80 lg:w-96 xl:w-[28rem] h-[24rem] lg:h-[28rem] xl:h-[32rem]" style={{ animationDelay: "0.3s" }}>
+          {/* Floating colored dots orbiting around the boy */}
+          <div className="absolute w-10 h-10 rounded-full bg-primary opacity-30 pointer-events-none animate-[orbit_8s_linear_infinite]" style={{ top: "10%", left: "5%" }} />
+          <div className="absolute w-7 h-7 rounded-full bg-secondary opacity-35 pointer-events-none animate-[orbit_10s_linear_infinite_reverse]" style={{ top: "5%", right: "10%" }} />
+          <div className="absolute w-8 h-8 rounded-full bg-accent opacity-25 pointer-events-none animate-[orbit_7s_linear_infinite]" style={{ bottom: "20%", left: "-5%" }} />
+          <div className="absolute w-6 h-6 rounded-full bg-sage opacity-30 pointer-events-none animate-[orbit_9s_linear_infinite_reverse]" style={{ bottom: "5%", right: "15%" }} />
+          <div className="absolute w-5 h-5 rounded-full bg-peach opacity-35 pointer-events-none animate-[orbit_11s_linear_infinite]" style={{ top: "40%", left: "-8%" }} />
+          <div className="absolute w-4 h-4 rounded-full bg-primary opacity-25 pointer-events-none animate-[orbit_6s_linear_infinite_reverse]" style={{ top: "15%", left: "30%" }} />
+          <div className="absolute w-9 h-9 rounded-full bg-secondary opacity-20 pointer-events-none animate-[orbit_12s_linear_infinite]" style={{ bottom: "35%", right: "-3%" }} />
           <img
             src={heroImage}
-            alt="A child looking up at a dreamy sky with butterflies - watercolour illustration"
-            className="w-80 lg:w-96 xl:w-[28rem] object-contain relative z-10"
-            style={{ mixBlendMode: "multiply" }} />
+            alt="A child looking up thinking - watercolour illustration"
+            className="w-full h-full object-contain relative z-10" />
         </div>
       </div>
     </section>

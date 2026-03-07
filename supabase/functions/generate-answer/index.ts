@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -98,7 +99,91 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
 
     const result = JSON.parse(toolCall.function.arguments);
 
-    return new Response(JSON.stringify(result), {
+    // Generate watercolor image based on the image_prompt
+    let image_url: string | null = null;
+    try {
+      // First check if we have a matching image in metaphor_images
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Try keyword match from existing images
+      const keywords = result.image_prompt.toLowerCase().split(/\s+/).filter((w: string) => w.length > 3);
+      const { data: existingImages } = await supabase
+        .from("metaphor_images")
+        .select("public_url, keywords")
+        .limit(20);
+
+      if (existingImages && existingImages.length > 0) {
+        // Score each image by keyword overlap
+        let bestMatch: { url: string; score: number } = { url: "", score: 0 };
+        for (const img of existingImages) {
+          const imgKeywords = (img.keywords || []).map((k: string) => k.toLowerCase());
+          const score = keywords.filter((kw: string) => imgKeywords.some((ik: string) => ik.includes(kw) || kw.includes(ik))).length;
+          if (score > bestMatch.score) {
+            bestMatch = { url: img.public_url, score };
+          }
+        }
+        if (bestMatch.score >= 2) {
+          image_url = bestMatch.url;
+        }
+      }
+
+      // If no good match, generate a new image
+      if (!image_url) {
+        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-image",
+            messages: [
+              {
+                role: "user",
+                content: `Create a soft pastel watercolour children's book illustration in a circular vignette style on a clean white background. The style should be dreamy, gentle, and whimsical with soft edges. ${result.image_prompt}`,
+              },
+            ],
+            modalities: ["image", "text"],
+          }),
+        });
+
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          const generatedImage = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+          if (generatedImage) {
+            // Extract base64 data and upload to storage
+            const base64Data = generatedImage.replace(/^data:image\/\w+;base64,/, "");
+            const imageBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+            const filename = `generated-${Date.now()}.png`;
+
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from("metaphor-images")
+              .upload(filename, imageBytes, { contentType: "image/png" });
+
+            if (!uploadError && uploadData) {
+              const { data: urlData } = supabase.storage
+                .from("metaphor-images")
+                .getPublicUrl(uploadData.path);
+              image_url = urlData.publicUrl;
+
+              // Save to metaphor_images table for future matching
+              await supabase.from("metaphor_images").insert({
+                filename,
+                public_url: image_url,
+                keywords: keywords.slice(0, 10),
+              });
+            }
+          }
+        }
+      }
+    } catch (imgErr) {
+      console.error("Image generation error (non-fatal):", imgErr);
+    }
+
+    return new Response(JSON.stringify({ ...result, image_url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

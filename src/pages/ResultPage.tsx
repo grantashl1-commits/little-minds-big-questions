@@ -116,11 +116,12 @@ const ResultPage = () => {
           {/* Watercolor Image */}
           {question.image_url && (
             <div className="flex justify-center mb-8">
-              <img
-                src={question.image_url}
-                alt={question.metaphor_title}
-                className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl"
-              />
+               <img
+                 src={question.image_url}
+                 alt={question.metaphor_title}
+                 className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl drop-shadow-sm"
+                 style={{ mixBlendMode: "multiply" }}
+               />
             </div>
           )}
 

@@ -2,7 +2,7 @@ import starsDivider from "@/assets/section-stars-divider.png";
 
 const steps = [
   {
-    image: "/metaphor-images/rabbit_watercolor-2.png",
+    image: "/metaphor-images/crayons.png",
     title: "A child asks a question",
     description: "Children often ask difficult questions about life, death, feelings, or the world.",
   },

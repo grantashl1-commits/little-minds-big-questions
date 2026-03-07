@@ -2,17 +2,17 @@ import starsDivider from "@/assets/section-stars-divider.png";
 
 const steps = [
   {
-    image: "/metaphor-images/rabbit_watercolor-2.png",
+    image: "/metaphor-images/crayons.png",
     title: "A child asks a question",
     description: "Children often ask difficult questions about life, death, feelings, or the world.",
   },
   {
-    image: "/metaphor-images/owl_watercolor-2.png",
+    image: "/metaphor-images/rocket.png",
     title: "We turn it into a story",
     description: "Our AI creates a gentle metaphor-based answer suited to their age.",
   },
   {
-    image: "/metaphor-images/stars_watercolor-2.png",
+    image: "/metaphor-images/planet.png",
     title: "Share and explore",
     description: "Responses can be saved and searched so other families can use them too.",
   },

@@ -140,7 +140,7 @@ const BrowsePage = () => {
           {/* Results Grid */}
           {loading ? (
             <div className="text-center py-16">
-              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 mx-auto mb-4 animate-float" />
+              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-28 h-28 mx-auto mb-4 animate-float" />
               <p className="font-display text-muted-foreground">Searching...</p>
             </div>
           ) : questions.length === 0 ? (

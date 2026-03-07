@@ -12,9 +12,9 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <HowItWorks />
+      <ThemeGrid />
       <FeaturedQuestions />
       <InstagramFeed />
-      <ThemeGrid />
       <Footer />
     </div>
   );

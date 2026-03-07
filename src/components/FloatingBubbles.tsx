@@ -11,25 +11,26 @@ const BUBBLE_COLORS = [
   "bg-peach",
 ];
 
-const FloatingBubbles = ({ count = 6, className = "" }: FloatingBubblesProps) => {
+const FloatingBubbles = ({ count = 8, className = "" }: FloatingBubblesProps) => {
   const bubbles = Array.from({ length: count }, (_, i) => {
-    const size = 16 + (i % 4) * 12;
+    const size = 12 + (i % 5) * 10;
     const color = BUBBLE_COLORS[i % BUBBLE_COLORS.length];
-    const top = `${10 + ((i * 37) % 70)}%`;
-    const left = `${5 + ((i * 23) % 85)}%`;
-    const delay = `${(i * 0.7) % 3}s`;
+    const top = `${5 + ((i * 31) % 80)}%`;
+    const left = `${3 + ((i * 19) % 90)}%`;
+    const delay = `${(i * 0.6) % 4}s`;
+    const duration = `${6 + (i % 4) * 2}s`;
 
     return (
       <div
         key={i}
-        className={`absolute rounded-full ${color} opacity-20 animate-float pointer-events-none`}
+        className={`absolute rounded-full ${color} opacity-15 animate-float pointer-events-none`}
         style={{
           width: size,
           height: size,
           top,
           left,
           animationDelay: delay,
-          animationDuration: `${4 + (i % 3)}s`,
+          animationDuration: duration,
         }}
       />
     );

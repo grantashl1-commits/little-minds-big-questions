@@ -1,15 +1,30 @@
 import { Link } from "react-router-dom";
 import { THEMES, type QuestionEntry } from "@/lib/constants";
 
+const THEME_COLORS: Record<string, string> = {
+  "death-dying": "bg-secondary/30 text-secondary-foreground",
+  "grief-loss": "bg-primary/30 text-primary-foreground",
+  "feelings": "bg-accent/30 text-accent-foreground",
+  "friendship": "bg-sage/30 text-sage-foreground",
+  "identity": "bg-peach/30 text-peach-foreground",
+  "family-change": "bg-secondary/30 text-secondary-foreground",
+  "school-confidence": "bg-primary/30 text-primary-foreground",
+  "kindness": "bg-sage/30 text-sage-foreground",
+  "bodies": "bg-accent/30 text-accent-foreground",
+  "spirituality": "bg-peach/30 text-peach-foreground",
+  "worry-anxiety": "bg-secondary/30 text-secondary-foreground",
+  "babies-birth": "bg-primary/30 text-primary-foreground",
+};
+
 interface QuestionCardProps {
   question: QuestionEntry;
   isSquare?: boolean;
 }
 
 const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
-  const themeNames = question.themes?.map(slug => {
+  const themeData = question.themes?.map(slug => {
     const t = THEMES.find(th => th.slug === slug);
-    return t ? t.name : slug;
+    return { name: t ? t.name : slug, slug };
   }) || [];
 
   return (
@@ -19,13 +34,13 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
         isSquare ? "aspect-square" : ""
       }`}
     >
-      {/* Show watercolor image if available */}
       {question.image_url && (
         <div className="flex justify-center pt-4">
           <img
             src={question.image_url}
             alt={question.metaphor_title}
-            className="w-16 h-16 object-contain"
+            className="w-32 h-32 object-contain drop-shadow-sm"
+            style={{ mixBlendMode: "multiply" }}
           />
         </div>
       )}
@@ -42,9 +57,12 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
-          {themeNames.slice(0, 3).map(tag => (
-            <span key={tag} className="text-xs font-display bg-primary/20 rounded-full px-3 py-1">
-              {tag}
+          {themeData.slice(0, 3).map(tag => (
+            <span
+              key={tag.slug}
+              className={`text-xs font-display rounded-full px-3 py-1 ${THEME_COLORS[tag.slug] || "bg-primary/20"}`}
+            >
+              {tag.name}
             </span>
           ))}
         </div>

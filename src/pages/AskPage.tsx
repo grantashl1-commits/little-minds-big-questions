@@ -119,7 +119,7 @@ const AskPage = () => {
           {/* Voice CTA */}
           <div className="bg-peach/20 rounded-2xl p-5 mb-8 text-center">
             <div className="flex justify-center mb-2">
-              <img src="/metaphor-images/rabbit_watercolor-2.png" alt="" className="w-10 h-10" />
+              <img src="/metaphor-images/rabbit_watercolor-2.png" alt="" className="w-20 h-20" />
             </div>
             <p className="font-display font-semibold text-sm mb-2">Want your child to ask themselves?</p>
             <Button variant="peach" size="sm" asChild>

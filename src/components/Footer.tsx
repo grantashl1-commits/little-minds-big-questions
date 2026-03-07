@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoSeed from "@/assets/logo-seed.png";
+import logoMain from "@/assets/logo-main.png";
 
 const Footer = () => {
   return (
@@ -8,10 +8,7 @@ const Footer = () => {
         <div className="grid sm:grid-cols-3 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <img src={logoSeed} alt="" className="w-7 h-7 rounded-full" />
-              <h3 className="font-display font-bold text-lg">
-                Little Minds <span className="text-primary font-extrabold">BIG</span> Questions
-              </h3>
+              <img src={logoMain} alt="Little Minds Big Questions" className="h-10" />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Gentle storytelling tools for parents and caregivers.

@@ -156,7 +156,7 @@ const ResultPage = () => {
           {/* Parent Explanation */}
           <div className="bg-sage/20 rounded-2xl p-8 mb-8">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-8 h-8" />
+              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16" />
               <h3 className="font-display font-bold text-lg">For Parents</h3>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">

@@ -49,6 +49,38 @@ export type Database = {
           },
         ]
       }
+      content_assets: {
+        Row: {
+          asset_type: string
+          created_at: string
+          id: string
+          image_url: string | null
+          question_id: string
+        }
+        Insert: {
+          asset_type: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          question_id: string
+        }
+        Update: {
+          asset_type?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_assets_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_themes: {
         Row: {
           id: string
@@ -85,6 +117,8 @@ export type Database = {
       questions: {
         Row: {
           age_group: string
+          audio_uploaded: boolean
+          audio_url: string | null
           child_age: number
           child_name: string
           context: string | null
@@ -98,9 +132,12 @@ export type Database = {
           parent_explanation: string
           parent_note: string | null
           question_text: string
+          transcription: string | null
         }
         Insert: {
           age_group: string
+          audio_uploaded?: boolean
+          audio_url?: string | null
           child_age: number
           child_name: string
           context?: string | null
@@ -114,9 +151,12 @@ export type Database = {
           parent_explanation: string
           parent_note?: string | null
           question_text: string
+          transcription?: string | null
         }
         Update: {
           age_group?: string
+          audio_uploaded?: boolean
+          audio_url?: string | null
           child_age?: number
           child_name?: string
           context?: string | null
@@ -130,6 +170,7 @@ export type Database = {
           parent_explanation?: string
           parent_note?: string | null
           question_text?: string
+          transcription?: string | null
         }
         Relationships: []
       }

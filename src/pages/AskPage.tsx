@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
+import { Mic } from "lucide-react";
 
 const AskPage = () => {
   const navigate = useNavigate();
@@ -44,7 +45,6 @@ const AskPage = () => {
 
     setLoading(true);
     try {
-      // Call AI edge function
       const { data: aiData, error: aiError } = await supabase.functions.invoke("generate-answer", {
         body: {
           child_name: form.child_name.trim(),
@@ -57,7 +57,6 @@ const AskPage = () => {
 
       if (aiError) throw aiError;
 
-      // Insert into database
       const { data: question, error: dbError } = await supabase
         .from("questions")
         .insert({
@@ -78,7 +77,6 @@ const AskPage = () => {
 
       if (dbError) throw dbError;
 
-      // Insert theme associations
       if (aiData.themes && aiData.themes.length > 0) {
         const { data: themeRows } = await supabase
           .from("themes")
@@ -111,9 +109,21 @@ const AskPage = () => {
       <section className="py-16 px-6">
         <div className="container max-w-2xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-3">Ask a Question</h1>
-          <p className="text-muted-foreground text-center mb-10">
+          <p className="text-muted-foreground text-center mb-6">
             Tell us what your child asked. We'll turn it into a gentle story.
           </p>
+
+          {/* Voice CTA */}
+          <div className="bg-peach/20 rounded-2xl p-5 mb-8 text-center">
+            <p className="font-display font-semibold text-sm mb-2">🎤 Want your child to ask themselves?</p>
+            <Button variant="peach" size="sm" asChild>
+              <Link to="/ask-child" className="gap-2">
+                <Mic className="w-4 h-4" />
+                Ask a Child
+              </Link>
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">Let your child record their question in their own voice.</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 bg-card rounded-2xl p-8 storybook-shadow">
             <div>

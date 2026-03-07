@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-illustration.jpg";
+import { Mic } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -22,14 +23,23 @@ const HeroSection = () => {
           <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-10 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Curious kids ask big questions. This space helps parents answer them with gentle stories and metaphors.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
             <Button size="lg" asChild>
               <Link to="/ask">Ask a Question</Link>
+            </Button>
+            <Button size="lg" variant="peach" asChild>
+              <Link to="/ask-child" className="gap-2">
+                <Mic className="w-4 h-4" />
+                Ask a Child
+              </Link>
             </Button>
             <Button size="lg" variant="secondary" asChild>
               <Link to="/browse">Browse Questions</Link>
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground mt-3 animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+            🎤 Let your child record their question in their own voice
+          </p>
         </div>
         <div className="flex justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
           <img

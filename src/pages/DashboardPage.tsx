@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
-  Eye, EyeOff, FolderPlus, X, Pencil, Check, Download, FileText,
-  ChevronDown, ChevronUp, Checkbox as CheckboxIcon
+  Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
+  ChevronDown, ChevronUp
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";

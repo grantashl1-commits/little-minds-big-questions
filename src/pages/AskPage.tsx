@@ -71,6 +71,7 @@ const AskPage = () => {
           metaphor_answer: aiData.metaphor_answer,
           parent_explanation: aiData.parent_explanation,
           image_prompt: aiData.image_prompt,
+          image_url: aiData.image_url || null,
           is_public: form.is_public,
         })
         .select()

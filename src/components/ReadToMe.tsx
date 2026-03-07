@@ -87,6 +87,21 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
     setMode(newMode);
   };
 
+  const handleUpgrade = async () => {
+    if (!user) {
+      window.location.href = "/auth";
+      return;
+    }
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error(e.message || "Could not start checkout");
+    }
+  };
+
   // Locked state for non-members
   if (!user || !isMember) {
     return (
@@ -101,9 +116,9 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
           </div>
         </div>
         <div className="flex items-center gap-2 mt-3">
-          <Button variant="outline" disabled className="gap-2 opacity-60">
+          <Button variant="default" onClick={handleUpgrade} className="gap-2">
             <Lock className="w-4 h-4" />
-            Unlock with Membership
+            {user ? "Upgrade to Unlock" : "Sign In to Unlock"}
           </Button>
         </div>
       </div>

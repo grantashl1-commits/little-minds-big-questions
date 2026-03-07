@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-illustration.jpg";
+import heroImage from "@/assets/hero-illustration.png";
 import { Mic } from "lucide-react";
 
 const HeroSection = () => {
@@ -13,7 +13,7 @@ const HeroSection = () => {
         <div className="absolute bottom-32 right-1/3 w-16 h-16 rounded-full bg-sage animate-float" style={{ animationDelay: "0.5s" }} />
       </div>
 
-      <div className="container max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+      <div className="container max-w-5xl mx-auto grid md:grid-cols-[1fr,auto] gap-12 items-center relative z-10">
         <div className="text-center md:text-left">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-fade-in-up">
             Little Minds
@@ -30,27 +30,23 @@ const HeroSection = () => {
             <Button size="lg" variant="peach" asChild>
               <Link to="/ask-child" className="gap-2">
                 <Mic className="w-4 h-4" />
-                Ask a Child
+                Let Your Child Ask
               </Link>
             </Button>
             <Button size="lg" variant="secondary" asChild>
               <Link to="/browse">Browse Questions</Link>
             </Button>
           </div>
-          
-
-          
         </div>
-        <div className="flex justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+        <div className="hidden md:flex justify-end animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
           <img
             src={heroImage}
-            alt="A child looking up at butterflies in a magical garden - watercolour illustration"
-            className="w-full max-w-md rounded-3xl storybook-shadow" />
-          
+            alt="A child looking up at the sky thinking - watercolour illustration"
+            className="w-72 lg:w-80 xl:w-96 object-contain" />
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 };
 
 export default HeroSection;

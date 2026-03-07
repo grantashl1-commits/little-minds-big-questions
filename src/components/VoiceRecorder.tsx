@@ -114,7 +114,11 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
       });
 
       if (error) throw error;
-      setTranscript(data.transcription || "");
+      let text = (data.transcription || "").trim();
+      if (text && !text.endsWith("?")) {
+        text += "?";
+      }
+      setTranscript(text);
     } catch (err) {
       console.error("Transcription error:", err);
       setTranscript("");

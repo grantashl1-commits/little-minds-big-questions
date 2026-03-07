@@ -27,7 +27,7 @@ const HowItWorks = () => {
           {steps.map((step, i) => (
             <div key={i} className="text-center">
               <div className="flex justify-center mb-4">
-                <img src={step.image} alt={step.title} className="w-36 h-36 object-contain" />
+                <img src={step.image} alt={step.title} className="w-36 h-36 object-contain drop-shadow-sm" />
               </div>
               <h3 className="font-display font-bold text-lg mb-2">{step.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
@@ -35,9 +35,13 @@ const HowItWorks = () => {
           ))}
         </div>
       </div>
-      {/* Stars divider */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
-        <img src={starsDivider} alt="" className="w-full h-12 md:h-16 object-cover opacity-50" />
+      {/* Stars divider — softened and floating */}
+      <div className="absolute -bottom-6 left-0 right-0 pointer-events-none flex justify-center">
+        <img
+          src={starsDivider}
+          alt=""
+          className="w-2/3 md:w-1/2 h-auto object-contain opacity-30 mix-blend-multiply"
+        />
       </div>
     </section>
   );

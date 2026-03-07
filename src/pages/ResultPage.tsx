@@ -116,11 +116,12 @@ const ResultPage = () => {
           {/* Watercolor Image */}
           {question.image_url && (
             <div className="flex justify-center mb-8">
-              <img
-                src={question.image_url}
-                alt={question.metaphor_title}
-                className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl"
-              />
+               <img
+                 src={question.image_url}
+                 alt={question.metaphor_title}
+                 className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl drop-shadow-sm"
+                 style={{ mixBlendMode: "multiply" }}
+               />
             </div>
           )}
 
@@ -132,16 +133,32 @@ const ResultPage = () => {
             <div className="text-base leading-relaxed whitespace-pre-line mb-6">
               {question.metaphor_answer}
             </div>
-            <div className="flex flex-wrap gap-2">
-              {themeNames.map((t: any) => (
-                <Link
-                  key={t.slug}
-                  to={`/browse?theme=${t.slug}`}
-                  className="text-xs font-display bg-primary/20 rounded-full px-3 py-1 hover:bg-primary/30 transition-colors"
-                >
-                  {t.name}
-                </Link>
-              ))}
+             <div className="flex flex-wrap gap-2">
+               {themeNames.map((t: any) => {
+                 const colorMap: Record<string, string> = {
+                   "death-dying": "bg-secondary/30",
+                   "grief-loss": "bg-primary/30",
+                   "feelings": "bg-accent/30",
+                   "friendship": "bg-sage/30",
+                   "identity": "bg-peach/30",
+                   "family-change": "bg-secondary/30",
+                   "school-confidence": "bg-primary/30",
+                   "kindness": "bg-sage/30",
+                   "bodies": "bg-accent/30",
+                   "spirituality": "bg-peach/30",
+                   "worry-anxiety": "bg-secondary/30",
+                   "babies-birth": "bg-primary/30",
+                 };
+                 return (
+                   <Link
+                     key={t.slug}
+                     to={`/browse?theme=${t.slug}`}
+                     className={`text-xs font-display rounded-full px-3 py-1 hover:opacity-80 transition-colors ${colorMap[t.slug] || "bg-primary/20"}`}
+                   >
+                     {t.name}
+                   </Link>
+                 );
+               })}
             </div>
           </div>
 

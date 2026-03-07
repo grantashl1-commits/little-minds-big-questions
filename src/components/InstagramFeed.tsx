@@ -48,7 +48,6 @@ const InstagramFeed = () => {
   return (
     <section className="py-16 px-6">
       <div className="container max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <Instagram className="w-6 h-6 text-foreground" />
           <h2 className="text-xl font-display font-bold text-foreground">
@@ -56,29 +55,26 @@ const InstagramFeed = () => {
           </h2>
         </div>
 
-        {/* 3x3 Grid */}
         <div className="grid grid-cols-3 gap-3 md:gap-4">
           {questions.map((q, i) => (
             <Link
               key={q.id}
               to={`/result/${q.id}`}
-              className="aspect-square rounded-2xl bg-[hsl(var(--card))] border border-border p-4 md:p-5 flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200 overflow-hidden group shadow-sm hover:shadow-md"
+              className="aspect-square rounded-2xl bg-card border border-border p-4 md:p-5 flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200 overflow-hidden group shadow-sm hover:shadow-md"
             >
-              {/* Watercolor accent */}
               <div className="flex justify-center mb-2">
                 <img
                   src={q.image_url || WATERCOLOR_ACCENTS[i % WATERCOLOR_ACCENTS.length]}
                   alt=""
-                  className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                  className="w-14 h-14 md:w-20 md:h-20 object-contain opacity-80 group-hover:opacity-100 transition-opacity drop-shadow-sm"
+                  style={{ mixBlendMode: "multiply" }}
                 />
               </div>
 
-              {/* Question text */}
               <p className="font-display font-semibold text-foreground text-xs md:text-sm leading-snug line-clamp-3 text-center flex-1 flex items-center justify-center">
                 "{q.question_text}"
               </p>
 
-              {/* Footer */}
               <div className="mt-auto pt-2 border-t border-border/50">
                 <p className="text-[9px] md:text-[10px] text-muted-foreground font-display text-center truncate">
                   {q.child_name}, age {q.child_age}

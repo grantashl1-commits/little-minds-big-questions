@@ -38,6 +38,9 @@ export interface QuestionEntry {
   is_public: boolean;
   created_at: string;
   themes?: string[];
+  audio_url?: string;
+  transcription?: string;
+  audio_uploaded?: boolean;
 }
 
 export const FEATURED_QUESTIONS: QuestionEntry[] = [

@@ -7,10 +7,12 @@ import Footer from "@/components/Footer";
 import FloatingBubbles from "@/components/FloatingBubbles";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
-import { Mic } from "lucide-react";
+import { Mic, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AskPage = () => {
   const navigate = useNavigate();
+  const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     child_name: "",
@@ -46,7 +48,7 @@ const AskPage = () => {
 
     setLoading(true);
     try {
-      const { data: aiData, error: aiError } = await supabase.functions.invoke("generate-answer", {
+      const { data: aiData, error: aiError } = await supabase.functions.invoke<any>("generate-answer", {
         body: {
           child_name: form.child_name.trim(),
           child_age: form.child_age,
@@ -57,6 +59,10 @@ const AskPage = () => {
       });
 
       if (aiError) throw aiError;
+      if (aiData.rejected) {
+        toast.error(aiData.rejection_reason || "That question isn't appropriate. Please try a different one.");
+        return;
+      }
 
       const { data: question, error: dbError } = await supabase
         .from("questions")
@@ -73,6 +79,7 @@ const AskPage = () => {
           image_prompt: aiData.image_prompt,
           image_url: aiData.image_url || null,
           is_public: form.is_public,
+          user_id: user?.id || null,
         })
         .select()
         .single();
@@ -185,16 +192,25 @@ const AskPage = () => {
               <input
                 type="checkbox"
                 checked={form.is_public}
-                onChange={handleCheckbox}
-                className="mt-1 w-5 h-5 rounded accent-primary"
+                onChange={isMember ? handleCheckbox : undefined}
+                disabled={!isMember}
+                className="mt-1 w-5 h-5 rounded accent-primary disabled:opacity-50"
               />
               <div>
                 <span className="text-sm text-foreground font-display font-semibold">
                   Make this answer public
                 </span>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Uncheck to keep this story private. Only you will have the link. Public stories help other families find answers. Private stories will be a premium feature soon.
-                </p>
+                {isMember ? (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Uncheck to keep this story private. Only you will have the link.
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                    <Lock className="w-3 h-3 inline" />
+                    Private stories are a members-only feature.{" "}
+                    <Link to="/dashboard" className="text-primary underline">Upgrade</Link>
+                  </p>
+                )}
               </div>
             </label>
 

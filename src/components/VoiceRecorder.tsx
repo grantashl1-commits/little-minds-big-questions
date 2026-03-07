@@ -27,10 +27,17 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
 
   const MAX_SECONDS = 20;
 
+  const getSupportedMimeType = () => {
+    const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+    return types.find(t => MediaRecorder.isTypeSupported(t)) || "";
+  };
+
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mimeType = getSupportedMimeType();
+      const options: MediaRecorderOptions = mimeType ? { mimeType } : {};
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -39,7 +46,8 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const recordedType = mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type: recordedType });
         audioBlobRef.current = blob;
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());

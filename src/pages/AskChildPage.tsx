@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -7,9 +7,12 @@ import Footer from "@/components/Footer";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
+import { Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AskChildPage = () => {
   const navigate = useNavigate();
+  const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
   const [confirmedText, setConfirmedText] = useState("");
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -65,6 +68,10 @@ const AskChildPage = () => {
         },
       });
       if (aiError) throw aiError;
+      if (aiData.rejected) {
+        toast.error(aiData.rejection_reason || "That question isn't appropriate. Please try a different one.");
+        return;
+      }
 
       const { data: question, error: dbError } = await supabase
         .from("questions")
@@ -80,6 +87,7 @@ const AskChildPage = () => {
           image_prompt: aiData.image_prompt,
           image_url: aiData.image_url || null,
           is_public: form.is_public,
+          user_id: user?.id || null,
           audio_url: audioUrl,
           transcription: confirmedText.trim(),
           audio_uploaded: !!audioBlob,
@@ -177,16 +185,25 @@ const AskChildPage = () => {
                 <input
                   type="checkbox"
                   checked={form.is_public}
-                  onChange={(e) => setForm((prev) => ({ ...prev, is_public: e.target.checked }))}
-                  className="mt-1 w-5 h-5 rounded accent-primary"
+                  onChange={isMember ? (e) => setForm((prev) => ({ ...prev, is_public: e.target.checked })) : undefined}
+                  disabled={!isMember}
+                  className="mt-1 w-5 h-5 rounded accent-primary disabled:opacity-50"
                 />
                 <div>
                   <span className="text-sm text-foreground font-display font-semibold">
                     Make this answer public
                   </span>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Public stories help other families find answers. Private stories will be a premium feature soon.
-                  </p>
+                  {isMember ? (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Uncheck to keep this story private. Only you will have the link.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <Lock className="w-3 h-3 inline" />
+                      Private stories are a members-only feature.{" "}
+                      <Link to="/dashboard" className="text-primary underline">Upgrade</Link>
+                    </p>
+                  )}
                 </div>
               </label>
 

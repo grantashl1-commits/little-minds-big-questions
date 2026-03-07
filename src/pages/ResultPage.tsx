@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -15,6 +26,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user, isMember } = useAuth();
   const [question, setQuestion] = useState<any>(null);
   const [themes, setThemes] = useState<string[]>([]);
@@ -101,6 +113,25 @@ const ResultPage = () => {
       toast.success(newVal ? "Story is now public" : "Story is now private");
     }
     setSavingAction(false);
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    setSavingAction(true);
+    try {
+      await supabase.from("question_themes").delete().eq("question_id", id);
+      await supabase.from("saved_questions").delete().eq("question_id", id);
+      await supabase.from("analytics").delete().eq("question_id", id);
+      await supabase.from("content_assets").delete().eq("question_id", id);
+      const { error } = await supabase.from("questions").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Story deleted");
+      navigate("/browse");
+    } catch {
+      toast.error("Could not delete story");
+    } finally {
+      setSavingAction(false);
+    }
   };
 
   if (loading) {
@@ -247,6 +278,32 @@ const ResultPage = () => {
                 {question.is_public ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 {question.is_public ? "Public" : "Private"}
               </Button>
+            )}
+
+            {/* Delete — own stories only */}
+            {user && question.user_id === user.id && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="gap-2 text-destructive hover:text-destructive">
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this story?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete this story and cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
 

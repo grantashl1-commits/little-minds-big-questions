@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -10,13 +10,17 @@ import StoryCardGenerator from "@/components/StoryCardGenerator";
 import FloatingBubbles from "@/components/FloatingBubbles";
 import { THEMES, FEATURED_QUESTIONS } from "@/lib/constants";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
+  const { user, isMember } = useAuth();
   const [question, setQuestion] = useState<any>(null);
   const [themes, setThemes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [savingAction, setSavingAction] = useState(false);
 
   useEffect(() => {
     const load = async () => {

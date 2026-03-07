@@ -17,7 +17,20 @@ serve(async (req) => {
     const systemPrompt = `You are a gentle children's storytelling assistant.
 Your task is to respond to difficult questions asked by children using comforting metaphors and simple stories.
 
-Rules:
+CONTENT SAFETY — CRITICAL:
+Before generating a story, evaluate the question for inappropriate content:
+- Profanity, swear words, or vulgar language
+- Sexual content or innuendo
+- Graphic violence or gore
+- Hate speech, slurs, or discriminatory language
+- Content clearly designed to troll, shock, or break the system
+- Questions that are nonsensical gibberish clearly not from a child
+
+If the question contains ANY of the above, DO NOT generate a story. Instead, set "rejected" to true and provide a kind, non-judgmental "rejection_reason" explaining that we can only answer genuine children's questions. Keep the rejection_reason gentle — e.g. "Hmm, that doesn't seem like a question we can help with. Try asking something a child might wonder about!"
+
+If the question is genuine (even if awkward or difficult — children do ask about death, bodies, babies, etc.), proceed normally with rejected set to false.
+
+Rules for story generation:
 - Use nature imagery when possible (animals, seasons, stars, oceans, butterflies, seeds, gardens)
 - Match language complexity to the child's age
 - Avoid frightening or graphic wording
@@ -26,11 +39,13 @@ Rules:
 - Themes should be from: death-dying, grief-loss, feelings, friendship, identity, family-change, school-confidence, kindness, bodies, spirituality, worry-anxiety, babies-birth
 
 Return a JSON object with these exact fields:
-- metaphor_title: A short poetic title for the story
-- metaphor_answer: The full child-friendly metaphor story (3-5 paragraphs)
-- parent_explanation: A short explanation for parents (2-3 sentences)
-- themes: An array of 1-3 theme slugs from the list above
-- image_prompt: A detailed prompt for generating a soft pastel watercolour children's book illustration based on the central metaphor symbol`;
+- rejected: boolean (true if inappropriate, false if genuine)
+- rejection_reason: string (only if rejected is true, otherwise empty string)
+- metaphor_title: A short poetic title for the story (empty string if rejected)
+- metaphor_answer: The full child-friendly metaphor story, 3-5 paragraphs (empty string if rejected)
+- parent_explanation: A short explanation for parents, 2-3 sentences (empty string if rejected)
+- themes: An array of 1-3 theme slugs from the list above (empty array if rejected)
+- image_prompt: A detailed prompt for generating a soft pastel watercolour children's book illustration based on the central metaphor symbol (empty string if rejected)`;
 
     const userPrompt = `Child's name: ${child_name}
 Child's age: ${child_age}
@@ -55,17 +70,19 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
             type: "function",
             function: {
               name: "generate_story_answer",
-              description: "Generate a metaphor-based story answer for a child's question",
+              description: "Generate a metaphor-based story answer for a child's question, or reject inappropriate questions",
               parameters: {
                 type: "object",
                 properties: {
+                  rejected: { type: "boolean" },
+                  rejection_reason: { type: "string" },
                   metaphor_title: { type: "string" },
                   metaphor_answer: { type: "string" },
                   parent_explanation: { type: "string" },
                   themes: { type: "array", items: { type: "string" } },
                   image_prompt: { type: "string" },
                 },
-                required: ["metaphor_title", "metaphor_answer", "parent_explanation", "themes", "image_prompt"],
+                required: ["rejected", "rejection_reason", "metaphor_title", "metaphor_answer", "parent_explanation", "themes", "image_prompt"],
                 additionalProperties: false,
               },
             },
@@ -99,10 +116,16 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
 
     const result = JSON.parse(toolCall.function.arguments);
 
+    // If rejected, return immediately without image generation
+    if (result.rejected) {
+      return new Response(JSON.stringify({ rejected: true, rejection_reason: result.rejection_reason }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Generate watercolor image based on the image_prompt
     let image_url: string | null = null;
     try {
-      // First check if we have a matching image in metaphor_images
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseKey);
@@ -115,7 +138,6 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
         .limit(20);
 
       if (existingImages && existingImages.length > 0) {
-        // Score each image by keyword overlap
         let bestMatch: { url: string; score: number } = { url: "", score: 0 };
         for (const img of existingImages) {
           const imgKeywords = (img.keywords || []).map((k: string) => k.toLowerCase());
@@ -129,7 +151,6 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
         }
       }
 
-      // If no good match, generate a new image
       if (!image_url) {
         const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -154,7 +175,6 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
           const generatedImage = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
           if (generatedImage) {
-            // Extract base64 data and upload to storage
             const base64Data = generatedImage.replace(/^data:image\/\w+;base64,/, "");
             const imageBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
             const filename = `generated-${Date.now()}.png`;
@@ -169,7 +189,6 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
                 .getPublicUrl(uploadData.path);
               image_url = urlData.publicUrl;
 
-              // Save to metaphor_images table for future matching
               await supabase.from("metaphor_images").insert({
                 filename,
                 public_url: image_url,

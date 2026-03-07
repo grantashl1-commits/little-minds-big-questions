@@ -185,16 +185,25 @@ const AskChildPage = () => {
                 <input
                   type="checkbox"
                   checked={form.is_public}
-                  onChange={(e) => setForm((prev) => ({ ...prev, is_public: e.target.checked }))}
-                  className="mt-1 w-5 h-5 rounded accent-primary"
+                  onChange={isMember ? (e) => setForm((prev) => ({ ...prev, is_public: e.target.checked })) : undefined}
+                  disabled={!isMember}
+                  className="mt-1 w-5 h-5 rounded accent-primary disabled:opacity-50"
                 />
                 <div>
                   <span className="text-sm text-foreground font-display font-semibold">
                     Make this answer public
                   </span>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Public stories help other families find answers. Private stories will be a premium feature soon.
-                  </p>
+                  {isMember ? (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Uncheck to keep this story private. Only you will have the link.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <Lock className="w-3 h-3 inline" />
+                      Private stories are a members-only feature.{" "}
+                      <Link to="/dashboard" className="text-primary underline">Upgrade</Link>
+                    </p>
+                  )}
                 </div>
               </label>
 

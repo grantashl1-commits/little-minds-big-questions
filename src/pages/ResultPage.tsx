@@ -279,6 +279,32 @@ const ResultPage = () => {
                 {question.is_public ? "Public" : "Private"}
               </Button>
             )}
+
+            {/* Delete — own stories only */}
+            {user && question.user_id === user.id && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="gap-2 text-destructive hover:text-destructive">
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this story?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete this story and cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
 
           {/* Parent Explanation */}

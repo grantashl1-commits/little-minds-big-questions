@@ -46,7 +46,8 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const recordedType = mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type: recordedType });
         audioBlobRef.current = blob;
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());

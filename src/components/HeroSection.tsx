@@ -12,7 +12,7 @@ const HeroSection = () => {
         <div className="absolute bottom-32 right-1/3 w-16 h-16 rounded-full bg-sage animate-float" style={{ animationDelay: "0.5s" }} />
       </div>
 
-      <div className="container max-w-4xl mx-auto text-center relative z-10">
+      <div className="container max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-fade-in-up">
           Little Minds
           <br />

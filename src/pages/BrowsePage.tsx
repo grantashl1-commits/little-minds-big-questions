@@ -17,50 +17,50 @@ const BrowsePage = () => {
   const [sort, setSort] = useState("newest");
 
   useEffect(() => {
-    loadQuestions();
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        let query = supabase
+          .from("questions")
+          .select("*")
+          .eq("is_public", true);
+
+        if (ageFilter) {
+          query = query.eq("age_group", ageFilter);
+        }
+
+        if (sort === "newest") {
+          query = query.order("created_at", { ascending: false });
+        }
+
+        const { data, error } = await query.limit(50);
+        
+        let results: QuestionEntry[] = [];
+        
+        if (error || !data || data.length === 0) {
+          results = FEATURED_QUESTIONS;
+        } else {
+          results = data as unknown as QuestionEntry[];
+        }
+
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          results = results.filter(
+            r => r.question_text.toLowerCase().includes(q) ||
+                 r.metaphor_title.toLowerCase().includes(q) ||
+                 r.child_name.toLowerCase().includes(q)
+          );
+        }
+
+        setQuestions(results);
+      } catch {
+        setQuestions(FEATURED_QUESTIONS);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [themeFilter, ageFilter, sort]);
-
-  const loadQuestions = async () => {
-    setLoading(true);
-    try {
-      let query = supabase
-        .from("questions")
-        .select("*")
-        .eq("is_public", true);
-
-      if (ageFilter) {
-        query = query.eq("age_group", ageFilter);
-      }
-
-      if (sort === "newest") {
-        query = query.order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query.limit(50);
-      if (error) console.error("Browse query error:", error);
-
-      let results: QuestionEntry[] = (data || []) as QuestionEntry[];
-
-      if (results.length === 0) {
-        results = FEATURED_QUESTIONS;
-      }
-
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        results = results.filter(
-          r => r.question_text.toLowerCase().includes(q) ||
-               r.metaphor_title.toLowerCase().includes(q) ||
-               r.child_name.toLowerCase().includes(q)
-        );
-      }
-
-      setQuestions(results);
-    } catch (err) {
-      console.error(err);
-      setQuestions(FEATURED_QUESTIONS);
-    }
-    setLoading(false);
-  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

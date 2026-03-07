@@ -36,7 +36,8 @@ const BrowsePage = () => {
         query = query.order("created_at", { ascending: false });
       }
 
-      const { data } = await query.limit(50);
+      const { data, error } = await query.limit(50);
+      if (error) console.error("Browse query error:", error);
 
       let results: QuestionEntry[] = (data || []) as QuestionEntry[];
 

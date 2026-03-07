@@ -20,7 +20,9 @@ const ThemeGrid = () => {
               to={`/browse?theme=${theme.slug}`}
               className={`${themeColors[i]} rounded-2xl p-5 text-center transition-all duration-200 hover:scale-[1.03] tile-shadow`}
             >
-              <span className="text-3xl block mb-2">{theme.emoji}</span>
+              <div className="flex justify-center mb-2">
+                <img src={theme.image} alt={theme.name} className="w-12 h-12 object-contain" />
+              </div>
               <span className="font-display font-semibold text-sm">{theme.name}</span>
             </Link>
           ))}

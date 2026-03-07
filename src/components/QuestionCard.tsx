@@ -19,6 +19,16 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
         isSquare ? "aspect-square" : ""
       }`}
     >
+      {/* Show watercolor image if available */}
+      {question.image_url && (
+        <div className="flex justify-center pt-4">
+          <img
+            src={question.image_url}
+            alt={question.metaphor_title}
+            className="w-16 h-16 object-contain"
+          />
+        </div>
+      )}
       <div className={`p-6 flex flex-col ${isSquare ? "h-full justify-between" : ""}`}>
         <div>
           <p className="text-xs font-display font-semibold text-muted-foreground mb-2">

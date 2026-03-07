@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingBubbles from "@/components/FloatingBubbles";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
 import { Mic } from "lucide-react";
@@ -70,6 +71,7 @@ const AskPage = () => {
           metaphor_answer: aiData.metaphor_answer,
           parent_explanation: aiData.parent_explanation,
           image_prompt: aiData.image_prompt,
+          image_url: aiData.image_url || null,
           is_public: form.is_public,
         })
         .select()
@@ -104,10 +106,11 @@ const AskPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <Navbar />
-      <section className="py-16 px-6">
-        <div className="container max-w-2xl mx-auto">
+      <section className="py-16 px-6 relative">
+        <FloatingBubbles count={5} />
+        <div className="container max-w-2xl mx-auto relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-3">Ask a Question</h1>
           <p className="text-muted-foreground text-center mb-6">
             Tell us what your child asked. We'll turn it into a gentle story.
@@ -115,11 +118,14 @@ const AskPage = () => {
 
           {/* Voice CTA */}
           <div className="bg-peach/20 rounded-2xl p-5 mb-8 text-center">
-            <p className="font-display font-semibold text-sm mb-2">🎤 Want your child to ask themselves?</p>
+            <div className="flex justify-center mb-2">
+              <img src="/metaphor-images/rabbit_watercolor-2.png" alt="" className="w-10 h-10" />
+            </div>
+            <p className="font-display font-semibold text-sm mb-2">Want your child to ask themselves?</p>
             <Button variant="peach" size="sm" asChild>
               <Link to="/ask-child" className="gap-2">
                 <Mic className="w-4 h-4" />
-                Ask a Child
+                Let Your Child Ask
               </Link>
             </Button>
             <p className="text-xs text-muted-foreground mt-2">Let your child record their question in their own voice.</p>
@@ -195,9 +201,14 @@ const AskPage = () => {
                 onChange={handleCheckbox}
                 className="mt-1 w-5 h-5 rounded accent-primary"
               />
-              <span className="text-sm text-muted-foreground">
-                Make this answer public so other parents can find it in the searchable library.
-              </span>
+              <div>
+                <span className="text-sm text-foreground font-display font-semibold">
+                  Make this answer public
+                </span>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Uncheck to keep this story private. Only you will have the link. Public stories help other families find answers. Private stories will be a premium feature soon.
+                </p>
+              </div>
             </label>
 
             <Button type="submit" size="lg" className="w-full" disabled={loading}>

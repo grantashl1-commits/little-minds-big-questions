@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuestionCard from "@/components/QuestionCard";
+import FloatingBubbles from "@/components/FloatingBubbles";
 import { THEMES, FEATURED_QUESTIONS, type QuestionEntry } from "@/lib/constants";
 
 const BrowsePage = () => {
@@ -35,16 +36,14 @@ const BrowsePage = () => {
         query = query.order("created_at", { ascending: false });
       }
 
-      const { data, error } = await query.limit(50);
+      const { data } = await query.limit(50);
 
       let results: QuestionEntry[] = (data || []) as QuestionEntry[];
 
-      // If no DB results yet, show featured
       if (results.length === 0) {
         results = FEATURED_QUESTIONS;
       }
 
-      // Client-side search filter
       if (search.trim()) {
         const q = search.toLowerCase();
         results = results.filter(
@@ -70,8 +69,9 @@ const BrowsePage = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <section className="py-16 px-6">
-        <div className="container max-w-5xl mx-auto">
+      <section className="py-16 px-6 relative">
+        <FloatingBubbles count={4} />
+        <div className="container max-w-5xl mx-auto relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-3">Explore Questions</h1>
           <p className="text-muted-foreground text-center mb-10">
             Discover gentle answers to life's big questions
@@ -140,12 +140,12 @@ const BrowsePage = () => {
           {/* Results Grid */}
           {loading ? (
             <div className="text-center py-16">
-              <div className="text-4xl mb-4 animate-float">🔍</div>
+              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 mx-auto mb-4 animate-float" />
               <p className="font-display text-muted-foreground">Searching...</p>
             </div>
           ) : questions.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-4xl mb-4">🌿</div>
+              <img src="/metaphor-images/leaf_watercolor-2.png" alt="" className="w-16 h-16 mx-auto mb-4" />
               <p className="font-display text-muted-foreground">No questions found. Try a different search.</p>
             </div>
           ) : (

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logoSeed from "@/assets/logo-seed.png";
 
 const Footer = () => {
   return (
@@ -6,7 +7,12 @@ const Footer = () => {
       <div className="container max-w-5xl mx-auto">
         <div className="grid sm:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="font-display font-bold text-lg mb-3">Little Minds Big Questions</h3>
+            <div className="flex items-center gap-2 mb-3">
+              <img src={logoSeed} alt="" className="w-7 h-7 rounded-full" />
+              <h3 className="font-display font-bold text-lg">
+                Little Minds <span className="text-primary font-extrabold">BIG</span> Questions
+              </h3>
+            </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Gentle storytelling tools for parents and caregivers.
             </p>
@@ -29,7 +35,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-border pt-6">
           <p className="text-xs text-muted-foreground text-center leading-relaxed">
-            ⚠️ This website provides gentle storytelling tools for parents and caregivers and is not a substitute for therapeutic, medical, or professional advice.
+            This website provides gentle storytelling tools for parents and caregivers and is not a substitute for therapeutic, medical, or professional advice.
           </p>
         </div>
       </div>

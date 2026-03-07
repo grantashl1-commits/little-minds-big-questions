@@ -1,6 +1,9 @@
 import { useCallback } from "react";
-import { Download } from "lucide-react";
+import { Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import type { QuestionEntry } from "@/lib/constants";
 
 interface StoryCardGeneratorProps {
@@ -96,6 +99,18 @@ function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {
 }
 
 const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
+  const { user, isMember } = useAuth();
+
+  const handleUpgrade = async () => {
+    if (!user) { window.location.href = "/auth"; return; }
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      toast.error("Could not start checkout");
+    }
+  };
 
   const generateQuestionCard = useCallback(() => {
     const { canvas, ctx } = createBaseCanvas();
@@ -243,14 +258,28 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
           <Download className="w-4 h-4" />
           Question Card
         </Button>
-        <Button variant="sage" size="sm" onClick={generateStoryCard} className="gap-2">
-          <Download className="w-4 h-4" />
-          Story Card
-        </Button>
-        <Button variant="accent" size="sm" onClick={generateCarousel} className="gap-2">
-          <Download className="w-4 h-4" />
-          Instagram Carousel
-        </Button>
+        {isMember ? (
+          <Button variant="sage" size="sm" onClick={generateStoryCard} className="gap-2">
+            <Download className="w-4 h-4" />
+            Story Card
+          </Button>
+        ) : (
+          <Button variant="sage" size="sm" onClick={handleUpgrade} className="gap-2">
+            <Lock className="w-4 h-4" />
+            Story Card
+          </Button>
+        )}
+        {isMember ? (
+          <Button variant="accent" size="sm" onClick={generateCarousel} className="gap-2">
+            <Download className="w-4 h-4" />
+            Instagram Carousel
+          </Button>
+        ) : (
+          <Button variant="accent" size="sm" onClick={handleUpgrade} className="gap-2">
+            <Lock className="w-4 h-4" />
+            Instagram Carousel
+          </Button>
+        )}
       </div>
       <p className="text-xs text-muted-foreground">
         All cards are 1080×1080px — perfect for Instagram, scrapbooks, or memory journals.

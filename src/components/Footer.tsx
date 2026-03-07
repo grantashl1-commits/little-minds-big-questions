@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import logoMain from "@/assets/logo-main.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Footer = () => {
+  const { user, loading, signOut } = useAuth();
+
   return (
     <footer className="py-12 px-6 bg-card/60 border-t border-border">
       <div className="container max-w-5xl mx-auto">
-        <div className="grid sm:grid-cols-3 gap-8 mb-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <img src={logoMain} alt="Little Minds Big Questions" className="h-10" />
@@ -27,6 +30,30 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/about" className="hover:text-foreground transition-colors">About</Link></li>
               <li><Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-display font-semibold mb-3">Account</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              {!loading && (
+                <>
+                  {user ? (
+                    <>
+                      <li><Link to="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link></li>
+                      <li>
+                        <button onClick={signOut} className="hover:text-foreground transition-colors">
+                          Log Out
+                        </button>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li><Link to="/auth" className="hover:text-foreground transition-colors">Log In</Link></li>
+                      <li><Link to="/auth" className="hover:text-foreground transition-colors">Sign Up</Link></li>
+                    </>
+                  )}
+                </>
+              )}
             </ul>
           </div>
         </div>

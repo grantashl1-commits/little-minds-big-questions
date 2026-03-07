@@ -14,6 +14,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import AboutPage from "./pages/AboutPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

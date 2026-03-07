@@ -1,0 +1,11 @@
+INSERT INTO public.metaphor_images (filename, public_url, keywords) VALUES 
+('rocket_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/rocket_watercolor.png', ARRAY['rocket', 'space', 'adventure', 'travel', 'future', 'sky']),
+('crayons_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/crayons_watercolor.png', ARRAY['crayons', 'art', 'creativity', 'color', 'school', 'drawing']),
+('paint_palette_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/paint_palette_watercolor.png', ARRAY['palette', 'art', 'creativity', 'painting', 'color']),
+('backpack_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/backpack_watercolor.png', ARRAY['backpack', 'school', 'travel', 'journey', 'learning']),
+('kite_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/kite_watercolor.png', ARRAY['kite', 'wind', 'play', 'sky', 'freedom']),
+('window_with_light_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/window_with_light_watercolor.png', ARRAY['window', 'light', 'home', 'hope', 'waiting', 'safety']),
+('lantern_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/lantern_watercolor.png', ARRAY['lantern', 'light', 'guidance', 'night', 'path']),
+('candle_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/candle_watercolor.png', ARRAY['candle', 'light', 'hope', 'memory', 'warmth']),
+('nest_with_eggs_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/nest_with_eggs_watercolor.png', ARRAY['nest', 'eggs', 'home', 'family', 'birth', 'safety', 'nature']),
+('house_watercolor.png', 'https://hrxreyncncmqzcyyqnpe.supabase.co/storage/v1/object/public/metaphor-images/house_watercolor.png', ARRAY['house', 'home', 'family', 'safety', 'comfort']);

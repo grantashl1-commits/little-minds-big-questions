@@ -8,10 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
-  Eye, EyeOff, FolderPlus, X, Pencil, Check
+  Eye, EyeOff, FolderPlus, X, Pencil, Check, Download, FileText,
+  ChevronDown, ChevronUp, Checkbox as CheckboxIcon
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -20,20 +22,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface QuestionData {
+  id: string;
+  question_text: string;
+  metaphor_title: string;
+  metaphor_answer: string;
+  child_name: string;
+  child_age: number;
+  is_public: boolean;
+  image_url: string | null;
+  image_prompt: string | null;
+}
+
 interface SavedQuestion {
   id: string;
   question_id: string;
   collection_id: string | null;
   created_at: string;
-  questions: {
-    id: string;
-    question_text: string;
-    metaphor_title: string;
-    child_name: string;
-    child_age: number;
-    is_public: boolean;
-    image_url: string | null;
-  };
+  questions: QuestionData;
 }
 
 interface Collection {
@@ -48,12 +54,17 @@ const DashboardPage = () => {
   const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [activeTab, setActiveTab] = useState<"library" | "collections">("library");
+  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book">("library");
   const [filterCollection, setFilterCollection] = useState<string>("all");
   const [newCollectionName, setNewCollectionName] = useState("");
   const [showNewCollection, setShowNewCollection] = useState(false);
   const [editingCollection, setEditingCollection] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+
+  // Book builder state
+  const [selectedForBook, setSelectedForBook] = useState<Set<string>>(new Set());
+  const [bookFilterCollection, setBookFilterCollection] = useState<string>("all");
+  const [previewOpen, setPreviewOpen] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user || !isMember) {
@@ -63,7 +74,7 @@ const DashboardPage = () => {
     const [sqRes, colRes] = await Promise.all([
       supabase
         .from("saved_questions")
-        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, child_name, child_age, is_public, image_url)")
+        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
       supabase
@@ -173,6 +184,67 @@ const DashboardPage = () => {
         ? savedQuestions.filter((sq) => !sq.collection_id)
         : savedQuestions.filter((sq) => sq.collection_id === filterCollection);
 
+  // Book builder helpers
+  const bookFilteredQuestions =
+    bookFilterCollection === "all"
+      ? savedQuestions
+      : bookFilterCollection === "uncategorized"
+        ? savedQuestions.filter((sq) => !sq.collection_id)
+        : savedQuestions.filter((sq) => sq.collection_id === bookFilterCollection);
+
+  const toggleBookSelection = (questionId: string) => {
+    setSelectedForBook((prev) => {
+      const next = new Set(prev);
+      if (next.has(questionId)) next.delete(questionId);
+      else next.add(questionId);
+      return next;
+    });
+  };
+
+  const selectAll = () => {
+    const ids = bookFilteredQuestions.map((sq) => sq.question_id);
+    setSelectedForBook(new Set(ids));
+  };
+
+  const deselectAll = () => setSelectedForBook(new Set());
+
+  const exportToCanva = () => {
+    const selected = savedQuestions.filter((sq) => selectedForBook.has(sq.question_id));
+    if (selected.length === 0) {
+      toast.error("Select at least one story to export");
+      return;
+    }
+
+    const pages = selected.map((sq, i) => ({
+      page: i + 1,
+      child_name: sq.questions.child_name,
+      child_age: sq.questions.child_age,
+      question: sq.questions.question_text,
+      story_title: sq.questions.metaphor_title,
+      story: sq.questions.metaphor_answer,
+      illustration_prompt: sq.questions.image_prompt || "A gentle watercolour illustration for this story",
+      image_url: sq.questions.image_url || null,
+    }));
+
+    const exportData = {
+      book_title: `Stories for ${selected[0].questions.child_name}`,
+      total_pages: pages.length,
+      exported_at: new Date().toISOString(),
+      format_notes: "Each page contains one story. Paste story text into your Canva children's book template. Use the illustration prompt to generate matching artwork in Canva's AI image generator.",
+      pages,
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `little-minds-book-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    toast.success(`Exported ${pages.length} stories for your book!`);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -244,7 +316,7 @@ const DashboardPage = () => {
         {isMember && (
           <>
             {/* Tabs */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-6">
               <Button
                 variant={activeTab === "library" ? "default" : "outline"}
                 onClick={() => setActiveTab("library")}
@@ -259,12 +331,18 @@ const DashboardPage = () => {
               >
                 <Star className="h-4 w-4 mr-1" /> Collections
               </Button>
+              <Button
+                variant={activeTab === "book" ? "default" : "outline"}
+                onClick={() => setActiveTab("book")}
+                size="sm"
+              >
+                <BookOpen className="h-4 w-4 mr-1" /> Create Your Book
+              </Button>
             </div>
 
             {/* Library Tab */}
             {activeTab === "library" && (
               <>
-                {/* Filter by collection */}
                 <div className="flex items-center gap-3 mb-4">
                   <Select value={filterCollection} onValueChange={setFilterCollection}>
                     <SelectTrigger className="w-48">
@@ -472,6 +550,164 @@ const DashboardPage = () => {
                       );
                     })}
                   </div>
+                )}
+              </>
+            )}
+
+            {/* Create Your Book Tab */}
+            {activeTab === "book" && (
+              <>
+                {/* Header */}
+                <div className="bg-card rounded-2xl p-6 mb-6 storybook-shadow">
+                  <div className="flex items-start gap-4">
+                    <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 shrink-0" />
+                    <div>
+                      <h2 className="font-display text-xl font-bold mb-1">Create Your Book</h2>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Select stories from your library, then export them as a formatted file ready 
+                        for your Canva children's book template. Canva will handle the final layout, 
+                        printing, shipping, and distribution.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {savedQuestions.length === 0 ? (
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <BookOpen className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                      <p className="font-display text-lg font-semibold mb-1">No stories to include</p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Save some stories to your library first, then come back here to create your book.
+                      </p>
+                      <Button asChild>
+                        <Link to="/ask">Ask a Question</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <>
+                    {/* Filter + Select controls */}
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <Select value={bookFilterCollection} onValueChange={setBookFilterCollection}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder="All stories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All stories</SelectItem>
+                          <SelectItem value="uncategorized">Uncategorised</SelectItem>
+                          {collections.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button size="sm" variant="ghost" onClick={selectAll}>Select all</Button>
+                      <Button size="sm" variant="ghost" onClick={deselectAll}>Deselect all</Button>
+                      <span className="text-sm text-muted-foreground ml-auto">
+                        {selectedForBook.size} selected
+                      </span>
+                    </div>
+
+                    {/* Story selection list */}
+                    <div className="space-y-2 mb-6">
+                      {bookFilteredQuestions.map((sq) => {
+                        const isSelected = selectedForBook.has(sq.question_id);
+                        return (
+                          <Card
+                            key={sq.id}
+                            className={`cursor-pointer transition-all ${isSelected ? "ring-2 ring-primary/50 bg-primary/5" : "hover:shadow-sm"}`}
+                            onClick={() => toggleBookSelection(sq.question_id)}
+                          >
+                            <CardContent className="p-3 flex items-center gap-3">
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => toggleBookSelection(sq.question_id)}
+                                className="shrink-0"
+                              />
+                              {sq.questions.image_url && (
+                                <img
+                                  src={sq.questions.image_url}
+                                  alt=""
+                                  className="w-10 h-10 rounded-lg object-contain shrink-0"
+                                  style={{ mixBlendMode: "multiply" }}
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-display font-semibold text-sm line-clamp-1">
+                                  {sq.questions.metaphor_title}
+                                </p>
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  "{sq.questions.question_text}" — {sq.questions.child_name}, age {sq.questions.child_age}
+                                </p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 shrink-0"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPreviewOpen(previewOpen === sq.question_id ? null : sq.question_id);
+                                }}
+                              >
+                                {previewOpen === sq.question_id ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </CardContent>
+
+                            {/* Expandable preview */}
+                            {previewOpen === sq.question_id && (
+                              <div className="px-4 pb-4 border-t border-border pt-3" onClick={(e) => e.stopPropagation()}>
+                                <div className="bg-background rounded-xl p-4 text-sm">
+                                  <p className="font-display font-bold mb-2">{sq.questions.metaphor_title}</p>
+                                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line line-clamp-6">
+                                    {sq.questions.metaphor_answer}
+                                  </p>
+                                  {sq.questions.image_prompt && (
+                                    <p className="text-xs text-muted-foreground/60 mt-3 italic">
+                                      Illustration: {sq.questions.image_prompt}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </Card>
+                        );
+                      })}
+                    </div>
+
+                    {/* Export section */}
+                    <Card className="bg-sage/10 border-sage/30">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                          <div className="flex-1 text-center sm:text-left">
+                            <p className="font-display font-bold text-base mb-1">
+                              Ready to create your book?
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Your export will include each story's question, narrative, child info, 
+                              and illustration prompts — formatted for easy pasting into a Canva book template.
+                            </p>
+                          </div>
+                          <Button
+                            size="lg"
+                            onClick={exportToCanva}
+                            disabled={selectedForBook.size === 0}
+                            className="gap-2 shrink-0"
+                          >
+                            <Download className="h-4 w-4" />
+                            Export to Canva Book Template
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-4 text-center sm:text-left">
+                          You will use the exported file with Canva to finalise your book. 
+                          Canva will handle printing, shipping, and distribution.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
                 )}
               </>
             )}

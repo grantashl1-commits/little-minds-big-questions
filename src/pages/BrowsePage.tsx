@@ -9,61 +9,63 @@ import { THEMES, FEATURED_QUESTIONS, type QuestionEntry } from "@/lib/constants"
 
 const BrowsePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [questions, setQuestions] = useState<QuestionEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState<QuestionEntry[]>(FEATURED_QUESTIONS);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [themeFilter, setThemeFilter] = useState(searchParams.get("theme") || "");
   const [ageFilter, setAgeFilter] = useState(searchParams.get("age") || "");
   const [sort, setSort] = useState("newest");
 
   useEffect(() => {
-    loadQuestions();
+    let cancelled = false;
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        let query = supabase
+          .from("questions")
+          .select("*")
+          .eq("is_public", true);
+
+        if (ageFilter) {
+          query = query.eq("age_group", ageFilter);
+        }
+
+        if (sort === "newest") {
+          query = query.order("created_at", { ascending: false });
+        }
+
+        const { data, error } = await query.limit(50);
+
+        if (cancelled) return;
+
+        if (!error && data && data.length > 0) {
+          setQuestions(data as unknown as QuestionEntry[]);
+        } else {
+          setQuestions(FEATURED_QUESTIONS);
+        }
+      } catch {
+        if (!cancelled) setQuestions(FEATURED_QUESTIONS);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchData();
+    return () => { cancelled = true; };
   }, [themeFilter, ageFilter, sort]);
 
-  const loadQuestions = async () => {
-    setLoading(true);
-    try {
-      let query = supabase
-        .from("questions")
-        .select("*")
-        .eq("is_public", true);
-
-      if (ageFilter) {
-        query = query.eq("age_group", ageFilter);
-      }
-
-      if (sort === "newest") {
-        query = query.order("created_at", { ascending: false });
-      }
-
-      const { data } = await query.limit(50);
-
-      let results: QuestionEntry[] = (data || []) as QuestionEntry[];
-
-      if (results.length === 0) {
-        results = FEATURED_QUESTIONS;
-      }
-
-      if (search.trim()) {
+  const filteredQuestions = search.trim()
+    ? questions.filter(r => {
         const q = search.toLowerCase();
-        results = results.filter(
-          r => r.question_text.toLowerCase().includes(q) ||
-               r.metaphor_title.toLowerCase().includes(q) ||
-               r.child_name.toLowerCase().includes(q)
+        return (
+          r.question_text.toLowerCase().includes(q) ||
+          r.metaphor_title.toLowerCase().includes(q) ||
+          r.child_name.toLowerCase().includes(q)
         );
-      }
-
-      setQuestions(results);
-    } catch (err) {
-      console.error(err);
-      setQuestions(FEATURED_QUESTIONS);
-    }
-    setLoading(false);
-  };
+      })
+    : questions;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadQuestions();
   };
 
   return (
@@ -138,19 +140,14 @@ const BrowsePage = () => {
           </div>
 
           {/* Results Grid */}
-          {loading ? (
-            <div className="text-center py-16">
-              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-28 h-28 mx-auto mb-4 animate-float" />
-              <p className="font-display text-muted-foreground">Searching...</p>
-            </div>
-          ) : questions.length === 0 ? (
+          {filteredQuestions.length === 0 ? (
             <div className="text-center py-16">
               <img src="/metaphor-images/leaf_watercolor-2.png" alt="" className="w-28 h-28 mx-auto mb-4" />
               <p className="font-display text-muted-foreground">No questions found. Try a different search.</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {questions.map(q => (
+              {filteredQuestions.map(q => (
                 <QuestionCard key={q.id} question={q} isSquare />
               ))}
             </div>

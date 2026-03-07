@@ -26,6 +26,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user, isMember } = useAuth();
   const [question, setQuestion] = useState<any>(null);
   const [themes, setThemes] = useState<string[]>([]);

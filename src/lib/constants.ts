@@ -1,16 +1,16 @@
 export const THEMES = [
-  { name: "Death & Dying", slug: "death-dying", image: "/metaphor-images/bird_watercolor-2.png" },
-  { name: "Grief & Loss", slug: "grief-loss", image: "/metaphor-images/moon_watercolor-2.png" },
-  { name: "Feelings", slug: "feelings", image: "/metaphor-images/sun_watercolor-2.png" },
-  { name: "Friendship", slug: "friendship", image: "/metaphor-images/whale_watercolor-2.png" },
-  { name: "Identity", slug: "identity", image: "/metaphor-images/rainbow_watercolor-2.png" },
-  { name: "Family Changes", slug: "family-change", image: "/metaphor-images/turtle_watercolor-2.png" },
-  { name: "School & Confidence", slug: "school-confidence", image: "/metaphor-images/owl_watercolor-2.png" },
-  { name: "Kindness", slug: "kindness", image: "/metaphor-images/leaf_watercolor-2.png" },
-  { name: "Bodies & Differences", slug: "bodies", image: "/metaphor-images/rainbow_watercolor-2.png" },
-  { name: "Spirituality", slug: "spirituality", image: "/metaphor-images/stars_watercolor-2.png" },
-  { name: "Worry & Anxiety", slug: "worry-anxiety", image: "/metaphor-images/rabbit_watercolor-2.png" },
-  { name: "Babies & Birth", slug: "babies-birth", image: "/metaphor-images/bird_watercolor-2.png" },
+  { name: "Death & Dying", slug: "death-dying", image: "/metaphor-images/death-dying-icon.png" },
+  { name: "Grief & Loss", slug: "grief-loss", image: "/metaphor-images/grief-loss-icon.png" },
+  { name: "Feelings", slug: "feelings", image: "/metaphor-images/feelings-icon.png" },
+  { name: "Friendship", slug: "friendship", image: "/metaphor-images/friendship-icon.png" },
+  { name: "Identity", slug: "identity", image: "/metaphor-images/identity-icon.png" },
+  { name: "Family Changes", slug: "family-change", image: "/metaphor-images/family-change-icon.png" },
+  { name: "School & Confidence", slug: "school-confidence", image: "/metaphor-images/school-confidence-icon.png" },
+  { name: "Kindness", slug: "kindness", image: "/metaphor-images/kindness-icon.png" },
+  { name: "Bodies & Differences", slug: "bodies", image: "/metaphor-images/bodies-icon.png" },
+  { name: "Spirituality", slug: "spirituality", image: "/metaphor-images/spirituality-icon.png" },
+  { name: "Worry & Anxiety", slug: "worry-anxiety", image: "/metaphor-images/worry-anxiety-icon.png" },
+  { name: "Babies & Birth", slug: "babies-birth", image: "/metaphor-images/babies-birth-icon.png" },
 ] as const;
 
 export type ThemeSlug = typeof THEMES[number]["slug"];

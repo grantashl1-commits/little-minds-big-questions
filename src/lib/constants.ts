@@ -53,7 +53,7 @@ export const FEATURED_QUESTIONS: QuestionEntry[] = [
     metaphor_title: "The Butterfly and the Garden",
     metaphor_answer: "Sometimes life is like a garden. When a flower finishes blooming, its petals fall gently back to the earth. But the love, seeds, and beauty it created stay in the garden forever.",
     parent_explanation: "Young children understand change better through nature imagery. You can explain that death is when a body stops working, but the love someone shared continues through memories.",
-    image_url: "/metaphor-images/bird_watercolor-2.png",
+    image_url: "/metaphor-images/featured-butterfly-garden.png",
     is_public: true,
     created_at: new Date().toISOString(),
     themes: ["death-dying", "grief-loss"],

@@ -22,6 +22,18 @@ const ResultPage = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [savingAction, setSavingAction] = useState(false);
 
+  // Check if already saved
+  useEffect(() => {
+    if (!user || !id) return;
+    supabase
+      .from("saved_questions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("question_id", id)
+      .maybeSingle()
+      .then(({ data }) => setIsSaved(!!data));
+  }, [user, id]);
+
   useEffect(() => {
     const load = async () => {
       const featured = FEATURED_QUESTIONS.find(q => q.id === id);

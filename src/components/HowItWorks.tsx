@@ -7,7 +7,7 @@ const steps = [
     description: "Children often ask difficult questions about life, death, feelings, or the world.",
   },
   {
-    image: "/metaphor-images/owl_watercolor-2.png",
+    image: "/metaphor-images/rocket.png",
     title: "We turn it into a story",
     description: "Our AI creates a gentle metaphor-based answer suited to their age.",
   },

@@ -15,6 +15,7 @@ const BrowsePage = () => {
   const [themeFilter, setThemeFilter] = useState(searchParams.get("theme") || "");
   const [ageFilter, setAgeFilter] = useState(searchParams.get("age") || "");
   const [sort, setSort] = useState("newest");
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,11 +61,11 @@ const BrowsePage = () => {
       }
     };
     fetchData();
-  }, [themeFilter, ageFilter, sort]);
+  }, [themeFilter, ageFilter, sort, searchTrigger]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadQuestions();
+    setSearchTrigger(prev => prev + 1);
   };
 
   return (

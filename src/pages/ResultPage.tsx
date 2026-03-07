@@ -206,12 +206,44 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Copy Story Text */}
-          <div className="flex justify-center mb-8">
+          {/* Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Button variant="outline" onClick={copyStoryText} className="gap-2">
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? "Copied!" : "Copy Story Text"}
             </Button>
+
+            {/* Save to Library — members only */}
+            {user && isMember ? (
+              <Button
+                variant={isSaved ? "sage" : "outline"}
+                onClick={handleSave}
+                disabled={savingAction}
+                className="gap-2"
+              >
+                {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                {isSaved ? "Saved" : "Save to Library"}
+              </Button>
+            ) : (
+              <Button variant="outline" disabled className="gap-2 opacity-60">
+                <Lock className="w-4 h-4" />
+                Save to Library
+                <span className="text-xs">(Members)</span>
+              </Button>
+            )}
+
+            {/* Privacy toggle — members who saved */}
+            {user && isMember && isSaved && (
+              <Button
+                variant="outline"
+                onClick={handleTogglePublic}
+                disabled={savingAction}
+                className="gap-2"
+              >
+                {question.is_public ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                {question.is_public ? "Public" : "Private"}
+              </Button>
+            )}
           </div>
 
           {/* Parent Explanation */}

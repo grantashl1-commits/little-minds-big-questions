@@ -35,13 +35,20 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
       }`}
     >
       {question.image_url && (
-        <div className="flex justify-center pt-4">
+        <div className="relative flex justify-center pt-4">
           <img
             src={question.image_url}
             alt={question.metaphor_title}
             className="w-64 h-64 object-contain drop-shadow-sm"
             style={{ mixBlendMode: "multiply" }}
           />
+          {isSquare && (
+            <div className="absolute inset-0 flex items-end justify-center pb-2 px-4">
+              <p className="text-sm font-display font-bold text-foreground/90 text-center bg-background/70 backdrop-blur-sm rounded-xl px-3 py-2 leading-snug line-clamp-2">
+                "{question.question_text}"
+              </p>
+            </div>
+          )}
         </div>
       )}
       <div className={`p-6 flex flex-col ${isSquare ? "h-full justify-between" : ""}`}>
@@ -49,9 +56,11 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
           <p className="text-xs font-display font-semibold text-muted-foreground mb-2">
             {question.child_name}, age {question.child_age}
           </p>
-          <h3 className="font-display font-bold text-base mb-3 leading-snug">
-            "{question.question_text}"
-          </h3>
+          {!isSquare && (
+            <h3 className="font-display font-bold text-base mb-3 leading-snug">
+              "{question.question_text}"
+            </h3>
+          )}
           <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
             {question.metaphor_answer}
           </p>

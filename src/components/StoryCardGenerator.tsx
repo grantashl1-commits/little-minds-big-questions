@@ -258,14 +258,28 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
           <Download className="w-4 h-4" />
           Question Card
         </Button>
-        <Button variant="sage" size="sm" onClick={generateStoryCard} className="gap-2">
-          <Download className="w-4 h-4" />
-          Story Card
-        </Button>
-        <Button variant="accent" size="sm" onClick={generateCarousel} className="gap-2">
-          <Download className="w-4 h-4" />
-          Instagram Carousel
-        </Button>
+        {isMember ? (
+          <Button variant="sage" size="sm" onClick={generateStoryCard} className="gap-2">
+            <Download className="w-4 h-4" />
+            Story Card
+          </Button>
+        ) : (
+          <Button variant="sage" size="sm" onClick={handleUpgrade} className="gap-2">
+            <Lock className="w-4 h-4" />
+            Story Card
+          </Button>
+        )}
+        {isMember ? (
+          <Button variant="accent" size="sm" onClick={generateCarousel} className="gap-2">
+            <Download className="w-4 h-4" />
+            Instagram Carousel
+          </Button>
+        ) : (
+          <Button variant="accent" size="sm" onClick={handleUpgrade} className="gap-2">
+            <Lock className="w-4 h-4" />
+            Instagram Carousel
+          </Button>
+        )}
       </div>
       <p className="text-xs text-muted-foreground">
         All cards are 1080×1080px — perfect for Instagram, scrapbooks, or memory journals.

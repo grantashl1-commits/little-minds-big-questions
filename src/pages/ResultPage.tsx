@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -10,13 +10,29 @@ import StoryCardGenerator from "@/components/StoryCardGenerator";
 import FloatingBubbles from "@/components/FloatingBubbles";
 import { THEMES, FEATURED_QUESTIONS } from "@/lib/constants";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
+  const { user, isMember } = useAuth();
   const [question, setQuestion] = useState<any>(null);
   const [themes, setThemes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [savingAction, setSavingAction] = useState(false);
+
+  // Check if already saved
+  useEffect(() => {
+    if (!user || !id) return;
+    supabase
+      .from("saved_questions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("question_id", id)
+      .maybeSingle()
+      .then(({ data }) => setIsSaved(!!data));
+  }, [user, id]);
 
   useEffect(() => {
     const load = async () => {
@@ -56,6 +72,34 @@ const ResultPage = () => {
     setCopied(true);
     toast.success("Story copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSave = async () => {
+    if (!user || !id) return;
+    setSavingAction(true);
+    if (isSaved) {
+      await supabase.from("saved_questions").delete().eq("user_id", user.id).eq("question_id", id);
+      setIsSaved(false);
+      toast.success("Removed from library");
+    } else {
+      const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
+      if (error) toast.error("Could not save");
+      else { setIsSaved(true); toast.success("Saved to library!"); }
+    }
+    setSavingAction(false);
+  };
+
+  const handleTogglePublic = async () => {
+    if (!question || !id) return;
+    setSavingAction(true);
+    const newVal = !question.is_public;
+    const { error } = await supabase.from("questions").update({ is_public: newVal }).eq("id", id);
+    if (error) toast.error("Could not update");
+    else {
+      setQuestion({ ...question, is_public: newVal });
+      toast.success(newVal ? "Story is now public" : "Story is now private");
+    }
+    setSavingAction(false);
   };
 
   if (loading) {
@@ -162,12 +206,44 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Copy Story Text */}
-          <div className="flex justify-center mb-8">
+          {/* Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Button variant="outline" onClick={copyStoryText} className="gap-2">
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? "Copied!" : "Copy Story Text"}
             </Button>
+
+            {/* Save to Library — members only */}
+            {user && isMember ? (
+              <Button
+                variant={isSaved ? "sage" : "outline"}
+                onClick={handleSave}
+                disabled={savingAction}
+                className="gap-2"
+              >
+                {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                {isSaved ? "Saved" : "Save to Library"}
+              </Button>
+            ) : (
+              <Button variant="outline" disabled className="gap-2 opacity-60">
+                <Lock className="w-4 h-4" />
+                Save to Library
+                <span className="text-xs">(Members)</span>
+              </Button>
+            )}
+
+            {/* Privacy toggle — members who saved */}
+            {user && isMember && isSaved && (
+              <Button
+                variant="outline"
+                onClick={handleTogglePublic}
+                disabled={savingAction}
+                className="gap-2"
+              >
+                {question.is_public ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                {question.is_public ? "Public" : "Private"}
+              </Button>
+            )}
           </div>
 
           {/* Parent Explanation */}

@@ -10,12 +10,17 @@ import { CheckCircle, Loader2, XCircle } from "lucide-react";
 const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (!sessionId || !user) return;
+    if (authLoading) return; // Wait for auth to resolve
+    if (!sessionId || !user) {
+      setErrorMsg("Not authenticated. Please log in and try again.");
+      setStatus("error");
+      return;
+    }
 
     const verify = async () => {
       try {
@@ -37,7 +42,7 @@ const PaymentSuccessPage = () => {
     };
 
     verify();
-  }, [sessionId, user]);
+  }, [sessionId, user, authLoading]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

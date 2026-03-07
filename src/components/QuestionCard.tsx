@@ -39,7 +39,7 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
           <img
             src={question.image_url}
             alt={question.metaphor_title}
-            className="w-32 h-32 object-contain drop-shadow-sm"
+            className="w-64 h-64 object-contain drop-shadow-sm"
             style={{ mixBlendMode: "multiply" }}
           />
         </div>

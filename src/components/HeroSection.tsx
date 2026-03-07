@@ -6,12 +6,7 @@ import { Mic } from "lucide-react";
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden py-20 md:py-28 px-6">
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-primary animate-float" />
-        <div className="absolute top-40 right-20 w-24 h-24 rounded-full bg-secondary animate-float" style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full bg-accent animate-float" style={{ animationDelay: "2s" }} />
-        <div className="absolute bottom-32 right-1/3 w-16 h-16 rounded-full bg-sage animate-float" style={{ animationDelay: "0.5s" }} />
-      </div>
+      {/* Floating dots intentionally blank here — moved to around hero image */}
 
       <div className="container max-w-5xl mx-auto grid md:grid-cols-[1fr,auto] gap-12 items-center relative z-10">
         <div className="text-center md:text-left">

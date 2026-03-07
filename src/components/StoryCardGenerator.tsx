@@ -99,6 +99,18 @@ function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {
 }
 
 const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
+  const { user, isMember } = useAuth();
+
+  const handleUpgrade = async () => {
+    if (!user) { window.location.href = "/auth"; return; }
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      toast.error("Could not start checkout");
+    }
+  };
 
   const generateQuestionCard = useCallback(() => {
     const { canvas, ctx } = createBaseCanvas();

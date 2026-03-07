@@ -1,0 +1,83 @@
+export const THEMES = [
+  { name: "Death & Dying", slug: "death-dying", emoji: "🦋" },
+  { name: "Grief & Loss", slug: "grief-loss", emoji: "🌧️" },
+  { name: "Feelings", slug: "feelings", emoji: "💛" },
+  { name: "Friendship", slug: "friendship", emoji: "🤝" },
+  { name: "Identity", slug: "identity", emoji: "🪞" },
+  { name: "Family Changes", slug: "family-change", emoji: "🏠" },
+  { name: "School & Confidence", slug: "school-confidence", emoji: "🎒" },
+  { name: "Kindness", slug: "kindness", emoji: "🌻" },
+  { name: "Bodies & Differences", slug: "bodies", emoji: "🌈" },
+  { name: "Spirituality", slug: "spirituality", emoji: "✨" },
+  { name: "Worry & Anxiety", slug: "worry-anxiety", emoji: "🌊" },
+  { name: "Babies & Birth", slug: "babies-birth", emoji: "🐣" },
+] as const;
+
+export type ThemeSlug = typeof THEMES[number]["slug"];
+
+export function getAgeGroup(age: number): string {
+  if (age <= 3) return "2–3";
+  if (age <= 5) return "4–5";
+  if (age <= 7) return "6–7";
+  return "8–10";
+}
+
+export interface QuestionEntry {
+  id: string;
+  child_name: string;
+  child_age: number;
+  age_group: string;
+  question_text: string;
+  context?: string;
+  parent_note?: string;
+  metaphor_title: string;
+  metaphor_answer: string;
+  parent_explanation: string;
+  image_prompt?: string;
+  image_url?: string;
+  is_public: boolean;
+  created_at: string;
+  themes?: string[];
+}
+
+export const FEATURED_QUESTIONS: QuestionEntry[] = [
+  {
+    id: "1",
+    child_name: "Ruby",
+    child_age: 5,
+    age_group: "4–5",
+    question_text: "What happens when we die?",
+    metaphor_title: "The Butterfly and the Garden",
+    metaphor_answer: "Sometimes life is like a garden. When a flower finishes blooming, its petals fall gently back to the earth. But the love, seeds, and beauty it created stay in the garden forever.",
+    parent_explanation: "Young children understand change better through nature imagery. You can explain that death is when a body stops working, but the love someone shared continues through memories.",
+    is_public: true,
+    created_at: new Date().toISOString(),
+    themes: ["death-dying", "grief-loss"],
+  },
+  {
+    id: "2",
+    child_name: "Leo",
+    child_age: 4,
+    age_group: "4–5",
+    question_text: "Why did Grandma go away?",
+    metaphor_title: "The Star That Moved",
+    metaphor_answer: "Imagine if every person who loved you became a star in the sky. Grandma became a very bright star. She's not gone — she's just shining from a different place now.",
+    parent_explanation: "At this age, children may not understand permanence. Use imagery of continued presence in a different form rather than 'gone forever'.",
+    is_public: true,
+    created_at: new Date().toISOString(),
+    themes: ["grief-loss", "feelings"],
+  },
+  {
+    id: "3",
+    child_name: "Mia",
+    child_age: 6,
+    age_group: "6–7",
+    question_text: "Why can't I be friends with everyone?",
+    metaphor_title: "The Ocean and the Shells",
+    metaphor_answer: "The ocean has millions of shells on the beach. Some shells fit perfectly in your hand, and some don't. It doesn't mean those shells aren't beautiful — they just belong in someone else's collection.",
+    parent_explanation: "Help children understand that not all relationships click, and that's natural. Focus on the quality of friendships rather than quantity.",
+    is_public: true,
+    created_at: new Date().toISOString(),
+    themes: ["friendship", "feelings"],
+  },
+];

@@ -199,6 +199,7 @@ export type Database = {
           parent_note: string | null
           question_text: string
           transcription: string | null
+          user_id: string | null
         }
         Insert: {
           age_group: string
@@ -218,6 +219,7 @@ export type Database = {
           parent_note?: string | null
           question_text: string
           transcription?: string | null
+          user_id?: string | null
         }
         Update: {
           age_group?: string
@@ -237,6 +239,7 @@ export type Database = {
           parent_note?: string | null
           question_text?: string
           transcription?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

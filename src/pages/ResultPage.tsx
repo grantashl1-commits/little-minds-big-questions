@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
 import StoryCardGenerator from "@/components/StoryCardGenerator";
 import FloatingBubbles from "@/components/FloatingBubbles";
+import ReadToMe from "@/components/ReadToMe";
 import { THEMES, FEATURED_QUESTIONS } from "@/lib/constants";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";

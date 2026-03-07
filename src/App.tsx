@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AskPage from "./pages/AskPage";
+import AskChildPage from "./pages/AskChildPage";
 import ResultPage from "./pages/ResultPage";
 import BrowsePage from "./pages/BrowsePage";
 import NotFound from "./pages/NotFound";
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/ask" element={<AskPage />} />
+          <Route path="/ask-child" element={<AskChildPage />} />
           <Route path="/result/:id" element={<ResultPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="*" element={<NotFound />} />

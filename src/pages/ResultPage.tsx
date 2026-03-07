@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AudioPlayer from "@/components/AudioPlayer";
+import StoryCardGenerator from "@/components/StoryCardGenerator";
 import { THEMES, FEATURED_QUESTIONS } from "@/lib/constants";
 
 const ResultPage = () => {
@@ -31,7 +33,6 @@ const ResultPage = () => {
 
       if (data) {
         setQuestion(data);
-        // Load themes
         const { data: qt } = await supabase
           .from("question_themes")
           .select("theme_id, themes(slug, theme_name)")
@@ -85,11 +86,19 @@ const ResultPage = () => {
       <Navbar />
       <section className="py-16 px-6">
         <div className="container max-w-3xl mx-auto">
+          {/* Header */}
           <div className="text-center mb-10">
             <p className="font-display text-sm text-muted-foreground mb-2">
               {question.child_name} asked (age {question.child_age}):
             </p>
-            <h1 className="text-2xl md:text-3xl font-bold">"{question.question_text}"</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">"{question.question_text}"</h1>
+
+            {/* Voice playback */}
+            {question.audio_uploaded && question.audio_url && (
+              <div className="max-w-sm mx-auto">
+                <AudioPlayer audioUrl={question.audio_url} />
+              </div>
+            )}
           </div>
 
           {/* Story Card */}
@@ -119,6 +128,11 @@ const ResultPage = () => {
             <p className="text-sm leading-relaxed text-muted-foreground">
               {question.parent_explanation}
             </p>
+          </div>
+
+          {/* Download & Share Cards */}
+          <div className="bg-card rounded-2xl p-8 storybook-shadow mb-8">
+            <StoryCardGenerator question={question} />
           </div>
 
           {/* Actions */}

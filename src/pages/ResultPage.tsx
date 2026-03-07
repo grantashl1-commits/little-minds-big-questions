@@ -207,6 +207,9 @@ const ResultPage = () => {
             </div>
           </div>
 
+          {/* Read to Me */}
+          <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} />
+
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Button variant="outline" onClick={copyStoryText} className="gap-2">

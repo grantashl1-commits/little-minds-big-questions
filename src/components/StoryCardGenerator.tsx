@@ -1,6 +1,9 @@
 import { useCallback } from "react";
-import { Download } from "lucide-react";
+import { Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import type { QuestionEntry } from "@/lib/constants";
 
 interface StoryCardGeneratorProps {

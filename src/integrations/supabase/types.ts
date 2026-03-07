@@ -81,6 +81,30 @@ export type Database = {
           },
         ]
       }
+      metaphor_images: {
+        Row: {
+          created_at: string | null
+          filename: string
+          id: string
+          keywords: string[] | null
+          public_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          filename: string
+          id?: string
+          keywords?: string[] | null
+          public_url: string
+        }
+        Update: {
+          created_at?: string | null
+          filename?: string
+          id?: string
+          keywords?: string[] | null
+          public_url?: string
+        }
+        Relationships: []
+      }
       question_themes: {
         Row: {
           id: string

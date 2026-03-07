@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Play, Pause, Moon, Sun, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 type VoiceMode = "bedtime" | "daytime";

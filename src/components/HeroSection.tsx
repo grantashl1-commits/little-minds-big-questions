@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-illustration.png";
+import logoMain from "@/assets/logo-main.png";
 import { Mic } from "lucide-react";
 
 const HeroSection = () => {
@@ -10,11 +11,9 @@ const HeroSection = () => {
 
       <div className="container max-w-5xl mx-auto grid md:grid-cols-[1fr,auto] gap-12 items-center relative z-10">
         <div className="text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-fade-in-up">
-            Little Minds
-            <br />
-            <span className="text-primary">Big Questions</span>
-          </h1>
+          <div className="flex justify-center md:justify-start mb-6 animate-fade-in-up">
+            <img src={logoMain} alt="Little Minds Big Questions" className="h-28 md:h-36 lg:h-44 object-contain" />
+          </div>
           <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-10 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Curious kids ask big questions. This space helps parents answer them with gentle stories and metaphors.
           </p>

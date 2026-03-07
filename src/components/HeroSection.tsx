@@ -32,7 +32,7 @@ const HeroSection = () => {
             </Button>
           </div>
         </div>
-        <div className="hidden md:flex justify-center items-center animate-fade-in-up relative w-80 lg:w-96 xl:w-[28rem] h-[24rem] lg:h-[28rem] xl:h-[32rem]" style={{ animationDelay: "0.3s" }}>
+        <div className="flex justify-center items-center animate-fade-in-up relative w-48 h-56 md:w-80 md:h-[24rem] lg:w-96 lg:h-[28rem] xl:w-[28rem] xl:h-[32rem] mx-auto md:mx-0" style={{ animationDelay: "0.3s" }}>
           {/* Floating colored dots orbiting around the boy */}
           <div className="absolute w-10 h-10 rounded-full bg-primary opacity-30 pointer-events-none animate-[orbit_8s_linear_infinite]" style={{ top: "10%", left: "5%" }} />
           <div className="absolute w-7 h-7 rounded-full bg-secondary opacity-35 pointer-events-none animate-[orbit_10s_linear_infinite_reverse]" style={{ top: "5%", right: "10%" }} />

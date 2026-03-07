@@ -12,7 +12,7 @@ const steps = [
     description: "Our AI creates a gentle metaphor-based answer suited to their age.",
   },
   {
-    image: "/metaphor-images/stars_watercolor-2.png",
+    image: "/metaphor-images/planet.png",
     title: "Share and explore",
     description: "Responses can be saved and searched so other families can use them too.",
   },

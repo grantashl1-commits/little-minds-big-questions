@@ -1,9 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logoMain from "@/assets/logo-main.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogOut, User } from "lucide-react";
 
 const Navbar = () => {
-  const location = useLocation();
+  const { user, loading, signOut } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -18,6 +20,27 @@ const Navbar = () => {
           <Button size="sm" asChild>
             <Link to="/ask">Ask a Question</Link>
           </Button>
+          {!loading && (
+            <>
+              {user ? (
+                <>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/dashboard">
+                      <User className="h-4 w-4 mr-1" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={signOut} title="Log out">
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button variant="secondary" size="sm" asChild>
+                  <Link to="/auth">Log In</Link>
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </nav>

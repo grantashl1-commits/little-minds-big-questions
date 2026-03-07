@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const AskChildPage = () => {
   const navigate = useNavigate();
+  const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
   const [confirmedText, setConfirmedText] = useState("");
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);

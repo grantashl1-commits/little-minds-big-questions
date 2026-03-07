@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const AskPage = () => {
   const navigate = useNavigate();
+  const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     child_name: "",

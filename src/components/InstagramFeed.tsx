@@ -34,7 +34,7 @@ const InstagramFeed = () => {
               <img
                 src={tile}
                 alt="Instagram post"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-[#F9EDD8]"
               />
             </a>
           ))}

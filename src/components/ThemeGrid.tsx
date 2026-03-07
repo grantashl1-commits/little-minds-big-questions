@@ -24,8 +24,7 @@ const ThemeGrid = () => {
                 <img
                   src={theme.image}
                   alt={theme.name}
-                  className="w-28 h-28 object-contain drop-shadow-sm"
-                  style={{ mixBlendMode: "multiply" }}
+                  className="w-28 h-28 object-contain"
                 />
               </div>
               <span className="font-display font-semibold text-sm">{theme.name}</span>

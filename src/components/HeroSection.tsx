@@ -45,7 +45,8 @@ const HeroSection = () => {
           <img
             src={heroImage}
             alt="A child looking up at a dreamy sky with butterflies - watercolour illustration"
-            className="w-80 lg:w-96 xl:w-[28rem] object-contain relative z-10" />
+            className="w-80 lg:w-96 xl:w-[28rem] object-contain relative z-10"
+            style={{ mixBlendMode: "multiply" }} />
         </div>
       </div>
     </section>

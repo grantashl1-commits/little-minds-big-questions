@@ -79,6 +79,7 @@ const AskPage = () => {
           image_prompt: aiData.image_prompt,
           image_url: aiData.image_url || null,
           is_public: form.is_public,
+          user_id: user?.id || null,
         })
         .select()
         .single();

@@ -74,6 +74,34 @@ const ResultPage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleSave = async () => {
+    if (!user || !id) return;
+    setSavingAction(true);
+    if (isSaved) {
+      await supabase.from("saved_questions").delete().eq("user_id", user.id).eq("question_id", id);
+      setIsSaved(false);
+      toast.success("Removed from library");
+    } else {
+      const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
+      if (error) toast.error("Could not save");
+      else { setIsSaved(true); toast.success("Saved to library!"); }
+    }
+    setSavingAction(false);
+  };
+
+  const handleTogglePublic = async () => {
+    if (!question || !id) return;
+    setSavingAction(true);
+    const newVal = !question.is_public;
+    const { error } = await supabase.from("questions").update({ is_public: newVal }).eq("id", id);
+    if (error) toast.error("Could not update");
+    else {
+      setQuestion({ ...question, is_public: newVal });
+      toast.success(newVal ? "Story is now public" : "Story is now private");
+    }
+    setSavingAction(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen">

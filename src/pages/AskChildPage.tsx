@@ -68,6 +68,10 @@ const AskChildPage = () => {
         },
       });
       if (aiError) throw aiError;
+      if (aiData.rejected) {
+        toast.error(aiData.rejection_reason || "That question isn't appropriate. Please try a different one.");
+        return;
+      }
 
       const { data: question, error: dbError } = await supabase
         .from("questions")

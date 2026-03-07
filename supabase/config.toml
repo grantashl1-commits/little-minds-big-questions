@@ -14,6 +14,3 @@ verify_jwt = false
 
 [functions.read-to-me]
 verify_jwt = false
-
-[functions.create-promo-code]
-verify_jwt = false

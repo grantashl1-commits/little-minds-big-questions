@@ -119,7 +119,7 @@ const ResultPage = () => {
               <img
                 src={question.image_url}
                 alt={question.metaphor_title}
-                className="w-40 h-40 md:w-52 md:h-52 object-contain rounded-2xl"
+                className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl"
               />
             </div>
           )}

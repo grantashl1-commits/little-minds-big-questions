@@ -27,7 +27,7 @@ const HowItWorks = () => {
           {steps.map((step, i) => (
             <div key={i} className="text-center">
               <div className="flex justify-center mb-4">
-                <img src={step.image} alt={step.title} className="w-20 h-20 object-contain" />
+                <img src={step.image} alt={step.title} className="w-36 h-36 object-contain" />
               </div>
               <h3 className="font-display font-bold text-lg mb-2">{step.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>

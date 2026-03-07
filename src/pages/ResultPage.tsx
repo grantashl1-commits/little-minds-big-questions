@@ -64,7 +64,7 @@ const ResultPage = () => {
         <Navbar />
         <div className="flex items-center justify-center py-32">
           <div className="text-center">
-            <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 mx-auto mb-4 animate-float" />
+            <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-28 h-28 mx-auto mb-4 animate-float" />
             <p className="font-display text-muted-foreground">Loading your story...</p>
           </div>
         </div>
@@ -119,7 +119,7 @@ const ResultPage = () => {
               <img
                 src={question.image_url}
                 alt={question.metaphor_title}
-                className="w-40 h-40 md:w-52 md:h-52 object-contain rounded-2xl"
+                className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl"
               />
             </div>
           )}
@@ -156,7 +156,7 @@ const ResultPage = () => {
           {/* Parent Explanation */}
           <div className="bg-sage/20 rounded-2xl p-8 mb-8">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-8 h-8" />
+              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16" />
               <h3 className="font-display font-bold text-lg">For Parents</h3>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">

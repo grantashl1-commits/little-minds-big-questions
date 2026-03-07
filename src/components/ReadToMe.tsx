@@ -24,6 +24,15 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
   const generateAudio = useCallback(async (selectedMode: VoiceMode) => {
     setLoading(true);
     try {
+      // Start playback immediately on user gesture with a silent source
+      // so the Audio element is "unlocked" for later use
+      const audio = audioRef.current;
+      if (audio) {
+        audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+        await audio.play().catch(() => {});
+        audio.pause();
+      }
+
       const fullText = `${title}.\n\n${storyText}`;
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/read-to-me`,
@@ -49,9 +58,9 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
       setAudioUrl(url);
       setLoadedMode(selectedMode);
 
-      if (audioRef.current) {
-        audioRef.current.src = url;
-        await audioRef.current.play();
+      if (audio) {
+        audio.src = url;
+        await audio.play();
         setPlaying(true);
       }
     } catch (e: any) {

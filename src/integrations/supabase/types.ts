@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics: {
+        Row: {
+          downloads: number
+          id: string
+          question_id: string
+          search_hits: number
+          shares: number
+          views: number
+        }
+        Insert: {
+          downloads?: number
+          id?: string
+          question_id: string
+          search_hits?: number
+          shares?: number
+          views?: number
+        }
+        Update: {
+          downloads?: number
+          id?: string
+          question_id?: string
+          search_hits?: number
+          shares?: number
+          views?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: true
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_themes: {
+        Row: {
+          id: string
+          question_id: string
+          theme_id: string
+        }
+        Insert: {
+          id?: string
+          question_id: string
+          theme_id: string
+        }
+        Update: {
+          id?: string
+          question_id?: string
+          theme_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_themes_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_themes_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          age_group: string
+          child_age: number
+          child_name: string
+          context: string | null
+          created_at: string
+          id: string
+          image_prompt: string | null
+          image_url: string | null
+          is_public: boolean
+          metaphor_answer: string
+          metaphor_title: string
+          parent_explanation: string
+          parent_note: string | null
+          question_text: string
+        }
+        Insert: {
+          age_group: string
+          child_age: number
+          child_name: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          image_prompt?: string | null
+          image_url?: string | null
+          is_public?: boolean
+          metaphor_answer: string
+          metaphor_title: string
+          parent_explanation: string
+          parent_note?: string | null
+          question_text: string
+        }
+        Update: {
+          age_group?: string
+          child_age?: number
+          child_name?: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          image_prompt?: string | null
+          image_url?: string | null
+          is_public?: boolean
+          metaphor_answer?: string
+          metaphor_title?: string
+          parent_explanation?: string
+          parent_note?: string | null
+          question_text?: string
+        }
+        Relationships: []
+      }
+      themes: {
+        Row: {
+          id: string
+          slug: string
+          theme_name: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          theme_name: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          theme_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

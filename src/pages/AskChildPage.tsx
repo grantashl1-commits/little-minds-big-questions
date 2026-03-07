@@ -87,6 +87,7 @@ const AskChildPage = () => {
           image_prompt: aiData.image_prompt,
           image_url: aiData.image_url || null,
           is_public: form.is_public,
+          user_id: user?.id || null,
           audio_url: audioUrl,
           transcription: confirmedText.trim(),
           audio_uploaded: !!audioBlob,

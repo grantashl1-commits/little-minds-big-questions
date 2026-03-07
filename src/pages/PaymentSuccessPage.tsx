@@ -42,7 +42,7 @@ const PaymentSuccessPage = () => {
     };
 
     verify();
-  }, [sessionId, user]);
+  }, [sessionId, user, authLoading]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

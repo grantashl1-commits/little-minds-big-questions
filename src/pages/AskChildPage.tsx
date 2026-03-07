@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
+import { Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AskChildPage = () => {
   const navigate = useNavigate();

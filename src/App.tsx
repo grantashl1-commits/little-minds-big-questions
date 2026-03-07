@@ -12,6 +12,7 @@ import BrowsePage from "./pages/BrowsePage";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

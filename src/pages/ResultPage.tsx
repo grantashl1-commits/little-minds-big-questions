@@ -114,6 +114,25 @@ const ResultPage = () => {
     setSavingAction(false);
   };
 
+  const handleDelete = async () => {
+    if (!id) return;
+    setSavingAction(true);
+    try {
+      await supabase.from("question_themes").delete().eq("question_id", id);
+      await supabase.from("saved_questions").delete().eq("question_id", id);
+      await supabase.from("analytics").delete().eq("question_id", id);
+      await supabase.from("content_assets").delete().eq("question_id", id);
+      const { error } = await supabase.from("questions").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Story deleted");
+      navigate("/browse");
+    } catch {
+      toast.error("Could not delete story");
+    } finally {
+      setSavingAction(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen">

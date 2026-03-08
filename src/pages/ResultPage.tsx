@@ -258,7 +258,7 @@ const ResultPage = () => {
           </div>
 
           {/* Read to Me */}
-          <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} />
+          <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} questionId={id} />
 
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">

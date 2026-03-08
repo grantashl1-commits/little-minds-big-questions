@@ -24,7 +24,7 @@ interface Props {
   storyCounts?: Record<string, number>;
 }
 
-const ChildProfileManager = ({ profiles, onRefresh }: Props) => {
+const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) => {
   const { user } = useAuth();
   const [showAdd, setShowAdd] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);

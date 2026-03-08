@@ -267,6 +267,11 @@ const ResultPage = () => {
               {copied ? "Copied!" : "Copy Story Text"}
             </Button>
 
+            <Button variant="accent" onClick={handleShare} className="gap-2">
+              <Share2 className="w-4 h-4" />
+              Share Story
+            </Button>
+
             {/* Save to Library — members only */}
             {user && isMember ? (
               <Button

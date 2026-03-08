@@ -34,6 +34,34 @@ const BrowsePage = () => {
           query = query.order("created_at", { ascending: false });
         }
 
+        // If theme filter is active, get question IDs from question_themes first
+        if (themeFilter) {
+          const { data: themeRows } = await supabase
+            .from("themes")
+            .select("id")
+            .eq("slug", themeFilter)
+            .maybeSingle();
+
+          if (themeRows) {
+            const { data: qtRows } = await supabase
+              .from("question_themes")
+              .select("question_id")
+              .eq("theme_id", themeRows.id);
+
+            if (qtRows && qtRows.length > 0) {
+              const ids = qtRows.map(r => r.question_id);
+              query = query.in("id", ids);
+            } else {
+              // No questions match this theme
+              if (!cancelled) {
+                setQuestions([]);
+                setLoading(false);
+              }
+              return;
+            }
+          }
+        }
+
         const { data, error } = await query.limit(50);
 
         if (cancelled) return;

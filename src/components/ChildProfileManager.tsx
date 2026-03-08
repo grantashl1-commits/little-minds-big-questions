@@ -21,9 +21,10 @@ const EMOJI_OPTIONS = ["🦋", "🌟", "🐰", "🦊", "🐢", "🐳", "🦉", "
 interface Props {
   profiles: ChildProfile[];
   onRefresh: () => void;
+  storyCounts?: Record<string, number>;
 }
 
-const ChildProfileManager = ({ profiles, onRefresh }: Props) => {
+const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) => {
   const { user } = useAuth();
   const [showAdd, setShowAdd] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -161,6 +162,7 @@ const ChildProfileManager = ({ profiles, onRefresh }: Props) => {
                   <p className="font-display font-semibold text-sm">{p.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {p.age ? `Age ${p.age}` : "Age not set"}
+                    {storyCounts[p.id] ? ` · ${storyCounts[p.id]} ${storyCounts[p.id] === 1 ? "story" : "stories"}` : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

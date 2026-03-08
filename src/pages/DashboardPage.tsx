@@ -34,6 +34,7 @@ interface QuestionData {
   is_public: boolean;
   image_url: string | null;
   image_prompt: string | null;
+  child_profile_id: string | null;
 }
 
 interface SavedQuestion {
@@ -80,7 +81,7 @@ const DashboardPage = () => {
     const [sqRes, colRes, cpRes] = await Promise.all([
       supabase
         .from("saved_questions")
-        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt)")
+        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
       supabase
@@ -215,12 +216,17 @@ const DashboardPage = () => {
     }
   };
 
-  const filteredQuestions =
-    filterCollection === "all"
-      ? savedQuestions
-      : filterCollection === "uncategorized"
-        ? savedQuestions.filter((sq) => !sq.collection_id)
-        : savedQuestions.filter((sq) => sq.collection_id === filterCollection);
+  const filteredQuestions = savedQuestions.filter((sq) => {
+    // Collection filter
+    const collectionMatch =
+      filterCollection === "all" ||
+      (filterCollection === "uncategorized" ? !sq.collection_id : sq.collection_id === filterCollection);
+    // Child filter
+    const childMatch =
+      filterChild === "all" ||
+      (sq.questions as QuestionData)?.child_profile_id === filterChild;
+    return collectionMatch && childMatch;
+  });
 
   // Book builder helpers
   const bookFilteredQuestions =
@@ -397,7 +403,7 @@ const DashboardPage = () => {
             {/* Library Tab */}
             {activeTab === "library" && (
               <>
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
                   <Select value={filterCollection} onValueChange={setFilterCollection}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="All stories" />
@@ -410,6 +416,21 @@ const DashboardPage = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                  {childProfiles.length > 0 && (
+                    <Select value={filterChild} onValueChange={setFilterChild}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="All children" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All children</SelectItem>
+                        {childProfiles.map((cp) => (
+                          <SelectItem key={cp.id} value={cp.id}>
+                            {cp.avatar_emoji} {cp.name}'s Stories
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   <span className="text-sm text-muted-foreground">
                     {filteredQuestions.length} {filteredQuestions.length === 1 ? "story" : "stories"}
                   </span>
@@ -610,7 +631,15 @@ const DashboardPage = () => {
 
             {/* Children Tab */}
             {activeTab === "children" && (
-              <ChildProfileManager profiles={childProfiles} onRefresh={fetchData} />
+              <ChildProfileManager
+                profiles={childProfiles}
+                onRefresh={fetchData}
+                storyCounts={savedQuestions.reduce((acc, sq) => {
+                  const cpId = (sq.questions as QuestionData)?.child_profile_id;
+                  if (cpId) acc[cpId] = (acc[cpId] || 0) + 1;
+                  return acc;
+                }, {} as Record<string, number>)}
+              />
             )}
 
             {/* Admin Tab */}

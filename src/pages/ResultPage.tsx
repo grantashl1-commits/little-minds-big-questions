@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2 } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2, ChevronDown } from "lucide-react";
 import SaveUpgradeModal from "@/components/SaveUpgradeModal";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +43,8 @@ const ResultPage = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [savingAction, setSavingAction] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
+  const [childProfiles, setChildProfiles] = useState<{ id: string; name: string; avatar_emoji: string }[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string>("general");
   // Check if already saved
   useEffect(() => {
     if (!user || !id) return;
@@ -48,6 +56,20 @@ const ResultPage = () => {
       .maybeSingle()
       .then(({ data }) => setIsSaved(!!data));
   }, [user, id]);
+
+  // Fetch child profiles for save dropdown
+  useEffect(() => {
+    if (!user || !isMember) return;
+    supabase
+      .from("child_profiles")
+      .select("id, name, avatar_emoji")
+      .eq("user_id", user.id)
+      .order("created_at")
+      .then(({ data }) => {
+        if (data) setChildProfiles(data as any[]);
+      });
+  }, [user, isMember]);
+
 
   useEffect(() => {
     const load = async () => {
@@ -116,9 +138,18 @@ const ResultPage = () => {
       setIsSaved(false);
       toast.success("Removed from library");
     } else {
+      // Link question to selected child profile
+      const childProfileId = selectedChildId !== "general" ? selectedChildId : null;
+      if (childProfileId) {
+        await supabase.from("questions").update({ child_profile_id: childProfileId }).eq("id", id);
+      }
       const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
       if (error) toast.error("Could not save");
-      else { setIsSaved(true); toast.success(`Saved to ${question?.child_name || "your"}'s Story Library`); }
+      else {
+        setIsSaved(true);
+        const childName = childProfiles.find(cp => cp.id === childProfileId)?.name || question?.child_name;
+        toast.success(`Saved to ${childName || "your"}'s Story Library`);
+      }
     }
     setSavingAction(false);
   };
@@ -275,6 +306,21 @@ const ResultPage = () => {
             </Button>
 
             {/* Save to Library — members only */}
+            {user && isMember && !isSaved && childProfiles.length > 0 && (
+              <Select value={selectedChildId} onValueChange={setSelectedChildId}>
+                <SelectTrigger className="w-44 h-10">
+                  <SelectValue placeholder="Save to child" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">General Library</SelectItem>
+                  {childProfiles.map(cp => (
+                    <SelectItem key={cp.id} value={cp.id}>
+                      {cp.avatar_emoji} {cp.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             {user && isMember ? (
               <Button
                 variant={isSaved ? "sage" : "outline"}

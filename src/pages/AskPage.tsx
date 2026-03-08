@@ -153,6 +153,29 @@ const AskPage = () => {
 
 
           <form onSubmit={handleSubmit} className="space-y-6 bg-card rounded-2xl p-8 storybook-shadow">
+            {/* Child profile selector */}
+            {childProfiles.length > 0 && (
+              <div>
+                <label className="block font-display font-semibold text-sm mb-2">Ask a question for:</label>
+                <div className="flex flex-wrap gap-2">
+                  {childProfiles.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => selectChild(p.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-display transition-all ${
+                        form.child_name === p.name
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted hover:bg-muted/80 text-foreground"
+                      }`}
+                    >
+                      <span>{p.avatar_emoji}</span> {p.name}{p.age ? ` (age ${p.age})` : ""}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block font-display font-semibold text-sm mb-2">Child's First Name</label>
               <input

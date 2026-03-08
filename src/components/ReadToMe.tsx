@@ -149,17 +149,19 @@ const ReadToMe = ({ storyText, title, questionId }: ReadToMeProps) => {
     );
   }
 
+  const isBedtime = mode === "bedtime";
+
   return (
-    <div className="bg-accent/10 rounded-2xl p-6 mb-8">
+    <div className={`rounded-2xl p-6 mb-8 transition-colors ${isBedtime ? "bg-[hsl(240_20%_18%)] text-[hsl(40_30%_90%)]" : "bg-accent/10"}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-            {mode === "bedtime" ? <Moon className="w-5 h-5 text-accent-foreground" /> : <Sun className="w-5 h-5 text-accent-foreground" />}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isBedtime ? "bg-[hsl(240_20%_25%)]" : "bg-accent/20"}`}>
+            {isBedtime ? <Moon className="w-5 h-5 text-[hsl(40_30%_80%)]" /> : <Sun className="w-5 h-5 text-accent-foreground" />}
           </div>
           <div>
-            <h3 className="font-display font-bold text-base">🎧 Read to Me</h3>
-            <p className="text-xs text-muted-foreground">
-              {mode === "bedtime" ? "Gentle bedtime voice" : "Bright daytime voice"}
+            <h3 className="font-display font-bold text-base">{isBedtime ? "🌙 Bedtime Story" : "🎧 Read to Me"}</h3>
+            <p className={`text-xs ${isBedtime ? "text-[hsl(40_30%_70%)]" : "text-muted-foreground"}`}>
+              {isBedtime ? "Gentle, calming bedtime voice" : "Bright daytime voice"}
             </p>
           </div>
         </div>

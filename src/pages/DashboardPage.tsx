@@ -571,6 +571,11 @@ const DashboardPage = () => {
               </>
             )}
 
+            {/* Children Tab */}
+            {activeTab === "children" && (
+              <ChildProfileManager profiles={childProfiles} onRefresh={fetchData} />
+            )}
+
             {/* Create Your Book Tab */}
             {activeTab === "book" && (
               <>

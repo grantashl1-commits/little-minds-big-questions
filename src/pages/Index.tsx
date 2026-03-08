@@ -17,6 +17,7 @@ const Index = () => {
       <ThemeGrid />
       <FeaturedQuestions />
       <MembershipCTA />
+      <WeeklyQuestion />
       <InstagramFeed />
       <Footer />
     </div>

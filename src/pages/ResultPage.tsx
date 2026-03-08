@@ -388,6 +388,11 @@ const ResultPage = () => {
         </div>
       </section>
       <Footer />
+      <SaveUpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+        childName={question?.child_name || ""}
+      />
     </div>
   );
 };

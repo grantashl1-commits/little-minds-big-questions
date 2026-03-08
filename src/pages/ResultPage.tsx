@@ -138,9 +138,18 @@ const ResultPage = () => {
       setIsSaved(false);
       toast.success("Removed from library");
     } else {
+      // Link question to selected child profile
+      const childProfileId = selectedChildId !== "general" ? selectedChildId : null;
+      if (childProfileId) {
+        await supabase.from("questions").update({ child_profile_id: childProfileId }).eq("id", id);
+      }
       const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
       if (error) toast.error("Could not save");
-      else { setIsSaved(true); toast.success(`Saved to ${question?.child_name || "your"}'s Story Library`); }
+      else {
+        setIsSaved(true);
+        const childName = childProfiles.find(cp => cp.id === childProfileId)?.name || question?.child_name;
+        toast.success(`Saved to ${childName || "your"}'s Story Library`);
+      }
     }
     setSavingAction(false);
   };

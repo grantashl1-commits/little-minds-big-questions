@@ -56,7 +56,9 @@ const DashboardPage = () => {
   const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book" | "children">("library");
+  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book" | "children" | "admin">("library");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [generatingWeekly, setGeneratingWeekly] = useState(false);
   const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
   const [filterChild, setFilterChild] = useState<string>("all");
   const [filterCollection, setFilterCollection] = useState<string>("all");
@@ -101,6 +103,32 @@ const DashboardPage = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Check admin role
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const handleGenerateWeekly = async () => {
+    setGeneratingWeekly(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-weekly-question");
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`Weekly question created: "${data.question}"`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to generate weekly question");
+    } finally {
+      setGeneratingWeekly(false);
+    }
+  };
 
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -355,6 +383,15 @@ const DashboardPage = () => {
               >
                 <Baby className="h-4 w-4 mr-1" /> Children
               </Button>
+              {isAdmin && (
+                <Button
+                  variant={activeTab === "admin" ? "default" : "outline"}
+                  onClick={() => setActiveTab("admin")}
+                  size="sm"
+                >
+                  <Sparkles className="h-4 w-4 mr-1" /> Admin
+                </Button>
+              )}
             </div>
 
             {/* Library Tab */}
@@ -574,6 +611,43 @@ const DashboardPage = () => {
             {/* Children Tab */}
             {activeTab === "children" && (
               <ChildProfileManager profiles={childProfiles} onRefresh={fetchData} />
+            )}
+
+            {/* Admin Tab */}
+            {activeTab === "admin" && isAdmin && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Weekly Question Generator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Generate a new "Question of the Week" with AI-written story, illustration, and shareable carousel slides.
+                  </p>
+                  <Button
+                    onClick={handleGenerateWeekly}
+                    disabled={generatingWeekly}
+                    className="gap-2"
+                  >
+                    {generatingWeekly ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Generate Weekly Question
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    This will create a new question, story, and illustration. It will appear on the homepage immediately.
+                  </p>
+                </CardContent>
+              </Card>
             )}
 
             {/* Create Your Book Tab */}

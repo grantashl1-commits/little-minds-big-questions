@@ -117,7 +117,7 @@ const ResultPage = () => {
     } else {
       const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
       if (error) toast.error("Could not save");
-      else { setIsSaved(true); toast.success("Saved to library!"); }
+      else { setIsSaved(true); toast.success(`Saved to ${question?.child_name || "your"}'s Story Library`); }
     }
     setSavingAction(false);
   };

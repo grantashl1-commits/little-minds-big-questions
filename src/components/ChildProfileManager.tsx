@@ -162,6 +162,7 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
                   <p className="font-display font-semibold text-sm">{p.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {p.age ? `Age ${p.age}` : "Age not set"}
+                    {storyCounts[p.id] ? ` · ${storyCounts[p.id]} ${storyCounts[p.id] === 1 ? "story" : "stories"}` : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

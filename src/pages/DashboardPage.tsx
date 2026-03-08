@@ -348,6 +348,13 @@ const DashboardPage = () => {
               >
                 <BookOpen className="h-4 w-4 mr-1" /> Create Your Book
               </Button>
+              <Button
+                variant={activeTab === "children" ? "default" : "outline"}
+                onClick={() => setActiveTab("children")}
+                size="sm"
+              >
+                <Baby className="h-4 w-4 mr-1" /> Children
+              </Button>
             </div>
 
             {/* Library Tab */}

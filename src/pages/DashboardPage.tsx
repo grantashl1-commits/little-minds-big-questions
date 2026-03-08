@@ -613,6 +613,43 @@ const DashboardPage = () => {
               <ChildProfileManager profiles={childProfiles} onRefresh={fetchData} />
             )}
 
+            {/* Admin Tab */}
+            {activeTab === "admin" && isAdmin && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Weekly Question Generator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Generate a new "Question of the Week" with AI-written story, illustration, and shareable carousel slides.
+                  </p>
+                  <Button
+                    onClick={handleGenerateWeekly}
+                    disabled={generatingWeekly}
+                    className="gap-2"
+                  >
+                    {generatingWeekly ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Generate Weekly Question
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    This will create a new question, story, and illustration. It will appear on the homepage immediately.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Create Your Book Tab */}
             {activeTab === "book" && (
               <>

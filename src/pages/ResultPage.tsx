@@ -43,7 +43,8 @@ const ResultPage = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [savingAction, setSavingAction] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
+  const [childProfiles, setChildProfiles] = useState<{ id: string; name: string; avatar_emoji: string }[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string>("general");
   // Check if already saved
   useEffect(() => {
     if (!user || !id) return;

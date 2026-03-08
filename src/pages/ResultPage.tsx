@@ -306,6 +306,21 @@ const ResultPage = () => {
             </Button>
 
             {/* Save to Library — members only */}
+            {user && isMember && !isSaved && childProfiles.length > 0 && (
+              <Select value={selectedChildId} onValueChange={setSelectedChildId}>
+                <SelectTrigger className="w-44 h-10">
+                  <SelectValue placeholder="Save to child" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">General Library</SelectItem>
+                  {childProfiles.map(cp => (
+                    <SelectItem key={cp.id} value={cp.id}>
+                      {cp.avatar_emoji} {cp.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             {user && isMember ? (
               <Button
                 variant={isSaved ? "sage" : "outline"}

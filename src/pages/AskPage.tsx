@@ -37,6 +37,31 @@ const AskPage = () => {
     setForm(prev => ({ ...prev, is_public: e.target.checked }));
   };
 
+  // Load child profiles for logged-in members
+  useState(() => {
+    if (user && isMember) {
+      supabase
+        .from("child_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at")
+        .then(({ data }) => {
+          if (data) setChildProfiles(data as ChildProfile[]);
+        });
+    }
+  });
+
+  const selectChild = (profileId: string) => {
+    const p = childProfiles.find((c) => c.id === profileId);
+    if (p) {
+      setForm((prev) => ({
+        ...prev,
+        child_name: p.name,
+        child_age: p.age || prev.child_age,
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.child_name.trim() || !form.question_text.trim()) {

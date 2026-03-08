@@ -7,8 +7,9 @@ import Footer from "@/components/Footer";
 import FloatingBubbles from "@/components/FloatingBubbles";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
-import { Mic, Lock } from "lucide-react";
+import { Mic, Lock, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import type { ChildProfile } from "@/components/ChildProfileManager";
 
 const AskPage = () => {
   const navigate = useNavigate();

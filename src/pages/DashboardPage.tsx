@@ -56,7 +56,9 @@ const DashboardPage = () => {
   const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book">("library");
+  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book" | "children">("library");
+  const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
+  const [filterChild, setFilterChild] = useState<string>("all");
   const [filterCollection, setFilterCollection] = useState<string>("all");
   const [newCollectionName, setNewCollectionName] = useState("");
   const [showNewCollection, setShowNewCollection] = useState(false);

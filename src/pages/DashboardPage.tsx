@@ -383,6 +383,15 @@ const DashboardPage = () => {
               >
                 <Baby className="h-4 w-4 mr-1" /> Children
               </Button>
+              {isAdmin && (
+                <Button
+                  variant={activeTab === "admin" ? "default" : "outline"}
+                  onClick={() => setActiveTab("admin")}
+                  size="sm"
+                >
+                  <Sparkles className="h-4 w-4 mr-1" /> Admin
+                </Button>
+              )}
             </div>
 
             {/* Library Tab */}

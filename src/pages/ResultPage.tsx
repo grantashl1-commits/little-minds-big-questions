@@ -57,7 +57,20 @@ const ResultPage = () => {
       .then(({ data }) => setIsSaved(!!data));
   }, [user, id]);
 
+  // Fetch child profiles for save dropdown
   useEffect(() => {
+    if (!user || !isMember) return;
+    supabase
+      .from("child_profiles")
+      .select("id, name, avatar_emoji")
+      .eq("user_id", user.id)
+      .order("created_at")
+      .then(({ data }) => {
+        if (data) setChildProfiles(data as any[]);
+      });
+  }, [user, isMember]);
+
+
     const load = async () => {
       const featured = FEATURED_QUESTIONS.find(q => q.id === id);
       if (featured) {

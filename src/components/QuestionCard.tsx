@@ -17,7 +17,7 @@ const THEME_COLORS: Record<string, string> = {
 };
 
 interface QuestionCardProps {
-  question: QuestionEntry;
+  question: QuestionEntry & { public_count?: number };
   isSquare?: boolean;
 }
 
@@ -65,7 +65,7 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
             {question.metaphor_answer}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
+        <div className="flex flex-wrap gap-2 mt-4 items-center">
           {themeData.slice(0, 3).map(tag => (
             <span
               key={tag.slug}
@@ -74,6 +74,13 @@ const QuestionCard = ({ question, isSquare = false }: QuestionCardProps) => {
               {tag.name}
             </span>
           ))}
+          {(question as any).public_count > 1 && (
+            <span className="text-xs font-display text-muted-foreground ml-auto">
+              {(question as any).public_count >= 10
+                ? "Asked by many families"
+                : `${(question as any).public_count} families asked this`}
+            </span>
+          )}
         </div>
       </div>
     </Link>

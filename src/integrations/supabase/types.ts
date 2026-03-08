@@ -206,6 +206,47 @@ export type Database = {
         }
         Relationships: []
       }
+      public_questions: {
+        Row: {
+          age_band: string | null
+          canonical_question: string
+          created_at: string
+          featured_story_id: string | null
+          id: string
+          normalized_question: string
+          public_count: number
+          theme: string | null
+        }
+        Insert: {
+          age_band?: string | null
+          canonical_question: string
+          created_at?: string
+          featured_story_id?: string | null
+          id?: string
+          normalized_question: string
+          public_count?: number
+          theme?: string | null
+        }
+        Update: {
+          age_band?: string | null
+          canonical_question?: string
+          created_at?: string
+          featured_story_id?: string | null
+          id?: string
+          normalized_question?: string
+          public_count?: number
+          theme?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_questions_featured_story_id_fkey"
+            columns: ["featured_story_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_themes: {
         Row: {
           id: string
@@ -255,6 +296,7 @@ export type Database = {
           is_public: boolean
           metaphor_answer: string
           metaphor_title: string
+          normalized_question: string | null
           parent_explanation: string
           parent_note: string | null
           question_text: string
@@ -276,6 +318,7 @@ export type Database = {
           is_public?: boolean
           metaphor_answer: string
           metaphor_title: string
+          normalized_question?: string | null
           parent_explanation: string
           parent_note?: string | null
           question_text: string
@@ -297,6 +340,7 @@ export type Database = {
           is_public?: boolean
           metaphor_answer?: string
           metaphor_title?: string
+          normalized_question?: string | null
           parent_explanation?: string
           parent_note?: string | null
           question_text?: string
@@ -430,6 +474,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      normalize_question: { Args: { input: string }; Returns: string }
     }
     Enums: {
       app_role: "member" | "admin"

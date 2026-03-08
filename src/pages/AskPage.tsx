@@ -15,6 +15,7 @@ const AskPage = () => {
   const navigate = useNavigate();
   const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
   const [form, setForm] = useState({
     child_name: "",
     child_age: 5,

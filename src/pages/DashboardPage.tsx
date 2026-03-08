@@ -34,6 +34,7 @@ interface QuestionData {
   is_public: boolean;
   image_url: string | null;
   image_prompt: string | null;
+  child_profile_id: string | null;
 }
 
 interface SavedQuestion {

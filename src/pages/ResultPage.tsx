@@ -71,6 +71,7 @@ const ResultPage = () => {
   }, [user, isMember]);
 
 
+  useEffect(() => {
     const load = async () => {
       const featured = FEATURED_QUESTIONS.find(q => q.id === id);
       if (featured) {

@@ -26,48 +26,92 @@ const BrowsePage = () => {
     searchParams.get("theme") || searchParams.get("age") ? "library" : "themes"
   );
 
-  // Fetch DB questions for library view
+  // Fetch public questions via public_questions table for deduplicated browse
   useEffect(() => {
     let cancelled = false;
     const fetchData = async () => {
       setLoading(true);
       try {
-        let query = supabase
-          .from("questions")
+        // Fetch canonical public questions
+        const { data: pubQs, error: pubErr } = await supabase
+          .from("public_questions" as any)
           .select("*")
-          .eq("is_public", true);
+          .order("created_at", { ascending: false })
+          .limit(50);
 
-        if (ageFilter) query = query.eq("age_group", ageFilter);
-        if (sort === "newest") query = query.order("created_at", { ascending: false });
-
-        if (themeFilter) {
-          const { data: themeRows } = await supabase
-            .from("themes")
-            .select("id")
-            .eq("slug", themeFilter)
-            .maybeSingle();
-
-          if (themeRows) {
-            const { data: qtRows } = await supabase
-              .from("question_themes")
-              .select("question_id")
-              .eq("theme_id", themeRows.id);
-
-            if (qtRows && qtRows.length > 0) {
-              query = query.in("id", qtRows.map(r => r.question_id));
-            } else {
-              if (!cancelled) { setDbQuestions([]); setLoading(false); }
-              return;
-            }
-          }
-        }
-
-        const { data, error } = await query.limit(50);
         if (cancelled) return;
-        if (!error && data && data.length > 0) {
-          setDbQuestions(data as unknown as QuestionEntry[]);
+
+        if (!pubErr && pubQs && pubQs.length > 0) {
+          // Get the featured story IDs to fetch full question data
+          const storyIds = (pubQs as any[])
+            .map((pq: any) => pq.featured_story_id)
+            .filter(Boolean);
+
+          if (storyIds.length > 0) {
+            let query = supabase
+              .from("questions")
+              .select("*")
+              .in("id", storyIds);
+
+            if (ageFilter) query = query.eq("age_group", ageFilter);
+            if (sort === "newest") query = query.order("created_at", { ascending: false });
+
+            if (themeFilter) {
+              const { data: themeRows } = await supabase
+                .from("themes")
+                .select("id")
+                .eq("slug", themeFilter)
+                .maybeSingle();
+
+              if (themeRows) {
+                const { data: qtRows } = await supabase
+                  .from("question_themes")
+                  .select("question_id")
+                  .eq("theme_id", themeRows.id);
+
+                if (qtRows && qtRows.length > 0) {
+                  query = query.in("id", qtRows.map(r => r.question_id));
+                } else {
+                  if (!cancelled) { setDbQuestions([]); setLoading(false); }
+                  return;
+                }
+              }
+            }
+
+            const { data, error } = await query.limit(50);
+            if (cancelled) return;
+
+            if (!error && data && data.length > 0) {
+              // Attach public_count to each question
+              const countMap = new Map((pubQs as any[]).map((pq: any) => [pq.featured_story_id, pq.public_count]));
+              const enriched = data.map((q: any) => ({
+                ...q,
+                public_count: countMap.get(q.id) || 1,
+              }));
+              setDbQuestions(enriched as unknown as QuestionEntry[]);
+            } else {
+              setDbQuestions(FEATURED_QUESTIONS);
+            }
+          } else {
+            setDbQuestions(FEATURED_QUESTIONS);
+          }
         } else {
-          setDbQuestions(FEATURED_QUESTIONS);
+          // Fallback to direct questions query
+          let query = supabase
+            .from("questions")
+            .select("*")
+            .eq("is_public", true);
+
+          if (ageFilter) query = query.eq("age_group", ageFilter);
+          if (sort === "newest") query = query.order("created_at", { ascending: false });
+
+          const { data, error } = await query.limit(50);
+          if (cancelled) return;
+          if (!error && data && data.length > 0) {
+            setDbQuestions(data as unknown as QuestionEntry[]);
+          } else {
+            setDbQuestions(FEATURED_QUESTIONS);
+          }
         }
       } catch {
         if (!cancelled) setDbQuestions(FEATURED_QUESTIONS);

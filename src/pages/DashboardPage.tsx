@@ -403,7 +403,7 @@ const DashboardPage = () => {
             {/* Library Tab */}
             {activeTab === "library" && (
               <>
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
                   <Select value={filterCollection} onValueChange={setFilterCollection}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="All stories" />
@@ -416,6 +416,21 @@ const DashboardPage = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                  {childProfiles.length > 0 && (
+                    <Select value={filterChild} onValueChange={setFilterChild}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="All children" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All children</SelectItem>
+                        {childProfiles.map((cp) => (
+                          <SelectItem key={cp.id} value={cp.id}>
+                            {cp.avatar_emoji} {cp.name}'s Stories
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   <span className="text-sm text-muted-foreground">
                     {filteredQuestions.length} {filteredQuestions.length === 1 ? "story" : "stories"}
                   </span>

@@ -87,6 +87,25 @@ const ResultPage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleShare = async () => {
+    if (!question) return;
+    const shareData = {
+      title: question.metaphor_title,
+      text: `"${question.question_text}" — ${question.child_name}, age ${question.child_age}\n\n${question.metaphor_title}\n\nFrom Little Minds BIG Questions`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled share
+      }
+    } else {
+      await navigator.clipboard.writeText(`${shareData.text}\n\n${shareData.url}`);
+      toast.success("Story link copied to clipboard!");
+    }
+  };
+
   const handleSave = async () => {
     if (!user || !id) return;
     setSavingAction(true);

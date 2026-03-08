@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Baby
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import ChildProfileManager from "@/components/ChildProfileManager";
+import type { ChildProfile } from "@/components/ChildProfileManager";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,

@@ -216,12 +216,17 @@ const DashboardPage = () => {
     }
   };
 
-  const filteredQuestions =
-    filterCollection === "all"
-      ? savedQuestions
-      : filterCollection === "uncategorized"
-        ? savedQuestions.filter((sq) => !sq.collection_id)
-        : savedQuestions.filter((sq) => sq.collection_id === filterCollection);
+  const filteredQuestions = savedQuestions.filter((sq) => {
+    // Collection filter
+    const collectionMatch =
+      filterCollection === "all" ||
+      (filterCollection === "uncategorized" ? !sq.collection_id : sq.collection_id === filterCollection);
+    // Child filter
+    const childMatch =
+      filterChild === "all" ||
+      (sq.questions as QuestionData)?.child_profile_id === filterChild;
+    return collectionMatch && childMatch;
+  });
 
   // Book builder helpers
   const bookFilteredQuestions =

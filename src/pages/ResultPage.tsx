@@ -285,10 +285,9 @@ const ResultPage = () => {
                 {isSaved ? "Saved" : "Save to Library"}
               </Button>
             ) : (
-              <Button variant="outline" disabled className="gap-2 opacity-60">
+              <Button variant="outline" onClick={() => setShowUpgradeModal(true)} className="gap-2">
                 <Lock className="w-4 h-4" />
                 Save to Library
-                <span className="text-xs">(Members)</span>
               </Button>
             )}
 

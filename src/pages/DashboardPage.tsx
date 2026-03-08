@@ -81,7 +81,7 @@ const DashboardPage = () => {
     const [sqRes, colRes, cpRes] = await Promise.all([
       supabase
         .from("saved_questions")
-        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt)")
+        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
       supabase

@@ -49,6 +49,38 @@ export type Database = {
           },
         ]
       }
+      audio_cache: {
+        Row: {
+          audio_url: string
+          created_at: string
+          id: string
+          question_id: string
+          voice_mode: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          id?: string
+          question_id: string
+          voice_mode: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          voice_mode?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audio_cache_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collections: {
         Row: {
           created_at: string

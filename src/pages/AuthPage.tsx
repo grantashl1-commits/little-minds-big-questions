@@ -83,6 +83,11 @@ const AuthPage = () => {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Signing in..." : "Log In"}
                   </Button>
+                  <p className="text-center text-sm text-muted-foreground">
+                    <a href="/reset-password" className="text-primary hover:underline font-display font-semibold">
+                      Forgot password?
+                    </a>
+                  </p>
                 </form>
               </TabsContent>
               <TabsContent value="signup">

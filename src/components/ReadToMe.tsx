@@ -10,9 +10,10 @@ type VoiceMode = "bedtime" | "daytime";
 interface ReadToMeProps {
   storyText: string;
   title: string;
+  questionId?: string;
 }
 
-const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
+const ReadToMe = ({ storyText, title, questionId }: ReadToMeProps) => {
   const { user, isMember } = useAuth();
   const [mode, setMode] = useState<VoiceMode>("bedtime");
   const [loading, setLoading] = useState(false);
@@ -24,8 +25,6 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
   const generateAudio = useCallback(async (selectedMode: VoiceMode) => {
     setLoading(true);
     try {
-      // Start playback immediately on user gesture with a silent source
-      // so the Audio element is "unlocked" for later use
       const audio = audioRef.current;
       if (audio) {
         audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
@@ -43,7 +42,7 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text: fullText, mode: selectedMode }),
+          body: JSON.stringify({ text: fullText, mode: selectedMode, questionId }),
         }
       );
 
@@ -52,8 +51,27 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
         throw new Error(err.error || "Failed to generate audio");
       }
 
+      const contentType = response.headers.get("content-type") || "";
+
+      // If cached URL returned as JSON
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+        if (data.cachedUrl) {
+          if (audioUrl) URL.revokeObjectURL(audioUrl);
+          setAudioUrl(data.cachedUrl);
+          setLoadedMode(selectedMode);
+          if (audio) {
+            audio.src = data.cachedUrl;
+            await audio.play();
+            setPlaying(true);
+          }
+          return;
+        }
+      }
+
+      // Raw audio blob
       const blob = await response.blob();
-      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      if (audioUrl && audioUrl.startsWith("blob:")) URL.revokeObjectURL(audioUrl);
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
       setLoadedMode(selectedMode);
@@ -68,17 +86,15 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
     } finally {
       setLoading(false);
     }
-  }, [storyText, title, audioUrl]);
+  }, [storyText, title, audioUrl, questionId]);
 
   const handlePlay = useCallback(async () => {
     if (!audioRef.current) return;
-
     if (playing) {
       audioRef.current.pause();
       setPlaying(false);
       return;
     }
-
     if (audioUrl && loadedMode === mode) {
       await audioRef.current.play();
       setPlaying(true);
@@ -111,7 +127,6 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
     }
   };
 
-  // Locked state for non-members
   if (!user || !isMember) {
     return (
       <div className="bg-accent/10 rounded-2xl p-6 mb-8">
@@ -148,8 +163,6 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
             </p>
           </div>
         </div>
-
-        {/* Mode toggle */}
         <div className="flex bg-card rounded-full p-1 gap-1 storybook-shadow">
           <button
             onClick={() => handleModeSwitch("bedtime")}
@@ -169,8 +182,6 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
           </button>
         </div>
       </div>
-
-      {/* Play button */}
       <Button
         onClick={handlePlay}
         disabled={loading}
@@ -178,28 +189,14 @@ const ReadToMe = ({ storyText, title }: ReadToMeProps) => {
         className="gap-2 w-full"
       >
         {loading ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Generating voice...
-          </>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Generating voice...</>
         ) : playing ? (
-          <>
-            <Pause className="w-4 h-4" />
-            Pause
-          </>
+          <><Pause className="w-4 h-4" /> Pause</>
         ) : (
-          <>
-            <Play className="w-4 h-4 ml-0.5" />
-            {audioUrl && loadedMode === mode ? "Resume" : "Play Story"}
-          </>
+          <><Play className="w-4 h-4 ml-0.5" /> {audioUrl && loadedMode === mode ? "Resume" : "Play Story"}</>
         )}
       </Button>
-
-      <audio
-        ref={audioRef}
-        onEnded={() => setPlaying(false)}
-        className="hidden"
-      />
+      <audio ref={audioRef} onEnded={() => setPlaying(false)} className="hidden" />
     </div>
   );
 };

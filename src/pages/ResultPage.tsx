@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2 } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -85,6 +85,25 @@ const ResultPage = () => {
     setCopied(true);
     toast.success("Story copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShare = async () => {
+    if (!question) return;
+    const shareData = {
+      title: question.metaphor_title,
+      text: `"${question.question_text}" — ${question.child_name}, age ${question.child_age}\n\n${question.metaphor_title}\n\nFrom Little Minds BIG Questions`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled share
+      }
+    } else {
+      await navigator.clipboard.writeText(`${shareData.text}\n\n${shareData.url}`);
+      toast.success("Story link copied to clipboard!");
+    }
   };
 
   const handleSave = async () => {
@@ -239,13 +258,18 @@ const ResultPage = () => {
           </div>
 
           {/* Read to Me */}
-          <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} />
+          <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} questionId={id} />
 
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Button variant="outline" onClick={copyStoryText} className="gap-2">
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? "Copied!" : "Copy Story Text"}
+            </Button>
+
+            <Button variant="accent" onClick={handleShare} className="gap-2">
+              <Share2 className="w-4 h-4" />
+              Share Story
             </Button>
 
             {/* Save to Library — members only */}

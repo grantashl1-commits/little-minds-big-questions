@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2 } from "lucide-react";
+import SaveUpgradeModal from "@/components/SaveUpgradeModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +35,7 @@ const ResultPage = () => {
   const [copied, setCopied] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [savingAction, setSavingAction] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Check if already saved
   useEffect(() => {
@@ -116,7 +118,7 @@ const ResultPage = () => {
     } else {
       const { error } = await supabase.from("saved_questions").insert({ user_id: user.id, question_id: id });
       if (error) toast.error("Could not save");
-      else { setIsSaved(true); toast.success("Saved to library!"); }
+      else { setIsSaved(true); toast.success(`Saved to ${question?.child_name || "your"}'s Story Library`); }
     }
     setSavingAction(false);
   };
@@ -284,10 +286,9 @@ const ResultPage = () => {
                 {isSaved ? "Saved" : "Save to Library"}
               </Button>
             ) : (
-              <Button variant="outline" disabled className="gap-2 opacity-60">
+              <Button variant="outline" onClick={() => setShowUpgradeModal(true)} className="gap-2">
                 <Lock className="w-4 h-4" />
                 Save to Library
-                <span className="text-xs">(Members)</span>
               </Button>
             )}
 
@@ -388,6 +389,11 @@ const ResultPage = () => {
         </div>
       </section>
       <Footer />
+      <SaveUpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+        childName={question?.child_name || ""}
+      />
     </div>
   );
 };

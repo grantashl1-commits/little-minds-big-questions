@@ -81,6 +81,33 @@ export type Database = {
           },
         ]
       }
+      child_profiles: {
+        Row: {
+          age: number | null
+          avatar_emoji: string | null
+          created_at: string | null
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          avatar_emoji?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          avatar_emoji?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       collections: {
         Row: {
           created_at: string
@@ -219,6 +246,7 @@ export type Database = {
           audio_url: string | null
           child_age: number
           child_name: string
+          child_profile_id: string | null
           context: string | null
           created_at: string
           id: string
@@ -239,6 +267,7 @@ export type Database = {
           audio_url?: string | null
           child_age: number
           child_name: string
+          child_profile_id?: string | null
           context?: string | null
           created_at?: string
           id?: string
@@ -259,6 +288,7 @@ export type Database = {
           audio_url?: string | null
           child_age?: number
           child_name?: string
+          child_profile_id?: string | null
           context?: string | null
           created_at?: string
           id?: string
@@ -273,7 +303,15 @@ export type Database = {
           transcription?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "questions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_questions: {
         Row: {
@@ -347,6 +385,36 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_questions: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string | null
+          question: string
+          story: string
+          story_title: string | null
+          week_start: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          question: string
+          story: string
+          story_title?: string | null
+          week_start: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          question?: string
+          story?: string
+          story_title?: string | null
+          week_start?: string
         }
         Relationships: []
       }

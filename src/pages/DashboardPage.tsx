@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Baby
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import ChildProfileManager from "@/components/ChildProfileManager";
+import type { ChildProfile } from "@/components/ChildProfileManager";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -54,7 +56,9 @@ const DashboardPage = () => {
   const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book">("library");
+  const [activeTab, setActiveTab] = useState<"library" | "collections" | "book" | "children">("library");
+  const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
+  const [filterChild, setFilterChild] = useState<string>("all");
   const [filterCollection, setFilterCollection] = useState<string>("all");
   const [newCollectionName, setNewCollectionName] = useState("");
   const [showNewCollection, setShowNewCollection] = useState(false);
@@ -71,7 +75,7 @@ const DashboardPage = () => {
       setLoadingData(false);
       return;
     }
-    const [sqRes, colRes] = await Promise.all([
+    const [sqRes, colRes, cpRes] = await Promise.all([
       supabase
         .from("saved_questions")
         .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt)")
@@ -82,9 +86,15 @@ const DashboardPage = () => {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
+      supabase
+        .from("child_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at"),
     ]);
     if (sqRes.data) setSavedQuestions(sqRes.data as unknown as SavedQuestion[]);
     if (colRes.data) setCollections(colRes.data);
+    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
     setLoadingData(false);
   }, [user, isMember]);
 
@@ -338,6 +348,13 @@ const DashboardPage = () => {
               >
                 <BookOpen className="h-4 w-4 mr-1" /> Create Your Book
               </Button>
+              <Button
+                variant={activeTab === "children" ? "default" : "outline"}
+                onClick={() => setActiveTab("children")}
+                size="sm"
+              >
+                <Baby className="h-4 w-4 mr-1" /> Children
+              </Button>
             </div>
 
             {/* Library Tab */}
@@ -552,6 +569,11 @@ const DashboardPage = () => {
                   </div>
                 )}
               </>
+            )}
+
+            {/* Children Tab */}
+            {activeTab === "children" && (
+              <ChildProfileManager profiles={childProfiles} onRefresh={fetchData} />
             )}
 
             {/* Create Your Book Tab */}

@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2 } from "lucide-react";
+import { Copy, Check, Lock, Bookmark, BookmarkCheck, Eye, EyeOff, Trash2, Share2, ChevronDown } from "lucide-react";
 import SaveUpgradeModal from "@/components/SaveUpgradeModal";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,

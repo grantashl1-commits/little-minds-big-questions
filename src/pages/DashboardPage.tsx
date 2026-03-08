@@ -104,6 +104,32 @@ const DashboardPage = () => {
     fetchData();
   }, [fetchData]);
 
+  // Check admin role
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const handleGenerateWeekly = async () => {
+    setGeneratingWeekly(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-weekly-question");
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`Weekly question created: "${data.question}"`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to generate weekly question");
+    } finally {
+      setGeneratingWeekly(false);
+    }
+  };
+
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
 

@@ -17,7 +17,7 @@ const THEME_COLORS: Record<string, string> = {
 };
 
 interface QuestionCardProps {
-  question: QuestionEntry;
+  question: QuestionEntry & { public_count?: number };
   isSquare?: boolean;
 }
 

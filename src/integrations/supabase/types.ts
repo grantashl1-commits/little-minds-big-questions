@@ -161,6 +161,39 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          age_segment: string | null
+          created_at: string
+          event_type: string
+          id: string
+          question_id: string | null
+          safety_flags: Json | null
+          theme: string | null
+          user_id: string | null
+        }
+        Insert: {
+          age_segment?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          question_id?: string | null
+          safety_flags?: Json | null
+          theme?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          age_segment?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          question_id?: string | null
+          safety_flags?: Json | null
+          theme?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       metaphor_images: {
         Row: {
           created_at: string | null
@@ -182,6 +215,36 @@ export type Database = {
           id?: string
           keywords?: string[] | null
           public_url?: string
+        }
+        Relationships: []
+      }
+      parent_scripts: {
+        Row: {
+          age_segment: string
+          created_at: string
+          id: string
+          resource_links: Json
+          theme: string
+          what_to_avoid: string
+          what_to_say: string
+        }
+        Insert: {
+          age_segment?: string
+          created_at?: string
+          id?: string
+          resource_links?: Json
+          theme: string
+          what_to_avoid: string
+          what_to_say: string
+        }
+        Update: {
+          age_segment?: string
+          created_at?: string
+          id?: string
+          resource_links?: Json
+          theme?: string
+          what_to_avoid?: string
+          what_to_say?: string
         }
         Relationships: []
       }
@@ -300,6 +363,7 @@ export type Database = {
           parent_explanation: string
           parent_note: string | null
           question_text: string
+          safety_flags: Json
           transcription: string | null
           user_id: string | null
         }
@@ -322,6 +386,7 @@ export type Database = {
           parent_explanation: string
           parent_note?: string | null
           question_text: string
+          safety_flags?: Json
           transcription?: string | null
           user_id?: string | null
         }
@@ -344,6 +409,7 @@ export type Database = {
           parent_explanation?: string
           parent_note?: string | null
           question_text?: string
+          safety_flags?: Json
           transcription?: string | null
           user_id?: string | null
         }
@@ -389,6 +455,44 @@ export type Database = {
           },
           {
             foreignKeyName: "saved_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shares: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          public_slug: string
+          question_id: string
+          redacted: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          public_slug: string
+          question_id: string
+          redacted?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          public_slug?: string
+          question_id?: string
+          redacted?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shares_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "questions"

@@ -41,6 +41,7 @@ const App = () => (
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/s/:slug" element={<SharedStoryPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

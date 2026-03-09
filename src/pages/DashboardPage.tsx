@@ -259,34 +259,62 @@ const DashboardPage = () => {
       return;
     }
 
-    const pages = selected.map((sq, i) => ({
-      page: i + 1,
-      child_name: sq.questions.child_name,
-      child_age: sq.questions.child_age,
-      question: sq.questions.question_text,
-      story_title: sq.questions.metaphor_title,
-      story: sq.questions.metaphor_answer,
-      illustration_prompt: sq.questions.image_prompt || "A gentle watercolour illustration for this story",
-      image_url: sq.questions.image_url || null,
-    }));
+    // Check for safety-flagged stories
+    const flagged = selected.filter((sq) => {
+      const flags = (sq.questions as any)?.safety_flags;
+      return flags && Object.values(flags).some(Boolean);
+    });
+    if (flagged.length > 0) {
+      toast.error(`${flagged.length} story(ies) have safety flags and cannot be exported. Please deselect them.`);
+      return;
+    }
 
-    const exportData = {
-      book_title: `Stories for ${selected[0].questions.child_name}`,
-      total_pages: pages.length,
-      exported_at: new Date().toISOString(),
-      format_notes: "Each page contains one story. Paste story text into your Canva children's book template. Use the illustration prompt to generate matching artwork in Canva's AI image generator.",
-      pages,
+    const bookTitle = `Stories for ${selected[0].questions.child_name}`;
+
+    // CSV header
+    const headers = ["book_title", "page_type", "child_label", "age_segment", "theme", "question", "story", "illustration_prompt", "parent_note"];
+    
+    const escCsv = (val: string) => {
+      if (!val) return "";
+      if (val.includes(",") || val.includes('"') || val.includes("\n")) {
+        return `"${val.replace(/"/g, '""')}"`;
+      }
+      return val;
     };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const rows = selected.map((sq) => {
+      const q = sq.questions;
+      return [
+        escCsv(bookTitle),
+        escCsv("story"),
+        escCsv("Child"), // default redacted label
+        escCsv(`age ${q.child_age}`),
+        escCsv(""),
+        escCsv(q.question_text),
+        escCsv(q.metaphor_answer),
+        escCsv(q.image_prompt || "A gentle watercolour illustration"),
+        escCsv(""),
+      ].join(",");
+    });
+
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `little-minds-book-${Date.now()}.json`;
+    a.download = `little-minds-book-${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
 
-    toast.success(`Exported ${pages.length} stories for your book!`);
+    toast.success(`Exported ${selected.length} stories as CSV! Open Canva → Bulk Create → Upload CSV → Map fields.`);
+
+    // Log export event
+    if (user) {
+      supabase.from("events" as any).insert({
+        user_id: user.id,
+        event_type: "export",
+      }).then(() => {});
+    }
   };
 
   return (

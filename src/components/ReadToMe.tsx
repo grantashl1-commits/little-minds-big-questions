@@ -135,7 +135,7 @@ const ReadToMe = ({ storyText, title, questionId }: ReadToMeProps) => {
             <Moon className="w-5 h-5 text-accent-foreground" />
           </div>
           <div>
-            <h3 className="font-display font-bold text-base">🎧 Read to Me</h3>
+            <h3 className="font-display font-bold text-base">Read to Me</h3>
             <p className="text-xs text-muted-foreground">Listen to this story in a calm, child-friendly voice</p>
           </div>
         </div>

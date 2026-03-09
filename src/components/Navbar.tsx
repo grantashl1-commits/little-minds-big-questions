@@ -10,6 +10,24 @@ const Navbar = () => {
   const { user, loading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
+  const authLinks = user ? (
+    <>
+      <Button variant="ghost" size="sm" asChild>
+        <Link to="/dashboard">
+          <User className="h-4 w-4 mr-1" />
+          Dashboard
+        </Link>
+      </Button>
+      <Button variant="ghost" size="icon" onClick={signOut} title="Log out">
+        <LogOut className="h-4 w-4" />
+      </Button>
+    </>
+  ) : (
+    <Button variant="secondary" size="sm" asChild>
+      <Link to="/auth">Log In</Link>
+    </Button>
+  );
+
   const navLinks = (
     <>
       <Button variant="ghost" size="sm" asChild>
@@ -18,26 +36,10 @@ const Navbar = () => {
       <Button size="sm" asChild>
         <Link to="/ask">Ask a Question</Link>
       </Button>
-      {!loading && (
-        <>
-          {user ? (
-            <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/dashboard">
-                  <User className="h-4 w-4 mr-1" />
-                  Dashboard
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" onClick={signOut} title="Log out">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </>
-          ) : (
-            <Button variant="secondary" size="sm" asChild>
-              <Link to="/auth">Log In</Link>
-            </Button>
-          )}
-        </>
+      {!loading ? authLinks : (
+        <Button variant="secondary" size="sm" asChild>
+          <Link to="/auth">Log In</Link>
+        </Button>
       )}
     </>
   );
@@ -50,27 +52,29 @@ const Navbar = () => {
       <Button size="sm" asChild onClick={() => setOpen(false)}>
         <Link to="/ask">Ask a Question</Link>
       </Button>
-      {!loading && (
-        <>
-          {user ? (
-            <>
-              <Button variant="ghost" size="sm" asChild onClick={() => setOpen(false)}>
-                <Link to="/dashboard">
-                  <User className="h-4 w-4 mr-1" />
-                  Dashboard
-                </Link>
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => { signOut(); setOpen(false); }}>
-                <LogOut className="h-4 w-4 mr-1" />
-                Log Out
-              </Button>
-            </>
-          ) : (
-            <Button variant="secondary" size="sm" asChild onClick={() => setOpen(false)}>
-              <Link to="/auth">Log In / Sign Up</Link>
+      {!loading ? (
+        user ? (
+          <>
+            <Button variant="ghost" size="sm" asChild onClick={() => setOpen(false)}>
+              <Link to="/dashboard">
+                <User className="h-4 w-4 mr-1" />
+                Dashboard
+              </Link>
             </Button>
-          )}
-        </>
+            <Button variant="ghost" size="sm" onClick={() => { signOut(); setOpen(false); }}>
+              <LogOut className="h-4 w-4 mr-1" />
+              Log Out
+            </Button>
+          </>
+        ) : (
+          <Button variant="secondary" size="sm" asChild onClick={() => setOpen(false)}>
+            <Link to="/auth">Log In / Sign Up</Link>
+          </Button>
+        )
+      ) : (
+        <Button variant="secondary" size="sm" asChild onClick={() => setOpen(false)}>
+          <Link to="/auth">Log In / Sign Up</Link>
+        </Button>
       )}
     </div>
   );

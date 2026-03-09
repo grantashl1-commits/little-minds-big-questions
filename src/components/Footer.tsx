@@ -36,23 +36,26 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold mb-3">Account</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              {!loading && (
+              {!loading ? (
+                user ? (
+                  <>
+                    <li><Link to="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link></li>
+                    <li>
+                      <button onClick={signOut} className="hover:text-foreground transition-colors">
+                        Log Out
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li><Link to="/auth" className="hover:text-foreground transition-colors">Log In</Link></li>
+                    <li><Link to="/auth" className="hover:text-foreground transition-colors">Sign Up</Link></li>
+                  </>
+                )
+              ) : (
                 <>
-                  {user ? (
-                    <>
-                      <li><Link to="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link></li>
-                      <li>
-                        <button onClick={signOut} className="hover:text-foreground transition-colors">
-                          Log Out
-                        </button>
-                      </li>
-                    </>
-                  ) : (
-                    <>
-                      <li><Link to="/auth" className="hover:text-foreground transition-colors">Log In</Link></li>
-                      <li><Link to="/auth" className="hover:text-foreground transition-colors">Sign Up</Link></li>
-                    </>
-                  )}
+                  <li><Link to="/auth" className="hover:text-foreground transition-colors">Log In</Link></li>
+                  <li><Link to="/auth" className="hover:text-foreground transition-colors">Sign Up</Link></li>
                 </>
               )}
             </ul>

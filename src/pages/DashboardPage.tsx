@@ -393,6 +393,18 @@ const DashboardPage = () => {
           </div>
         )}
 
+        {/* Children tab — available to ALL logged-in users */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {!isMember && (
+            <Button
+              variant={activeTab === "children" ? "default" : "outline"}
+              onClick={() => setActiveTab("children")}
+              size="sm"
+            >
+              <Baby className="h-4 w-4 mr-1" /> Children
+            </Button>
+          )}
+
         {/* Member Dashboard */}
         {isMember && (
           <>

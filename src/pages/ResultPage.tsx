@@ -356,8 +356,6 @@ const ResultPage = () => {
                 Anonymous Link
               </Button>
             )}
-              Share Story
-            </Button>
 
             {/* Save to Library — members only */}
             {user && isMember && !isSaved && childProfiles.length > 0 && (

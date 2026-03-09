@@ -869,6 +869,13 @@ const DashboardPage = () => {
                         </p>
                       </CardContent>
                     </Card>
+
+                    {/* Book Cover Generator */}
+                    <div className="mt-8">
+                      <BookCoverGenerator
+                        defaultName={childProfiles.length > 0 ? childProfiles[0].name : ""}
+                      />
+                    </div>
                   </>
                 )}
               </>

@@ -107,7 +107,8 @@ const AskPage = () => {
           image_url: aiData.image_url || null,
           is_public: form.is_public,
           user_id: user?.id || null,
-        })
+          safety_flags: aiData.safety_flags || {},
+        } as any)
         .select()
         .single();
 

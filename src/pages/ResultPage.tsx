@@ -441,6 +441,9 @@ const ResultPage = () => {
             </p>
           </div>
 
+          {/* Parent Scripts Panel */}
+          <ParentScriptPanel themes={themes} />
+
           {/* Social Media Tile Preview */}
           <div className="bg-card rounded-2xl p-8 storybook-shadow mb-8">
             <div className="flex items-center justify-between mb-4">

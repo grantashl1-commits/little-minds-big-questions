@@ -27,13 +27,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const checkMembership = async (userId: string) => {
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "member")
-      .maybeSingle();
-    setIsMember(!!data);
+    try {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "member")
+        .maybeSingle();
+      setIsMember(!!data);
+    } catch (err) {
+      console.error("Failed to check membership:", err);
+      setIsMember(false);
+    }
   };
 
   useEffect(() => {

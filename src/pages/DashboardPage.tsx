@@ -140,7 +140,14 @@ const DashboardPage = () => {
     }
   };
 
-  if (loading) return null;
+  if (loading) return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
+      <main className="flex-1 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </main>
+    </div>
+  );
   if (!user) return <Navigate to="/auth" replace />;
 
   const handleCheckout = async () => {

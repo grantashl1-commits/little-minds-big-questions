@@ -886,6 +886,19 @@ const DashboardPage = () => {
             )}
           </>
         )}
+
+        {/* Children Tab — available to ALL logged-in users */}
+        {activeTab === "children" && (
+          <ChildProfileManager
+            profiles={childProfiles}
+            onRefresh={fetchData}
+            storyCounts={savedQuestions.reduce((acc, sq) => {
+              const cpId = (sq.questions as QuestionData)?.child_profile_id;
+              if (cpId) acc[cpId] = (acc[cpId] || 0) + 1;
+              return acc;
+            }, {} as Record<string, number>)}
+          />
+        )}
       </main>
       <Footer />
     </div>

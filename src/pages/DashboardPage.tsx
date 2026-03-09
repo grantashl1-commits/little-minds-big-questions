@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import ChildProfileManager from "@/components/ChildProfileManager";
 import type { ChildProfile } from "@/components/ChildProfileManager";
 import { Checkbox } from "@/components/ui/checkbox";
+import BookCoverGenerator from "@/components/BookCoverGenerator";
 import {
   Select,
   SelectContent,
@@ -74,11 +75,25 @@ const DashboardPage = () => {
   const [previewOpen, setPreviewOpen] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!user || !isMember) {
+    if (!user) {
       setLoadingData(false);
       return;
     }
-    const [sqRes, colRes, cpRes] = await Promise.all([
+
+    // Always fetch child profiles for any logged-in user
+    const cpRes = await supabase
+      .from("child_profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at");
+    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
+
+    if (!isMember) {
+      setLoadingData(false);
+      return;
+    }
+
+    const [sqRes, colRes] = await Promise.all([
       supabase
         .from("saved_questions")
         .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")
@@ -89,15 +104,9 @@ const DashboardPage = () => {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
-      supabase
-        .from("child_profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at"),
     ]);
     if (sqRes.data) setSavedQuestions(sqRes.data as unknown as SavedQuestion[]);
     if (colRes.data) setCollections(colRes.data);
-    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
     setLoadingData(false);
   }, [user, isMember]);
 
@@ -384,6 +393,19 @@ const DashboardPage = () => {
           </div>
         )}
 
+        {/* Children tab button — available to ALL logged-in users (non-members only see this) */}
+        {!isMember && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Button
+              variant={activeTab === "children" ? "default" : "outline"}
+              onClick={() => setActiveTab("children")}
+              size="sm"
+            >
+              <Baby className="h-4 w-4 mr-1" /> Children
+            </Button>
+          </div>
+        )}
+
         {/* Member Dashboard */}
         {isMember && (
           <>
@@ -657,18 +679,6 @@ const DashboardPage = () => {
               </>
             )}
 
-            {/* Children Tab */}
-            {activeTab === "children" && (
-              <ChildProfileManager
-                profiles={childProfiles}
-                onRefresh={fetchData}
-                storyCounts={savedQuestions.reduce((acc, sq) => {
-                  const cpId = (sq.questions as QuestionData)?.child_profile_id;
-                  if (cpId) acc[cpId] = (acc[cpId] || 0) + 1;
-                  return acc;
-                }, {} as Record<string, number>)}
-              />
-            )}
 
             {/* Admin Tab */}
             {activeTab === "admin" && isAdmin && (
@@ -859,11 +869,31 @@ const DashboardPage = () => {
                         </p>
                       </CardContent>
                     </Card>
+
+                    {/* Book Cover Generator */}
+                    <div className="mt-8">
+                      <BookCoverGenerator
+                        defaultName={childProfiles.length > 0 ? childProfiles[0].name : ""}
+                      />
+                    </div>
                   </>
                 )}
               </>
             )}
           </>
+        )}
+
+        {/* Children Tab — available to ALL logged-in users */}
+        {activeTab === "children" && (
+          <ChildProfileManager
+            profiles={childProfiles}
+            onRefresh={fetchData}
+            storyCounts={savedQuestions.reduce((acc, sq) => {
+              const cpId = (sq.questions as QuestionData)?.child_profile_id;
+              if (cpId) acc[cpId] = (acc[cpId] || 0) + 1;
+              return acc;
+            }, {} as Record<string, number>)}
+          />
         )}
       </main>
       <Footer />

@@ -104,15 +104,9 @@ const DashboardPage = () => {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
-      supabase
-        .from("child_profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at"),
     ]);
     if (sqRes.data) setSavedQuestions(sqRes.data as unknown as SavedQuestion[]);
     if (colRes.data) setCollections(colRes.data);
-    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
     setLoadingData(false);
   }, [user, isMember]);
 

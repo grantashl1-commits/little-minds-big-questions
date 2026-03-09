@@ -324,6 +324,11 @@ const ResultPage = () => {
             </div>
           </div>
 
+          {/* Safety Triage Banner */}
+          {question.safety_flags && hasActiveFlags(question.safety_flags) && (
+            <SafetyTriageBanner safetyFlags={question.safety_flags} />
+          )}
+
           {/* Read to Me */}
           <ReadToMe storyText={question.metaphor_answer} title={question.metaphor_title} questionId={id} />
 

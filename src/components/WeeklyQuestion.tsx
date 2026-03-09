@@ -220,7 +220,7 @@ const WeeklyQuestion = () => {
       <div className="container max-w-3xl mx-auto">
         <div className="text-center mb-6">
           <span className="inline-block bg-accent/20 text-accent-foreground text-xs font-display font-semibold rounded-full px-4 py-1.5 mb-3">
-            ✨ Question of the Week
+            Question of the Week
           </span>
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
             "{wq.question}"

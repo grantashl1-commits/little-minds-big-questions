@@ -159,7 +159,7 @@ const ReadToMe = ({ storyText, title, questionId }: ReadToMeProps) => {
             {isBedtime ? <Moon className="w-5 h-5 text-[hsl(40_30%_80%)]" /> : <Sun className="w-5 h-5 text-accent-foreground" />}
           </div>
           <div>
-            <h3 className="font-display font-bold text-base">{isBedtime ? "🌙 Bedtime Story" : "🎧 Read to Me"}</h3>
+            <h3 className="font-display font-bold text-base">{isBedtime ? "Bedtime Story" : "Read to Me"}</h3>
             <p className={`text-xs ${isBedtime ? "text-[hsl(40_30%_70%)]" : "text-muted-foreground"}`}>
               {isBedtime ? "Gentle, calming bedtime voice" : "Bright daytime voice"}
             </p>

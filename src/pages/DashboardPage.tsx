@@ -75,11 +75,25 @@ const DashboardPage = () => {
   const [previewOpen, setPreviewOpen] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!user || !isMember) {
+    if (!user) {
       setLoadingData(false);
       return;
     }
-    const [sqRes, colRes, cpRes] = await Promise.all([
+
+    // Always fetch child profiles for any logged-in user
+    const cpRes = await supabase
+      .from("child_profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at");
+    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
+
+    if (!isMember) {
+      setLoadingData(false);
+      return;
+    }
+
+    const [sqRes, colRes] = await Promise.all([
       supabase
         .from("saved_questions")
         .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")

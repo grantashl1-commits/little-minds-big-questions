@@ -104,9 +104,9 @@ const ResetPasswordPage = () => {
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
                   Remember your password?{" "}
-                  <a href="/auth" className="text-primary hover:underline font-display font-semibold">
+                  <Link to="/auth" className="text-primary hover:underline font-display font-semibold">
                     Log in
-                  </a>
+                  </Link>
                 </p>
               </form>
             )}

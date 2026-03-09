@@ -16,6 +16,7 @@ import AboutPage from "./pages/AboutPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import SharedStoryPage from "./pages/SharedStoryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

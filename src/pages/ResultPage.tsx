@@ -115,6 +115,11 @@ const ResultPage = () => {
 
   const handleShare = async () => {
     if (!question) return;
+    const isFlagged = hasActiveFlags(question.safety_flags);
+    if (isFlagged) {
+      toast.error("This story covers sensitive topics and cannot be shared publicly.");
+      return;
+    }
     const shareData = {
       title: question.metaphor_title,
       text: `"${question.question_text}" — ${question.child_name}, age ${question.child_age}\n\n${question.metaphor_title}\n\nFrom Little Minds BIG Questions`,
@@ -129,6 +134,33 @@ const ResultPage = () => {
     } else {
       await navigator.clipboard.writeText(`${shareData.text}\n\n${shareData.url}`);
       toast.success("Story link copied to clipboard!");
+    }
+  };
+
+  const handleCreateShareLink = async () => {
+    if (!user || !id || !question) return;
+    const isFlagged = hasActiveFlags(question.safety_flags);
+    if (isFlagged) {
+      toast.error("This story covers sensitive topics and cannot be shared publicly.");
+      return;
+    }
+    setSavingAction(true);
+    try {
+      const slug = `${id.slice(0, 8)}-${Date.now().toString(36)}`;
+      const { error } = await supabase.from("shares" as any).insert({
+        question_id: id,
+        user_id: user.id,
+        public_slug: slug,
+        redacted: true,
+      });
+      if (error) throw error;
+      const shareUrl = `${window.location.origin}/s/${slug}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Anonymous share link copied! Child name and parent notes are hidden.");
+    } catch {
+      toast.error("Could not create share link");
+    } finally {
+      setSavingAction(false);
     }
   };
 

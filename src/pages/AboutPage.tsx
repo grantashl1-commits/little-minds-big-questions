@@ -110,9 +110,13 @@ const AboutPage = () => {
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground text-center mb-10">Meet the Founder</h2>
 
           <div className="rounded-2xl bg-card border border-border p-8 md:p-12 text-center space-y-6">
-            {/* Photo placeholder */}
-            <div className="w-36 h-36 rounded-full bg-muted mx-auto flex items-center justify-center border-4 border-primary/30">
-              <span className="text-xs text-muted-foreground">Founder Photo</span>
+            <div className="w-36 h-36 rounded-full mx-auto flex items-center justify-center border-4 border-primary/30 overflow-hidden">
+              <img
+                src="/metaphor-images/owl_watercolor-2.png"
+                alt="Founder"
+                className="w-full h-full object-contain p-3"
+                style={{ mixBlendMode: "multiply" }}
+              />
             </div>
 
             <p className="text-foreground leading-relaxed">

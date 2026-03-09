@@ -252,7 +252,7 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display font-bold text-lg">📥 Download & Share</h3>
+      <h3 className="font-display font-bold text-lg">Download & Share</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Button variant="peach" size="sm" onClick={generateQuestionCard} className="gap-2">
           <Download className="w-4 h-4" />

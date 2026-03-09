@@ -32,7 +32,7 @@ const AudioPlayer = ({ audioUrl }: AudioPlayerProps) => {
         )}
       </button>
       <div>
-        <p className="font-display text-sm font-semibold">🎤 Asked in their own voice</p>
+        <p className="font-display text-sm font-semibold">Asked in their own voice</p>
         <p className="text-xs text-muted-foreground">Tap to listen</p>
       </div>
       <audio

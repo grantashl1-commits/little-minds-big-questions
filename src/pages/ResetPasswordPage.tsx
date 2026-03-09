@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,9 +104,9 @@ const ResetPasswordPage = () => {
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
                   Remember your password?{" "}
-                  <a href="/auth" className="text-primary hover:underline font-display font-semibold">
+                  <Link to="/auth" className="text-primary hover:underline font-display font-semibold">
                     Log in
-                  </a>
+                  </Link>
                 </p>
               </form>
             )}

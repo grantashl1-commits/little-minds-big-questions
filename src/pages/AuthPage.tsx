@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
@@ -123,9 +123,9 @@ const AuthPage = () => {
                     {loading ? "Signing in..." : "Log In"}
                   </Button>
                   <p className="text-center text-sm text-muted-foreground">
-                    <a href="/reset-password" className="text-primary hover:underline font-display font-semibold">
+                    <Link to="/reset-password" className="text-primary hover:underline font-display font-semibold">
                       Forgot password?
-                    </a>
+                    </Link>
                   </p>
                 </form>
               </TabsContent>

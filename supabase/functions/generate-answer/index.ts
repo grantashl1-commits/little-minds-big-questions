@@ -38,6 +38,18 @@ Rules for story generation:
 - Parent explanation should translate the metaphor simply
 - Themes should be from: death-dying, grief-loss, feelings, friendship, identity, family-change, school-confidence, kindness, bodies, spirituality, worry-anxiety, babies-birth
 
+SAFETY TRIAGE — SENSITIVE TOPICS:
+After generating the story, evaluate whether the question touches on high-sensitivity topics that require professional support. Set safety_flags as an object with boolean fields for any that apply:
+- self_harm: mentions of self-harm, cutting, suicide, wanting to die
+- abuse: mentions of physical/sexual/emotional abuse
+- sextortion: mentions of online sexual exploitation, nude images, blackmail
+- sexual_content: age-inappropriate sexual questions beyond normal curiosity
+- bullying: severe bullying, cyberbullying, harassment
+- eating_disorder: mentions of eating disorders, body dysmorphia
+- substance: mentions of drug or alcohol use
+
+Most questions will have NO flags (all false). Only flag genuinely concerning content. Normal curiosity about bodies, death, babies, etc. should NOT be flagged.
+
 Return a JSON object with these exact fields:
 - rejected: boolean (true if inappropriate, false if genuine)
 - rejection_reason: string (only if rejected is true, otherwise empty string)
@@ -45,7 +57,8 @@ Return a JSON object with these exact fields:
 - metaphor_answer: The full child-friendly metaphor story, 3-5 paragraphs (empty string if rejected)
 - parent_explanation: A short explanation for parents, 2-3 sentences (empty string if rejected)
 - themes: An array of 1-3 theme slugs from the list above (empty array if rejected)
-- image_prompt: A detailed prompt for generating a soft pastel watercolour children's book illustration based on the central metaphor symbol (empty string if rejected)`;
+- image_prompt: A detailed prompt for generating a soft pastel watercolour children's book illustration based on the central metaphor symbol (empty string if rejected)
+- safety_flags: An object with boolean fields (self_harm, abuse, sextortion, sexual_content, bullying, eating_disorder, substance) — all false if no concerns`;
 
     const userPrompt = `Child's name: ${child_name}
 Child's age: ${child_age}
@@ -81,8 +94,20 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
                   parent_explanation: { type: "string" },
                   themes: { type: "array", items: { type: "string" } },
                   image_prompt: { type: "string" },
+                  safety_flags: {
+                    type: "object",
+                    properties: {
+                      self_harm: { type: "boolean" },
+                      abuse: { type: "boolean" },
+                      sextortion: { type: "boolean" },
+                      sexual_content: { type: "boolean" },
+                      bullying: { type: "boolean" },
+                      eating_disorder: { type: "boolean" },
+                      substance: { type: "boolean" },
+                    },
+                  },
                 },
-                required: ["rejected", "rejection_reason", "metaphor_title", "metaphor_answer", "parent_explanation", "themes", "image_prompt"],
+                required: ["rejected", "rejection_reason", "metaphor_title", "metaphor_answer", "parent_explanation", "themes", "image_prompt", "safety_flags"],
                 additionalProperties: false,
               },
             },

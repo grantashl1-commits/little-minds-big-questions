@@ -16,6 +16,7 @@ import AboutPage from "./pages/AboutPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import SharedStoryPage from "./pages/SharedStoryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/s/:slug" element={<SharedStoryPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

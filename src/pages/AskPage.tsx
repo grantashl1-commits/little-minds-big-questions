@@ -107,7 +107,8 @@ const AskPage = () => {
           image_url: aiData.image_url || null,
           is_public: form.is_public,
           user_id: user?.id || null,
-        })
+          safety_flags: aiData.safety_flags || {},
+        } as any)
         .select()
         .single();
 
@@ -128,6 +129,16 @@ const AskPage = () => {
           );
         }
       }
+
+      // Log analytics event
+      supabase.from("events" as any).insert({
+        user_id: user?.id || null,
+        event_type: "generate",
+        question_id: question.id,
+        theme: aiData.themes?.[0] || null,
+        age_segment: getAgeGroup(form.child_age),
+        safety_flags: aiData.safety_flags || {},
+      }).then(() => {});
 
       toast.success("Your story answer is ready!");
       navigate(`/result/${question.id}`);

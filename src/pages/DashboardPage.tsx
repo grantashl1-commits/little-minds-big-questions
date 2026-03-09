@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import ChildProfileManager from "@/components/ChildProfileManager";
 import type { ChildProfile } from "@/components/ChildProfileManager";
 import { Checkbox } from "@/components/ui/checkbox";
+import BookCoverGenerator from "@/components/BookCoverGenerator";
 import {
   Select,
   SelectContent,

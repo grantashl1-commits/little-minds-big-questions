@@ -339,8 +339,23 @@ const ResultPage = () => {
               {copied ? "Copied!" : "Copy Story Text"}
             </Button>
 
-            <Button variant="accent" onClick={handleShare} className="gap-2">
+            <Button variant="accent" onClick={handleShare} className="gap-2" disabled={hasActiveFlags(question.safety_flags)}>
               <Share2 className="w-4 h-4" />
+              Share Story
+            </Button>
+
+            {/* Anonymous Share Link — members only */}
+            {user && isMember && (
+              <Button
+                variant="outline"
+                onClick={handleCreateShareLink}
+                disabled={savingAction || hasActiveFlags(question.safety_flags)}
+                className="gap-2"
+              >
+                <LinkIcon className="w-4 h-4" />
+                Anonymous Link
+              </Button>
+            )}
               Share Story
             </Button>
 

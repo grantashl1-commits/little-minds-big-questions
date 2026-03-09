@@ -717,9 +717,8 @@ const DashboardPage = () => {
                     <div>
                       <h2 className="font-display text-xl font-bold mb-1">Create Your Book</h2>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Select stories from your library, then export them as a formatted file ready 
-                        for your Canva children's book template. Canva will handle the final layout, 
-                        printing, shipping, and distribution.
+                        Select stories from your library, then export them as a CSV file for 
+                        Canva's Bulk Create feature. Open Canva → Bulk Create → Upload CSV → Map fields.
                       </p>
                     </div>
                   </div>

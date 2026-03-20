@@ -73,4 +73,11 @@
   .tile-shadow {
     box-shadow: 0 2px 12px -2px hsl(34 30% 70% / 0.3);
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

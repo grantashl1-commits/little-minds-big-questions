@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logoMain from "@/assets/logo-main.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,7 @@ const Navbar = () => {
           Dashboard
         </Link>
       </Button>
-      <Button variant="ghost" size="icon" onClick={signOut} title="Log out">
+      <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/"); }} title="Log out">
         <LogOut className="h-4 w-4" />
       </Button>
     </>
@@ -107,7 +108,7 @@ const Navbar = () => {
               <>
                 {mobileLink("/dashboard", "Dashboard", <User className="h-4 w-4" />)}
                 <button
-                  onClick={() => { signOut(); setOpen(false); }}
+                  onClick={async () => { await signOut(); setOpen(false); navigate("/"); }}
                   className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-display font-semibold text-foreground hover:bg-muted transition-colors w-full text-left"
                 >
                   <LogOut className="h-4 w-4" />

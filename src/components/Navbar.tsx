@@ -40,7 +40,7 @@ const Navbar = () => {
           Dashboard
         </Link>
       </Button>
-      <Button variant="ghost" size="icon" onClick={signOut} title="Log out">
+      <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/"); }} title="Log out">
         <LogOut className="h-4 w-4" />
       </Button>
     </>

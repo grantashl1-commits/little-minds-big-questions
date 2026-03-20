@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
-  ChevronDown, ChevronUp, Baby
+  ChevronDown, ChevronUp, Baby, ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";

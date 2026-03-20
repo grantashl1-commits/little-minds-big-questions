@@ -98,7 +98,7 @@ const MembershipCTA = () => {
         <div className="text-center">
           <Button
             size="lg"
-            variant="accent"
+            variant="coral"
             onClick={handleCheckout}
             disabled={loading}
             className="text-base px-10"

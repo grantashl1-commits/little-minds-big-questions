@@ -275,7 +275,7 @@ const AskPage = () => {
               </div>
             </label>
 
-            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" size="lg" variant="coral" className="w-full" disabled={loading}>
               {loading ? "Creating your story..." : "Create Story Answer"}
             </Button>
           </form>

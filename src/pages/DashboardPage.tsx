@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
-  ChevronDown, ChevronUp, Baby
+  ChevronDown, ChevronUp, Baby, ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -287,8 +287,8 @@ const DashboardPage = () => {
 
     const bookTitle = `Stories for ${selected[0].questions.child_name}`;
 
-    // CSV header
-    const headers = ["book_title", "page_type", "child_label", "age_segment", "theme", "question", "story", "illustration_prompt", "parent_note"];
+    // CSV header — matches Canva Bulk Create field mapping
+    const headers = ["child_name", "question", "story_title", "story_text", "theme"];
     
     const escCsv = (val: string) => {
       if (!val) return "";
@@ -301,14 +301,10 @@ const DashboardPage = () => {
     const rows = selected.map((sq) => {
       const q = sq.questions;
       return [
-        escCsv(bookTitle),
-        escCsv("story"),
-        escCsv("Child"), // default redacted label
-        escCsv(`age ${q.child_age}`),
-        escCsv(""),
+        escCsv(q.child_name),
         escCsv(q.question_text),
+        escCsv(q.metaphor_title),
         escCsv(q.metaphor_answer),
-        escCsv(q.image_prompt || "A gentle watercolour illustration"),
         escCsv(""),
       ].join(",");
     });
@@ -732,12 +728,59 @@ const DashboardPage = () => {
                   <div className="flex items-start gap-4">
                     <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 shrink-0" />
                     <div>
-                      <h2 className="font-display text-xl font-bold mb-1">Create Your Book</h2>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Select stories from your library, then export them as a CSV file for 
-                        Canva's Bulk Create feature. Open Canva → Bulk Create → Upload CSV → Map fields.
+                      <h2 className="font-display text-xl font-bold mb-2">Create Your Book</h2>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+                        Turn your saved stories into a beautiful printed bedtime storybook using Canva's Bulk Create feature.
                       </p>
                     </div>
+                  </div>
+
+                  <div className="mt-4 space-y-3 text-sm text-foreground/80">
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">1.</span>
+                      <p><span className="font-semibold">Select your stories</span> — Tick the stories from your library that you want to include. These will become the pages of your printed bedtime story book.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">2.</span>
+                      <p><span className="font-semibold">Export as CSV</span> — Click "Export CSV". This downloads a file with your child's name, the question they asked, and the full story text — one row per story page.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">3.</span>
+                      <p><span className="font-semibold">Open the Canva template</span> — Click "Open Canva Template" below. This opens your personal copy of the Little Minds Big Questions book template. (You'll need a free Canva account — it only takes a minute to sign up.)</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">4.</span>
+                      <p><span className="font-semibold">Use Bulk Create</span> — Inside Canva: click <em>Apps → Bulk Create → Upload CSV</em> and select the file you just downloaded. Map the columns: connect <code className="bg-muted px-1 rounded text-xs">story_title</code> to the title text box, <code className="bg-muted px-1 rounded text-xs">story_text</code> to the story text box, and <code className="bg-muted px-1 rounded text-xs">child_name</code> to the child name field.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">5.</span>
+                      <p><span className="font-semibold">Generate your pages</span> — Click Generate — Canva automatically creates a page for each story with the text filled in. Review the pages and make any tweaks you like.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">6.</span>
+                      <p><span className="font-semibold">Download & print</span> — Click <em>Share → Download → PDF Print</em> (select "PDF - Print" for the best quality). Then send to your local print shop or home printer for a professional hardcover or softcover book!</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <Button
+                      variant="accent"
+                      size="lg"
+                      className="gap-2"
+                      asChild
+                    >
+                      <a
+                        href="https://www.canva.com/design/DAGpzExample/view"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Open Canva Template
+                      </a>
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Opens in a new tab. You'll get your own editable copy of the template.
+                    </p>
                   </div>
                 </div>
 
@@ -867,7 +910,7 @@ const DashboardPage = () => {
                             className="gap-2 shrink-0"
                           >
                             <Download className="h-4 w-4" />
-                            Export to Canva Book Template
+                            Export CSV
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-4 text-center sm:text-left">

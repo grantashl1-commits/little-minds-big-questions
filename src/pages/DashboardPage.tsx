@@ -910,7 +910,7 @@ const DashboardPage = () => {
                             className="gap-2 shrink-0"
                           >
                             <Download className="h-4 w-4" />
-                            Export to Canva Book Template
+                            Export CSV
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-4 text-center sm:text-left">

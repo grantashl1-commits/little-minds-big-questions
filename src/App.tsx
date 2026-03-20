@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import AskPage from "./pages/AskPage";
 import AskChildPage from "./pages/AskChildPage";
 import ResultPage from "./pages/ResultPage";
+import StoryPage from "./pages/StoryPage";
+import ChildAskRedirect from "./pages/ChildAskRedirect";
 import BrowsePage from "./pages/BrowsePage";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/ask" element={<AskPage />} />
             <Route path="/ask-child" element={<AskChildPage />} />
+            <Route path="/child-ask" element={<ChildAskRedirect />} />
+            <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/result/:id" element={<ResultPage />} />
             <Route path="/browse" element={<BrowsePage />} />
             <Route path="/auth" element={<AuthPage />} />

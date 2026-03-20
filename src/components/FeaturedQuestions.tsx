@@ -1,5 +1,6 @@
 import { FEATURED_QUESTIONS } from "@/lib/constants";
 import QuestionCard from "@/components/QuestionCard";
+import instagramIcon from "@/assets/instagram-icon.png";
 
 const FeaturedQuestions = () => {
   return (
@@ -11,6 +12,17 @@ const FeaturedQuestions = () => {
           {FEATURED_QUESTIONS.map(q => (
             <QuestionCard key={q.id} question={q} />
           ))}
+        </div>
+        <div className="mt-10 text-center">
+          <a
+            href="https://www.instagram.com/littlemindsbigquestions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-display font-semibold text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <img src={instagramIcon} alt="Instagram" className="w-5 h-5 rounded" />
+            Join the conversation on Instagram
+          </a>
         </div>
       </div>
     </section>

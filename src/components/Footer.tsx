@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logoMain from "@/assets/logo-main.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Footer = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <footer className="py-12 px-6 bg-card/60 border-t border-border">

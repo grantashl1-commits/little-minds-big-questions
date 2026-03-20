@@ -13,18 +13,19 @@ const ThemeGrid = () => {
       <div className="container max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Browse by Theme</h2>
         <p className="text-muted-foreground text-center mb-10">Find answers to questions about life's big topics</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {/* Scrollable on mobile, grid on desktop */}
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide">
           {THEMES.map((theme, i) => (
             <Link
               key={theme.slug}
               to={`/browse?theme=${theme.slug}`}
-              className={`${themeColors[i]} rounded-2xl p-5 text-center transition-all duration-200 hover:scale-[1.03] tile-shadow`}
+              className={`${themeColors[i]} rounded-2xl p-5 text-center transition-all duration-200 hover:scale-[1.03] tile-shadow flex-shrink-0 w-40 snap-center md:w-auto`}
             >
               <div className="flex justify-center mb-2">
                 <img
                   src={theme.image}
                   alt={theme.name}
-                  className="w-56 h-56 object-contain"
+                  className="w-32 h-32 md:w-56 md:h-56 object-contain"
                 />
               </div>
               <span className="font-display font-semibold text-sm">{theme.name}</span>

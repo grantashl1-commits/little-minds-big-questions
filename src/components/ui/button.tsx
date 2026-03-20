@@ -17,6 +17,7 @@ const buttonVariants = cva(
         sage: "bg-sage text-sage-foreground hover:bg-sage/80 storybook-shadow hover:scale-[1.02]",
         peach: "bg-peach text-peach-foreground hover:bg-peach/80 storybook-shadow hover:scale-[1.02]",
         accent: "bg-accent text-accent-foreground hover:bg-accent/80 storybook-shadow hover:scale-[1.02]",
+        coral: "bg-coral text-coral-foreground hover:bg-coral/80 storybook-shadow hover:scale-[1.02]",
       },
       size: {
         default: "h-11 px-6 py-2",

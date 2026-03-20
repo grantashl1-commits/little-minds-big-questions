@@ -18,7 +18,7 @@ const HeroSection = () => {
             Curious kids ask big questions. This space helps parents answer them with gentle stories and metaphors.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-            <Button size="lg" asChild>
+            <Button size="lg" variant="coral" asChild>
               <Link to="/ask">Ask a Question</Link>
             </Button>
             <Button size="lg" variant="peach" asChild>

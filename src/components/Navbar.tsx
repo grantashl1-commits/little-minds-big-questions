@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logoMain from "@/assets/logo-main.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 

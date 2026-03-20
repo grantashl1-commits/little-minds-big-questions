@@ -119,18 +119,21 @@ const AskChildPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-peach/20 via-background to-sage/10">
       <Navbar />
-      <section className="py-16 px-6">
+      <section className="py-12 md:py-16 px-6">
         <div className="container max-w-2xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold text-center mb-3">
-            Ask a Question in Your Own Voice
-          </h1>
-          <p className="text-muted-foreground text-center mb-12">
-            Sometimes kids ask the biggest questions. Let them ask it themselves.
-          </p>
+          <div className="text-center mb-10">
+            <span className="text-4xl md:text-5xl block mb-3">🎤✨</span>
+            <h1 className="text-3xl md:text-4xl font-bold font-display bg-gradient-to-r from-coral to-primary bg-clip-text text-transparent">
+              Got a Big Question?
+            </h1>
+            <p className="text-muted-foreground mt-2 text-lg font-display">
+              Press the button and ask it out loud!
+            </p>
+          </div>
 
-          <div className="bg-card rounded-2xl p-10 storybook-shadow mb-8">
+          <div className="bg-card rounded-3xl p-8 md:p-10 storybook-shadow mb-8">
             <VoiceRecorder onConfirmed={handleConfirmed} />
           </div>
 

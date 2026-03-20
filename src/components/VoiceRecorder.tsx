@@ -148,32 +148,40 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
       {(state === "idle" || state === "recording") && (
         <>
           <div className="relative">
+            <div className={`absolute inset-0 rounded-full transition-all duration-700 ${
+              state === "recording"
+                ? "bg-coral/30 animate-ping"
+                : "bg-primary/20 animate-pulse"
+            }`} style={{ margin: "-16px", borderRadius: "9999px" }} />
+            <div className={`absolute inset-0 rounded-full transition-all duration-1000 ${
+              state === "idle" ? "bg-primary/10 animate-pulse [animation-delay:0.5s]" : "hidden"
+            }`} style={{ margin: "-32px", borderRadius: "9999px" }} />
             <button
               onClick={state === "idle" ? startRecording : stopRecording}
-              className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 storybook-shadow ${
+              className={`relative w-36 h-36 md:w-40 md:h-40 rounded-full flex items-center justify-center transition-all duration-300 storybook-shadow ${
                 state === "recording"
-                  ? "bg-secondary scale-110 animate-pulse"
-                  : "bg-primary hover:scale-105"
+                  ? "bg-coral scale-110"
+                  : "bg-primary hover:scale-110"
               }`}
             >
               {state === "recording" ? (
-                <Square className="w-10 h-10 text-secondary-foreground" />
+                <Square className="w-12 h-12 text-coral-foreground" />
               ) : (
-                <Mic className="w-10 h-10 text-primary-foreground" />
+                <Mic className="w-14 h-14 text-primary-foreground" />
               )}
             </button>
 
             {state === "recording" && (
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                <span className="font-display font-bold text-secondary text-lg">
+              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
+                <span className="font-display font-bold text-coral text-xl">
                   {elapsed}s / {MAX_SECONDS}s
                 </span>
               </div>
             )}
           </div>
 
-          <p className="font-display text-sm text-muted-foreground mt-2">
-            {state === "idle" ? "Tap to Record" : "Recording... Tap to Stop"}
+          <p className="font-display text-base text-muted-foreground mt-6 font-semibold">
+            {state === "idle" ? "Tap the microphone to start! 🎙️" : "Recording... tap to stop! 🛑"}
           </p>
         </>
       )}

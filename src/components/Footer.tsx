@@ -42,7 +42,7 @@ const Footer = () => {
                   <>
                     <li><Link to="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link></li>
                     <li>
-                      <button onClick={signOut} className="hover:text-foreground transition-colors">
+                      <button onClick={async () => { await signOut(); navigate("/"); }} className="hover:text-foreground transition-colors">
                         Log Out
                       </button>
                     </li>

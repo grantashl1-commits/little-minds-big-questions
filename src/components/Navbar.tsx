@@ -108,7 +108,7 @@ const Navbar = () => {
               <>
                 {mobileLink("/dashboard", "Dashboard", <User className="h-4 w-4" />)}
                 <button
-                  onClick={() => { signOut(); setOpen(false); }}
+                  onClick={async () => { await signOut(); setOpen(false); navigate("/"); }}
                   className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-display font-semibold text-foreground hover:bg-muted transition-colors w-full text-left"
                 >
                   <LogOut className="h-4 w-4" />

@@ -287,8 +287,8 @@ const DashboardPage = () => {
 
     const bookTitle = `Stories for ${selected[0].questions.child_name}`;
 
-    // CSV header
-    const headers = ["book_title", "page_type", "child_label", "age_segment", "theme", "question", "story", "illustration_prompt", "parent_note"];
+    // CSV header — matches Canva Bulk Create field mapping
+    const headers = ["child_name", "question", "story_title", "story_text", "theme"];
     
     const escCsv = (val: string) => {
       if (!val) return "";
@@ -301,14 +301,10 @@ const DashboardPage = () => {
     const rows = selected.map((sq) => {
       const q = sq.questions;
       return [
-        escCsv(bookTitle),
-        escCsv("story"),
-        escCsv("Child"), // default redacted label
-        escCsv(`age ${q.child_age}`),
-        escCsv(""),
+        escCsv(q.child_name),
         escCsv(q.question_text),
+        escCsv(q.metaphor_title),
         escCsv(q.metaphor_answer),
-        escCsv(q.image_prompt || "A gentle watercolour illustration"),
         escCsv(""),
       ].join(",");
     });

@@ -496,7 +496,7 @@ const DashboardPage = () => {
                 ) : filteredQuestions.length === 0 ? (
                   <Card className="text-center py-12">
                     <CardContent>
-                      <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-20 h-20 mx-auto mb-4 opacity-60" />
+                      <img src="/metaphor-images/owl.png" alt="" className="w-20 h-20 mx-auto mb-4 opacity-60 object-contain" />
                       <p className="font-display text-lg font-semibold mb-1">No saved stories yet</p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Generate a story and click "Save to Library" to see it here.
@@ -726,7 +726,7 @@ const DashboardPage = () => {
                 {/* Header */}
                 <div className="bg-card rounded-2xl p-6 mb-6 storybook-shadow">
                   <div className="flex items-start gap-4">
-                    <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16 shrink-0" />
+                    <img src="/metaphor-images/owl.png" alt="" className="w-16 h-16 shrink-0 object-contain" />
                     <div>
                       <h2 className="font-display text-xl font-bold mb-2">Create Your Book</h2>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-1">

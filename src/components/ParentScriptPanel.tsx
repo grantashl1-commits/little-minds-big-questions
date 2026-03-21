@@ -33,7 +33,7 @@ const ParentScriptPanel = ({ themes }: { themes: string[] }) => {
         className="w-full flex items-center justify-between p-6 text-left hover:bg-muted/30 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-10 h-10" />
+          <img src="/metaphor-images/owl.png" alt="" className="w-10 h-10 object-contain" />
           <div>
             <h3 className="font-display font-bold text-base">Parent Guide</h3>
             <p className="text-xs text-muted-foreground">What to say and what to avoid</p>

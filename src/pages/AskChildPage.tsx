@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,8 +7,14 @@ import Footer from "@/components/Footer";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
+import { Loader2, Lock, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+
+const LOADING_MESSAGES = [
+  "Turning their words into a gentle story...",
+  "Weaving in warm bedtime imagery...",
+  "Finishing the illustration and final polish...",
+];
 
 const AskChildPage = () => {
   const navigate = useNavigate();
@@ -16,6 +22,7 @@ const AskChildPage = () => {
   const [loading, setLoading] = useState(false);
   const [confirmedText, setConfirmedText] = useState("");
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const [form, setForm] = useState({
     child_name: "",
     child_age: 5,
@@ -35,6 +42,19 @@ const AskChildPage = () => {
       [name]: type === "number" ? parseInt(value) || 0 : value,
     }));
   };
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingMessageIndex(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 1800);
+
+    return () => window.clearInterval(interval);
+  }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +88,7 @@ const AskChildPage = () => {
         },
       });
       if (aiError) throw aiError;
+      if (aiData?.error) throw new Error(aiData.error);
       if (aiData.rejected) {
         toast.error(aiData.rejection_reason || "That question isn't appropriate. Please try a different one.");
         return;
@@ -112,7 +133,7 @@ const AskChildPage = () => {
       navigate(`/result/${question.id}`);
     } catch (err: any) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -211,12 +232,30 @@ const AskChildPage = () => {
               </label>
 
               <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                {loading ? "Creating your story..." : "Create Story Answer"}
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating your story...
+                  </>
+                ) : "Create Story Answer"}
               </Button>
             </form>
           )}
         </div>
       </section>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6">
+          <div className="max-w-md rounded-3xl border border-border bg-card p-8 text-center storybook-shadow">
+            <img src="/metaphor-images/butterfly.png" alt="Story illustration loading" className="mx-auto mb-5 h-24 w-24 animate-float object-contain" />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <Sparkles className="h-5 w-5 animate-pulse" />
+            </div>
+            <h2 className="font-display text-2xl font-bold">We’re making the story now</h2>
+            <p className="mt-3 text-sm text-muted-foreground">{LOADING_MESSAGES[loadingMessageIndex]}</p>
+            <p className="mt-2 text-xs text-muted-foreground">Hang tight — artwork can make this take a little longer.</p>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

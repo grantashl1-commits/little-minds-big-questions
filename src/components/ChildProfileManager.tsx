@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Pencil, Trash2, Check, X, Baby } from "lucide-react";
+import { Plus, Pencil, Trash2, Check, X, Baby, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export interface ChildProfile {
@@ -29,6 +29,7 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
   const [showAdd, setShowAdd] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", age: "", emoji: "🦋" });
+  const [saving, setSaving] = useState<"create" | "update" | "delete" | null>(null);
 
   const resetForm = () => {
     setForm({ name: "", age: "", emoji: "🦋" });
@@ -38,41 +39,64 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
 
   const handleCreate = async () => {
     if (!form.name.trim() || !user) return;
+    const parsedAge = form.age === "" ? null : Number(form.age);
+    if (parsedAge !== null && (Number.isNaN(parsedAge) || parsedAge < 0 || parsedAge > 18)) {
+      toast.error("Please enter a valid age between 0 and 18.");
+      return;
+    }
+
+    setSaving("create");
     const { error } = await supabase.from("child_profiles").insert({
       user_id: user.id,
       name: form.name.trim(),
-      age: form.age ? parseInt(form.age) : null,
+      age: parsedAge,
       avatar_emoji: form.emoji,
     });
-    if (error) toast.error("Could not create profile");
-    else {
-      toast.success(`${form.name}'s profile created!`);
+
+    if (error) {
+      toast.error(error.message || "Could not create profile");
+    } else {
+      toast.success(`${form.name}'s profile saved!`);
       resetForm();
-      onRefresh();
+      await onRefresh();
     }
+    setSaving(null);
   };
 
   const handleUpdate = async (id: string) => {
     if (!form.name.trim()) return;
+    const parsedAge = form.age === "" ? null : Number(form.age);
+    if (parsedAge !== null && (Number.isNaN(parsedAge) || parsedAge < 0 || parsedAge > 18)) {
+      toast.error("Please enter a valid age between 0 and 18.");
+      return;
+    }
+
+    setSaving("update");
     const { error } = await supabase.from("child_profiles").update({
       name: form.name.trim(),
-      age: form.age ? parseInt(form.age) : null,
+      age: parsedAge,
       avatar_emoji: form.emoji,
     }).eq("id", id);
-    if (error) toast.error("Could not update");
-    else {
+
+    if (error) {
+      toast.error(error.message || "Could not update");
+    } else {
+      toast.success(`${form.name}'s profile updated`);
       resetForm();
-      onRefresh();
+      await onRefresh();
     }
+    setSaving(null);
   };
 
   const handleDelete = async (id: string, name: string) => {
+    setSaving("delete");
     const { error } = await supabase.from("child_profiles").delete().eq("id", id);
-    if (error) toast.error("Could not delete");
+    if (error) toast.error(error.message || "Could not delete");
     else {
       toast.success(`${name}'s profile removed`);
-      onRefresh();
+      await onRefresh();
     }
+    setSaving(null);
   };
 
   const startEdit = (p: ChildProfile) => {
@@ -112,14 +136,15 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
                 value={form.age}
                 onChange={(e) => setForm(f => ({ ...f, age: e.target.value }))}
                 className="w-20"
-                min={2}
-                max={10}
+                min={0}
+                max={18}
               />
             </div>
             <div className="flex gap-1.5 flex-wrap">
               {EMOJI_OPTIONS.map((e) => (
                 <button
                   key={e}
+                  type="button"
                   onClick={() => setForm(f => ({ ...f, emoji: e }))}
                   className={`text-xl w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
                     form.emoji === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
@@ -130,13 +155,19 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
               ))}
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => editingId ? handleUpdate(editingId) : handleCreate()}>
-                <Check className="h-4 w-4 mr-1" /> {editingId ? "Save" : "Create"}
+              <Button size="sm" disabled={saving !== null} onClick={() => editingId ? handleUpdate(editingId) : handleCreate()}>
+                {saving === "create" || saving === "update" ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <Check className="h-4 w-4 mr-1" />
+                )}
+                {saving === "create" || saving === "update" ? "Saving..." : editingId ? "Save" : "Create"}
               </Button>
-              <Button size="sm" variant="ghost" onClick={resetForm}>
+              <Button size="sm" variant="ghost" disabled={saving !== null} onClick={resetForm}>
                 <X className="h-4 w-4 mr-1" /> Cancel
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">Child profiles save to your dashboard automatically.</p>
           </CardContent>
         </Card>
       )}
@@ -172,10 +203,11 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
                   <Button
                     variant="ghost"
                     size="icon"
+                    disabled={saving === "delete"}
                     className="h-8 w-8 text-destructive/60 hover:text-destructive"
                     onClick={() => handleDelete(p.id, p.name)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    {saving === "delete" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                   </Button>
                 </div>
               </CardContent>

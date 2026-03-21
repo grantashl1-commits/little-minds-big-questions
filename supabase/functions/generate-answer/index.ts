@@ -47,6 +47,7 @@ Rules for story content:
 - Keep tone warm, poetic, and comforting
 - Parent explanation should translate the metaphor simply
 - Themes should be from: death-dying, grief-loss, feelings, friendship, identity, family-change, school-confidence, kindness, bodies, spirituality, worry-anxiety, babies-birth
+- For image_prompt, include specific nature/object keywords that match our watercolor asset library. Good keywords: butterfly, clouds, teardrop, whale, rainbow, tree, heart, fox, owl, turtle, bunny, deer, elephant, penguin, globe, book, rain, rocket, crayons, candle, backpack, seedling, flower, bird, moon, sun, palette, balloon, planet, sandcastle, wave, volcano, kite. Use these words naturally when they fit the metaphor.
 
 SAFETY TRIAGE — SENSITIVE TOPICS:
 After generating the story, evaluate whether the question touches on high-sensitivity topics that require professional support. Set safety_flags as an object with boolean fields for any that apply:

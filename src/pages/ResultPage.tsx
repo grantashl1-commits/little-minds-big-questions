@@ -226,7 +226,7 @@ const ResultPage = () => {
         <Navbar />
         <div className="flex items-center justify-center py-32">
           <div className="text-center">
-            <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-28 h-28 mx-auto mb-4 animate-float" />
+            <img src="/metaphor-images/owl.png" alt="" className="w-28 h-28 mx-auto mb-4 animate-float object-contain" />
             <p className="font-display text-muted-foreground">Loading your story...</p>
           </div>
         </div>
@@ -282,7 +282,6 @@ const ResultPage = () => {
                  src={question.image_url}
                  alt={question.metaphor_title}
                  className="w-52 h-52 md:w-72 md:h-72 object-contain rounded-2xl drop-shadow-sm"
-                 style={{ mixBlendMode: "multiply" }}
                />
             </div>
           )}
@@ -433,7 +432,7 @@ const ResultPage = () => {
           {/* Parent Explanation */}
           <div className="bg-sage/20 rounded-2xl p-8 mb-8">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/metaphor-images/owl_watercolor-2.png" alt="" className="w-16 h-16" />
+              <img src="/metaphor-images/owl.png" alt="" className="w-16 h-16 object-contain" />
               <h3 className="font-display font-bold text-lg">For Parents</h3>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -446,29 +445,11 @@ const ResultPage = () => {
 
           {/* Social Media Tile Preview */}
           <div className="bg-card rounded-2xl p-8 storybook-shadow mb-8">
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-5 max-w-2xl">
               <h3 className="font-display font-bold text-lg">Share as a Tile</h3>
-              <span className="flex items-center gap-1 text-xs font-display text-muted-foreground bg-accent/20 rounded-full px-3 py-1">
-                <Lock className="w-3 h-3" />
-                Premium — Coming Soon
-              </span>
-            </div>
-
-            {/* Preview tile */}
-            <div className="bg-primary/10 rounded-xl p-6 max-w-sm mx-auto aspect-square flex flex-col justify-between">
-              <div>
-                <p className="font-display font-bold text-sm mb-2">"{question.question_text}"</p>
-                <p className="text-xs text-muted-foreground">{question.child_name}, age {question.child_age}</p>
-              </div>
-              {question.image_url && (
-                <div className="flex justify-center my-3">
-                  <img src={question.image_url} alt="" className="w-20 h-20 object-contain" />
-                </div>
-              )}
-              <div>
-                <p className="text-xs leading-relaxed line-clamp-3">{question.metaphor_answer}</p>
-                <p className="text-[10px] text-muted-foreground mt-2 font-display">Little Minds BIG Questions</p>
-              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Turn this story into polished share art, a keepsake poster, or a swipeable Instagram carousel.
+              </p>
             </div>
 
             <div className="mt-4">

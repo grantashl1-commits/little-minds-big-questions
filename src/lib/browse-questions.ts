@@ -14,7 +14,7 @@ export const BROWSE_THEMES = [
   { slug: "fairness", name: "Fairness", image: "/metaphor-images/hot-air-balloon.png" },
   { slug: "love", name: "Love", image: "/metaphor-images/elephant.png" },
   { slug: "identity", name: "Identity", image: "/metaphor-images/deer.png" },
-  { slug: "time", name: "Time", image: "/metaphor-images/snowflake.png" },
+  { slug: "time", name: "Time", image: "/metaphor-images/moon_watercolor-2.png" },
 ] as const;
 
 export const BROWSE_QUESTIONS: BrowseQuestion[] = [

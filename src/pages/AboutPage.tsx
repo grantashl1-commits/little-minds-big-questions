@@ -112,10 +112,9 @@ const AboutPage = () => {
           <div className="rounded-2xl bg-card border border-border p-8 md:p-12 text-center space-y-6">
             <div className="w-36 h-36 rounded-full mx-auto flex items-center justify-center border-4 border-primary/30 overflow-hidden">
               <img
-                src="/metaphor-images/owl_watercolor-2.png"
+                src="/metaphor-images/owl.png"
                 alt="Founder"
                 className="w-full h-full object-contain p-3"
-                style={{ mixBlendMode: "multiply" }}
               />
             </div>
 

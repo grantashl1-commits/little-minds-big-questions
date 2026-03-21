@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,15 +7,22 @@ import Footer from "@/components/Footer";
 import FloatingBubbles from "@/components/FloatingBubbles";
 import { getAgeGroup } from "@/lib/constants";
 import { toast } from "sonner";
-import { Mic, Lock, ChevronDown } from "lucide-react";
+import { Loader2, Lock, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ChildProfile } from "@/components/ChildProfileManager";
+
+const LOADING_MESSAGES = [
+  "Listening for the heart of the question...",
+  "Writing a gentle bedtime story...",
+  "Choosing the softest imagery for the moment...",
+];
 
 const AskPage = () => {
   const navigate = useNavigate();
   const { user, isMember } = useAuth();
   const [loading, setLoading] = useState(false);
   const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const [form, setForm] = useState({
     child_name: "",
     child_age: 5,
@@ -37,9 +44,8 @@ const AskPage = () => {
     setForm(prev => ({ ...prev, is_public: e.target.checked }));
   };
 
-  // Load child profiles for logged-in members
-  useState(() => {
-    if (user && isMember) {
+  useEffect(() => {
+    if (user) {
       supabase
         .from("child_profiles")
         .select("*")
@@ -49,7 +55,20 @@ const AskPage = () => {
           if (data) setChildProfiles(data as ChildProfile[]);
         });
     }
-  });
+  }, [user]);
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingMessageIndex(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 1800);
+
+    return () => window.clearInterval(interval);
+  }, [loading]);
 
   const selectChild = (profileId: string) => {
     const p = childProfiles.find((c) => c.id === profileId);
@@ -86,6 +105,7 @@ const AskPage = () => {
       });
 
       if (aiError) throw aiError;
+      if (aiData?.error) throw new Error(aiData.error);
       if (aiData.rejected) {
         toast.error(aiData.rejection_reason || "That question isn't appropriate. Please try a different one.");
         return;
@@ -144,7 +164,7 @@ const AskPage = () => {
       navigate(`/result/${question.id}`);
     } catch (err: any) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -276,11 +296,29 @@ const AskPage = () => {
             </label>
 
             <Button type="submit" size="lg" variant="coral" className="w-full" disabled={loading}>
-              {loading ? "Creating your story..." : "Create Story Answer"}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating your story...
+                </>
+              ) : "Create Story Answer"}
             </Button>
           </form>
         </div>
       </section>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6">
+          <div className="max-w-md rounded-3xl border border-border bg-card p-8 text-center storybook-shadow">
+            <img src="/metaphor-images/butterfly.png" alt="Story illustration loading" className="mx-auto mb-5 h-24 w-24 animate-float object-contain" />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <Sparkles className="h-5 w-5 animate-pulse" />
+            </div>
+            <h2 className="font-display text-2xl font-bold">Your story is on its way</h2>
+            <p className="mt-3 text-sm text-muted-foreground">{LOADING_MESSAGES[loadingMessageIndex]}</p>
+            <p className="mt-2 text-xs text-muted-foreground">This can take a little longer when we create artwork too.</p>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

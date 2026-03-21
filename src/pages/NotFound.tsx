@@ -19,10 +19,9 @@ const NotFound = () => {
         <FloatingBubbles count={4} />
         <div className="text-center relative z-10">
           <img
-            src="/metaphor-images/owl_watercolor-2.png"
+            src="/metaphor-images/penguin.png"
             alt=""
             className="w-28 h-28 mx-auto mb-6"
-            style={{ mixBlendMode: "multiply" }}
           />
           <h1 className="font-display text-5xl font-bold text-foreground mb-3">404</h1>
           <p className="font-display text-lg text-muted-foreground mb-6">

@@ -81,7 +81,7 @@ export const FEATURED_QUESTIONS: QuestionEntry[] = [
     metaphor_title: "The Ocean and the Shells",
     metaphor_answer: "The ocean has millions of shells on the beach. Some shells fit perfectly in your hand, and some don't. It doesn't mean those shells aren't beautiful — they just belong in someone else's collection.",
     parent_explanation: "Help children understand that not all relationships click, and that's natural. Focus on the quality of friendships rather than quantity.",
-    image_url: "/metaphor-images/turtle.png",
+    image_url: "/metaphor-images/deer.png",
     is_public: true,
     created_at: new Date().toISOString(),
     themes: ["friendship", "feelings"],

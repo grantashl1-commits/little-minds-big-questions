@@ -20,7 +20,7 @@ const AboutPage = () => {
           </p>
           {/* Decorative watercolour accents */}
           <img src="/metaphor-images/butterfly.png" alt="" className="absolute top-6 right-4 w-14 opacity-40 pointer-events-none mix-blend-multiply animate-float" style={{ animationDelay: "1s" }} />
-          <img src="/metaphor-images/stars_watercolor-2.png" alt="" className="absolute bottom-2 left-4 w-16 opacity-30 pointer-events-none mix-blend-multiply animate-float" style={{ animationDelay: "2s" }} />
+          
         </div>
       </section>
 

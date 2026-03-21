@@ -10,11 +10,11 @@ export interface BrowseQuestion {
 
 export const BROWSE_THEMES = [
   { slug: "death-loss", name: "Death & Loss", image: "/metaphor-images/butterfly.png" },
-  { slug: "god-meaning", name: "God & Meaning", image: "/metaphor-images/candle.png" },
-  { slug: "fairness", name: "Fairness", image: "/metaphor-images/rainbow.png" },
-  { slug: "love", name: "Love", image: "/metaphor-images/flower.png" },
-  { slug: "identity", name: "Identity", image: "/metaphor-images/palette.png" },
-  { slug: "time", name: "Time", image: "/metaphor-images/moon_watercolor-2.png" },
+  { slug: "god-meaning", name: "God & Meaning", image: "/metaphor-images/lightning.png" },
+  { slug: "fairness", name: "Fairness", image: "/metaphor-images/hot-air-balloon.png" },
+  { slug: "love", name: "Love", image: "/metaphor-images/elephant.png" },
+  { slug: "identity", name: "Identity", image: "/metaphor-images/deer.png" },
+  { slug: "time", name: "Time", image: "/metaphor-images/snowflake.png" },
 ] as const;
 
 export const BROWSE_QUESTIONS: BrowseQuestion[] = [

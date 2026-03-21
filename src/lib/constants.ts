@@ -67,7 +67,7 @@ export const FEATURED_QUESTIONS: QuestionEntry[] = [
     metaphor_title: "The Star That Moved",
     metaphor_answer: "Imagine if every person who loved you became a star in the sky. Grandma became a very bright star. She's not gone — she's just shining from a different place now.",
     parent_explanation: "At this age, children may not understand permanence. Use imagery of continued presence in a different form rather than 'gone forever'.",
-    image_url: "/metaphor-images/planet.png",
+    image_url: "/metaphor-images/penguin.png",
     is_public: true,
     created_at: new Date().toISOString(),
     themes: ["grief-loss", "feelings"],

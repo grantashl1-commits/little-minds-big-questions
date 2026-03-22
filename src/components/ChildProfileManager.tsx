@@ -20,7 +20,7 @@ const EMOJI_OPTIONS = ["🦋", "🌟", "🐰", "🦊", "🐢", "🐳", "🦉", "
 
 interface Props {
   profiles: ChildProfile[];
-  onRefresh: () => void;
+  onRefresh: () => void | Promise<void>;
   storyCounts?: Record<string, number>;
 }
 

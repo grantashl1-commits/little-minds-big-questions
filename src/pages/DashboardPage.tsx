@@ -443,7 +443,7 @@ const DashboardPage = () => {
                 onClick={() => setActiveTab("library")}
                 size="sm"
               >
-                <Library className="h-4 w-4 mr-1" /> My Library
+                <img src={iconLibrary} alt="" className="h-4 w-4 mr-1 object-contain" /> My Library
               </Button>
               <Button
                 variant={activeTab === "collections" ? "default" : "outline"}

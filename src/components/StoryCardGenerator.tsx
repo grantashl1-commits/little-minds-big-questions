@@ -1,10 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
-import { Download, Loader2, Sparkles, Lock } from "lucide-react";
+import { Download, Loader2, Sparkles, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { QuestionEntry } from "@/lib/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface StoryCardGeneratorProps {
   question: QuestionEntry;

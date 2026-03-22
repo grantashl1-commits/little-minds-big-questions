@@ -285,10 +285,7 @@ const DashboardPage = () => {
       return;
     }
 
-    const bookTitle = `Stories for ${selected[0].questions.child_name}`;
-
-    // CSV header — matches Canva Bulk Create field mapping
-    const headers = ["child_name", "question", "story_title", "story_text", "theme"];
+    const headers = ["Question", "Answer", "Child Name", "Age"];
     
     const escCsv = (val: string) => {
       if (!val) return "";
@@ -301,11 +298,10 @@ const DashboardPage = () => {
     const rows = selected.map((sq) => {
       const q = sq.questions;
       return [
-        escCsv(q.child_name),
         escCsv(q.question_text),
-        escCsv(q.metaphor_title),
-        escCsv(q.metaphor_answer),
-        escCsv(""),
+        escCsv(`${q.metaphor_title}\n\n${q.metaphor_answer}`),
+        escCsv(q.child_name),
+        escCsv(`Age ${q.child_age}`),
       ].join(",");
     });
 
@@ -318,7 +314,7 @@ const DashboardPage = () => {
     a.click();
     URL.revokeObjectURL(url);
 
-    toast.success(`Exported ${selected.length} stories as CSV! Open Canva → Bulk Create → Upload CSV → Map fields.`);
+    toast.success(`Exported ${selected.length} stories! Open the CSV and copy-paste into your Canva template.`);
 
     // Log export event
     if (user) {
@@ -725,12 +721,12 @@ const DashboardPage = () => {
               <>
                 {/* Header */}
                 <div className="bg-card rounded-2xl p-6 mb-6 storybook-shadow">
-                  <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4">
                     <img src="/metaphor-images/owl.png" alt="" className="w-16 h-16 shrink-0 object-contain" />
                     <div>
                       <h2 className="font-display text-xl font-bold mb-2">Create Your Book</h2>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-                        Turn your saved stories into a beautiful printed bedtime storybook using Canva's Bulk Create feature.
+                        Turn your saved stories into a beautiful printed bedtime storybook using our Canva template.
                       </p>
                     </div>
                   </div>
@@ -742,23 +738,19 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex gap-3">
                       <span className="font-display font-bold text-primary shrink-0 w-6 text-right">2.</span>
-                      <p><span className="font-semibold">Export as CSV</span> — Click "Export CSV". This downloads a file with your child's name, the question they asked, and the full story text — one row per story page.</p>
+                      <p><span className="font-semibold">Export CSV</span> — Click "Export CSV" to download a file with each story's question, answer, child name, and age. Open it in any spreadsheet app to copy from.</p>
                     </div>
                     <div className="flex gap-3">
                       <span className="font-display font-bold text-primary shrink-0 w-6 text-right">3.</span>
-                      <p><span className="font-semibold">Open the Canva template</span> — Click "Open Canva Template" below. This opens your personal copy of the Little Minds Big Questions book template. (You'll need a free Canva account — it only takes a minute to sign up.)</p>
+                      <p><span className="font-semibold">Open the Canva template</span> — Click "Open Canva Template" below to get your own editable copy. (You'll need a free Canva account — it only takes a minute to sign up.)</p>
                     </div>
                     <div className="flex gap-3">
                       <span className="font-display font-bold text-primary shrink-0 w-6 text-right">4.</span>
-                      <p><span className="font-semibold">Use Bulk Create</span> — Inside Canva: click <em>Apps → Bulk Create → Upload CSV</em> and select the file you just downloaded. Map the columns: connect <code className="bg-muted px-1 rounded text-xs">story_title</code> to the title text box, <code className="bg-muted px-1 rounded text-xs">story_text</code> to the story text box, and <code className="bg-muted px-1 rounded text-xs">child_name</code> to the child name field.</p>
+                      <p><span className="font-semibold">Copy & paste</span> — Copy the questions and stories from the CSV into the matching text boxes on each template page. Add your child's name and age to the cover. Tweak fonts, colours, or layout however you like!</p>
                     </div>
                     <div className="flex gap-3">
                       <span className="font-display font-bold text-primary shrink-0 w-6 text-right">5.</span>
-                      <p><span className="font-semibold">Generate your pages</span> — Click Generate — Canva automatically creates a page for each story with the text filled in. Review the pages and make any tweaks you like.</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <span className="font-display font-bold text-primary shrink-0 w-6 text-right">6.</span>
-                      <p><span className="font-semibold">Download & print</span> — Click <em>Share → Download → PDF Print</em> (select "PDF - Print" for the best quality). Then send to your local print shop or home printer for a professional hardcover or softcover book!</p>
+                      <p><span className="font-semibold">Download & print</span> — Click <em>Share → Download → PDF Print</em> for the best quality. Then send to your local print shop or order online for a professional hardcover or softcover book!</p>
                     </div>
                   </div>
 

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Download, Loader2, Sparkles } from "lucide-react";
+import { Download, Loader2, Sparkles, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,26 +27,28 @@ function drawRoundedRect(
   ctx.closePath();
 }
 
+// Richer palette with slide-specific tones
 const palette = {
-  background: "hsl(34 58% 89%)",
+  cream: "hsl(34 58% 89%)",
   paper: "hsl(36 50% 95%)",
   paperSoft: "hsl(36 40% 92%)",
   ink: "hsl(30 7% 15%)",
-  muted: "hsl(30 7% 35%)",
+  muted: "hsl(30 7% 40%)",
   border: "hsl(34 30% 80%)",
   blue: "hsl(210 76% 84%)",
+  blueSoft: "hsl(210 60% 94%)",
   coral: "hsl(14 76% 65%)",
   coralSoft: "hsl(14 76% 92%)",
   sage: "hsl(88 30% 74%)",
   sageSoft: "hsl(88 30% 92%)",
   gold: "hsl(42 84% 68%)",
+  goldSoft: "hsl(42 60% 92%)",
 };
 
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
-  x: number,
-  y: number,
+  x: number, y: number,
   maxWidth: number,
   lineHeight: number,
   maxLines = 999
@@ -54,12 +56,11 @@ function wrapText(
   const words = text.split(" ");
   let line = "";
   let lines = 0;
-
   for (const word of words) {
     const testLine = line + word + " ";
     if (ctx.measureText(testLine).width > maxWidth && line) {
       if (lines >= maxLines - 1) {
-        ctx.fillText(line.trim() + "...", x, y);
+        ctx.fillText(line.trim() + "…", x, y);
         return y + lineHeight;
       }
       ctx.fillText(line.trim(), x, y);
@@ -76,17 +77,12 @@ function wrapText(
 
 function wrapParagraphs(
   ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number,
-  maxLines: number,
+  text: string, x: number, y: number,
+  maxWidth: number, lineHeight: number, maxLines: number,
 ) {
   const paragraphs = text.split(/\n+/).filter(Boolean);
   let currentY = y;
   let linesUsed = 0;
-
   for (const paragraph of paragraphs) {
     const words = paragraph.split(" ");
     let line = "";
@@ -105,7 +101,6 @@ function wrapParagraphs(
         line = testLine;
       }
     }
-
     if (line) {
       if (linesUsed >= maxLines - 1) {
         ctx.fillText(line.trim() + "…", x, currentY);
@@ -115,44 +110,57 @@ function wrapParagraphs(
       currentY += lineHeight;
       linesUsed++;
     }
-
     currentY += lineHeight * 0.35;
   }
-
   return currentY;
 }
 
-function createBaseCanvas(): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
+function createSlideCanvas(bg: string): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1080;
   const ctx = canvas.getContext("2d")!;
-
-   const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
-   gradient.addColorStop(0, palette.background);
-   gradient.addColorStop(1, palette.paper);
-   ctx.fillStyle = gradient;
+  ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 1080, 1080);
-
-   // Soft decorative circles
-  ctx.globalAlpha = 0.15;
-   ctx.fillStyle = palette.blue;
-  ctx.beginPath(); ctx.arc(900, 150, 120, 0, Math.PI * 2); ctx.fill();
-   ctx.fillStyle = palette.coral;
-  ctx.beginPath(); ctx.arc(180, 900, 80, 0, Math.PI * 2); ctx.fill();
-   ctx.fillStyle = palette.sage;
-  ctx.beginPath(); ctx.arc(950, 850, 60, 0, Math.PI * 2); ctx.fill();
-  ctx.globalAlpha = 1;
-
   return { canvas, ctx };
 }
 
-function drawFooter(ctx: CanvasRenderingContext2D) {
+function drawDecorCircles(ctx: CanvasRenderingContext2D, variant: number) {
+  ctx.globalAlpha = 0.12;
+  const configs = [
+    [{ c: palette.blue, x: 920, y: 140, r: 110 }, { c: palette.coral, x: 160, y: 920, r: 70 }, { c: palette.sage, x: 960, y: 880, r: 50 }],
+    [{ c: palette.sage, x: 100, y: 160, r: 100 }, { c: palette.gold, x: 940, y: 900, r: 80 }, { c: palette.blue, x: 900, y: 200, r: 60 }],
+    [{ c: palette.coral, x: 920, y: 160, r: 90 }, { c: palette.sage, x: 140, y: 880, r: 110 }, { c: palette.gold, x: 500, y: 100, r: 50 }],
+    [{ c: palette.gold, x: 160, y: 140, r: 100 }, { c: palette.blue, x: 920, y: 920, r: 80 }, { c: palette.coral, x: 100, y: 800, r: 60 }],
+    [{ c: palette.blue, x: 540, y: 100, r: 80 }, { c: palette.sage, x: 140, y: 900, r: 70 }, { c: palette.coral, x: 940, y: 880, r: 90 }],
+  ];
+  const circles = configs[variant % configs.length];
+  for (const { c, x, y, r } of circles) {
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawBrandFooter(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = palette.ink;
-  ctx.globalAlpha = 0.4;
-  ctx.font = "500 22px Fredoka, Nunito, sans-serif";
+  ctx.globalAlpha = 0.35;
+  ctx.font = "500 20px Fredoka, Nunito, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("Little Minds Big Questions", 540, 1040);
+  ctx.fillText("Little Minds Big Questions", 540, 1050);
+  ctx.globalAlpha = 1;
+}
+
+function drawDivider(ctx: CanvasRenderingContext2D, y: number, color: string) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.3;
+  ctx.beginPath();
+  ctx.moveTo(120, y);
+  ctx.lineTo(960, y);
+  ctx.stroke();
   ctx.globalAlpha = 1;
 }
 
@@ -165,7 +173,6 @@ function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {
 
 async function loadImage(src?: string | null) {
   if (!src) return null;
-
   return await new Promise<HTMLImageElement | null>((resolve) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -176,19 +183,13 @@ async function loadImage(src?: string | null) {
 }
 
 function drawImageContain(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
+  ctx: CanvasRenderingContext2D, img: HTMLImageElement,
+  x: number, y: number, width: number, height: number,
 ) {
   const scale = Math.min(width / img.width, height / img.height);
-  const drawWidth = img.width * scale;
-  const drawHeight = img.height * scale;
-  const drawX = x + (width - drawWidth) / 2;
-  const drawY = y + (height - drawHeight) / 2;
-  ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, x + (width - dw) / 2, y + (height - dh) / 2, dw, dh);
 }
 
 const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
@@ -196,15 +197,9 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
   const [downloading, setDownloading] = useState<"question" | "story" | "carousel" | null>(null);
 
   const excerpt = useMemo(() => {
-    const firstParagraph = question.metaphor_answer.split(/\n+/)[0] || question.metaphor_answer;
-    return firstParagraph.length > 190 ? `${firstParagraph.slice(0, 187)}…` : firstParagraph;
+    const first = question.metaphor_answer.split(/\n+/)[0] || question.metaphor_answer;
+    return first.length > 190 ? `${first.slice(0, 187)}…` : first;
   }, [question.metaphor_answer]);
-
-  const parentSnippet = useMemo(() => {
-    return question.parent_explanation.length > 140
-      ? `${question.parent_explanation.slice(0, 137)}…`
-      : question.parent_explanation;
-  }, [question.parent_explanation]);
 
   const handleUpgrade = async () => {
     if (!user) { window.location.href = "/auth"; return; }
@@ -217,264 +212,326 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
     }
   };
 
+  // ─── QUESTION CARD (free) ───
   const generateQuestionCard = useCallback(async () => {
     setDownloading("question");
-    const { canvas, ctx } = createBaseCanvas();
+    const { canvas, ctx } = createSlideCanvas(palette.cream);
+    drawDecorCircles(ctx, 0);
     const image = await loadImage(question.image_url);
 
+    // Card panel
     ctx.fillStyle = palette.paper;
     drawRoundedRect(ctx, 54, 54, 972, 972, 44);
     ctx.fill();
     ctx.strokeStyle = palette.border;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    ctx.fillStyle = palette.coralSoft;
-    drawRoundedRect(ctx, 86, 86, 220, 52, 26);
-    ctx.fill();
-    ctx.fillStyle = palette.ink;
-    ctx.font = "bold 24px Fredoka, sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("QUESTION CARD", 116, 120);
-
-    ctx.fillStyle = palette.paperSoft;
-    drawRoundedRect(ctx, 86, 168, 908, 430, 40);
-    ctx.fill();
-
+    // Image area
     if (image) {
-      drawImageContain(ctx, image, 126, 194, 828, 378);
+      drawImageContain(ctx, image, 140, 100, 800, 440);
     }
 
-    ctx.fillStyle = palette.blue;
-    drawRoundedRect(ctx, 86, 640, 280, 52, 26);
+    drawDivider(ctx, 570, palette.coral);
+
+    // Badge
+    ctx.fillStyle = palette.coralSoft;
+    drawRoundedRect(ctx, 100, 596, 260, 48, 24);
     ctx.fill();
     ctx.fillStyle = palette.ink;
-    ctx.font = "600 24px Nunito, sans-serif";
-    ctx.fillText(`${question.child_name}, age ${question.child_age}`, 116, 674);
+    ctx.textAlign = "left";
+    ctx.font = "600 22px Nunito, sans-serif";
+    ctx.fillText(`${question.child_name}, age ${question.child_age}`, 126, 628);
 
+    // Question
     ctx.textAlign = "center";
     ctx.fillStyle = palette.ink;
-    ctx.font = "bold 42px Fredoka, Nunito, sans-serif";
-    wrapText(ctx, `“${question.question_text}”`, 540, 760, 820, 54, 4);
+    ctx.font = "bold 44px Fredoka, sans-serif";
+    wrapText(ctx, `"${question.question_text}"`, 540, 730, 820, 56, 4);
 
+    // Excerpt
     ctx.fillStyle = palette.muted;
-    ctx.font = "500 28px Nunito, sans-serif";
-    wrapText(ctx, excerpt, 540, 934, 820, 38, 3);
-    ctx.globalAlpha = 1;
+    ctx.font = "italic 26px Nunito, sans-serif";
+    wrapText(ctx, excerpt, 540, 940, 820, 36, 2);
 
-    drawFooter(ctx);
+    drawBrandFooter(ctx);
     downloadCanvas(canvas, `question-card-${question.child_name.toLowerCase()}.png`);
     setDownloading(null);
-  }, [question]);
+  }, [question, excerpt]);
 
+  // ─── STORY CARD (paid) ───
   const generateStoryCard = useCallback(async () => {
     setDownloading("story");
-    const { canvas, ctx } = createBaseCanvas();
+    const { canvas, ctx } = createSlideCanvas(palette.sageSoft);
+    drawDecorCircles(ctx, 1);
     const image = await loadImage(question.image_url);
 
+    // Full-width illustration hero
     ctx.fillStyle = palette.paper;
     drawRoundedRect(ctx, 54, 54, 972, 972, 44);
     ctx.fill();
-    ctx.strokeStyle = palette.border;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.fillStyle = palette.sageSoft;
-    drawRoundedRect(ctx, 86, 86, 908, 420, 40);
-    ctx.fill();
 
     if (image) {
-      drawImageContain(ctx, image, 116, 116, 848, 360);
+      ctx.save();
+      drawRoundedRect(ctx, 80, 80, 920, 480, 36);
+      ctx.clip();
+      ctx.fillStyle = palette.sageSoft;
+      ctx.fillRect(80, 80, 920, 480);
+      drawImageContain(ctx, image, 80, 80, 920, 480);
+      ctx.restore();
     }
 
-    ctx.fillStyle = palette.sage;
-    drawRoundedRect(ctx, 86, 540, 260, 50, 25);
-    ctx.fill();
-    ctx.fillStyle = palette.ink;
-    ctx.textAlign = "left";
-    ctx.font = "bold 22px Fredoka, sans-serif";
-    ctx.fillText("STORY CARD", 118, 572);
+    // Decorative flourish line
+    ctx.strokeStyle = palette.sage;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(340, 590);
+    ctx.bezierCurveTo(440, 575, 640, 575, 740, 590);
+    ctx.stroke();
 
+    // Story title
     ctx.textAlign = "center";
-    ctx.font = "bold 40px Fredoka, sans-serif";
-    wrapText(ctx, question.metaphor_title, 540, 658, 810, 48, 3);
-
-    ctx.fillStyle = palette.muted;
-    ctx.font = "italic 24px Nunito, sans-serif";
-    wrapText(ctx, `“${question.question_text}”`, 540, 760, 800, 34, 2);
-
     ctx.fillStyle = palette.ink;
-    ctx.font = "400 28px Nunito, sans-serif";
-    wrapParagraphs(ctx, question.metaphor_answer, 120, 842, 840, 36, 5);
+    ctx.font = "bold 42px Fredoka, sans-serif";
+    wrapText(ctx, question.metaphor_title, 540, 650, 800, 50, 2);
 
+    // Question as pull-quote
+    ctx.fillStyle = palette.muted;
+    ctx.font = "italic 26px Nunito, sans-serif";
+    wrapText(ctx, `"${question.question_text}"`, 540, 748, 780, 34, 2);
+
+    // Story excerpt
+    ctx.textAlign = "left";
+    ctx.fillStyle = palette.ink;
+    ctx.font = "400 26px Nunito, sans-serif";
+    wrapParagraphs(ctx, question.metaphor_answer, 120, 840, 840, 34, 4);
+
+    // Child name badge
     ctx.fillStyle = palette.coralSoft;
-    drawRoundedRect(ctx, 86, 940, 350, 52, 26);
+    drawRoundedRect(ctx, 100, 970, 300, 44, 22);
     ctx.fill();
     ctx.fillStyle = palette.ink;
-    ctx.font = "600 22px Nunito, sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText(`${question.child_name}, age ${question.child_age}`, 118, 974);
+    ctx.font = "600 20px Nunito, sans-serif";
+    ctx.fillText(`A story for ${question.child_name}, age ${question.child_age}`, 120, 998);
 
-    drawFooter(ctx);
+    drawBrandFooter(ctx);
     downloadCanvas(canvas, `story-card-${question.child_name.toLowerCase()}.png`);
     setDownloading(null);
   }, [question]);
 
+  // ─── INSTAGRAM CAROUSEL (paid, 5 slides) ───
   const generateCarousel = useCallback(async () => {
     setDownloading("carousel");
     const image = await loadImage(question.image_url);
+    const paragraphs = question.metaphor_answer.split(/\n+/).filter(Boolean);
+    const storyPart1 = paragraphs.slice(0, Math.ceil(paragraphs.length / 2)).join("\n\n");
+    const storyPart2 = paragraphs.slice(Math.ceil(paragraphs.length / 2)).join("\n\n");
 
-    const slides: { draw: (ctx: CanvasRenderingContext2D) => void; name: string }[] = [
+    const slides: { bg: string; variant: number; draw: (ctx: CanvasRenderingContext2D) => void; name: string }[] = [
+      // SLIDE 1: Magazine cover — full-bleed image + question overlay
       {
-        name: "slide1",
+        bg: palette.cream, variant: 0, name: "slide1-cover",
         draw: (ctx) => {
-          ctx.fillStyle = palette.paper;
-          drawRoundedRect(ctx, 60, 60, 960, 960, 42);
-          ctx.fill();
-          ctx.strokeStyle = palette.border;
-          ctx.lineWidth = 3;
-          ctx.stroke();
-
-          ctx.fillStyle = palette.coralSoft;
-          drawRoundedRect(ctx, 92, 92, 220, 50, 24);
-          ctx.fill();
-          ctx.fillStyle = palette.ink;
-          ctx.font = "bold 22px Fredoka, sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillText("SLIDE 1 · THE QUESTION", 120, 124);
-
-          ctx.fillStyle = palette.paperSoft;
-          drawRoundedRect(ctx, 92, 176, 896, 420, 36);
-          ctx.fill();
           if (image) {
-            drawImageContain(ctx, image, 122, 206, 836, 360);
+            ctx.globalAlpha = 0.2;
+            drawImageContain(ctx, image, 0, 0, 1080, 1080);
+            ctx.globalAlpha = 1;
+            // Hero image centered
+            drawImageContain(ctx, image, 140, 60, 800, 540);
           }
 
-          ctx.fillStyle = palette.ink;
-          ctx.font = "bold 46px Fredoka, sans-serif";
+          // Bottom panel
+          ctx.fillStyle = palette.paper;
+          ctx.globalAlpha = 0.92;
+          drawRoundedRect(ctx, 0, 620, 1080, 460, 0);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+
+          // Tag
+          ctx.fillStyle = palette.coral;
+          drawRoundedRect(ctx, 100, 660, 200, 44, 22);
+          ctx.fill();
+          ctx.fillStyle = "white";
+          ctx.font = "bold 20px Fredoka, sans-serif";
           ctx.textAlign = "center";
-          wrapText(ctx, `“${question.question_text}”`, 540, 720, 820, 56, 4);
+          ctx.fillText("BIG QUESTION", 200, 688);
+
+          // Question
+          ctx.fillStyle = palette.ink;
+          ctx.font = "bold 48px Fredoka, sans-serif";
+          ctx.textAlign = "left";
+          wrapText(ctx, `"${question.question_text}"`, 100, 760, 880, 58, 4);
+
+          // Name
           ctx.fillStyle = palette.muted;
-          ctx.font = "500 28px Nunito, sans-serif";
-          ctx.fillText(`Asked by ${question.child_name}, age ${question.child_age}`, 540, 924);
+          ctx.font = "500 26px Nunito, sans-serif";
+          ctx.fillText(`Asked by ${question.child_name}, age ${question.child_age}`, 100, 990);
         },
       },
+      // SLIDE 2: Story title page — elegant opening
       {
-        name: "slide2",
+        bg: palette.paper, variant: 1, name: "slide2-title",
         draw: (ctx) => {
-          ctx.fillStyle = palette.paper;
-          drawRoundedRect(ctx, 60, 60, 960, 960, 42);
-          ctx.fill();
-          ctx.strokeStyle = palette.border;
+          // Decorative frame
+          ctx.strokeStyle = palette.sage;
           ctx.lineWidth = 3;
+          drawRoundedRect(ctx, 60, 60, 960, 960, 40);
           ctx.stroke();
 
-          ctx.fillStyle = palette.sageSoft;
-          drawRoundedRect(ctx, 92, 92, 896, 320, 34);
-          ctx.fill();
+          // Small illustration
           if (image) {
-            drawImageContain(ctx, image, 124, 118, 832, 268);
+            drawImageContain(ctx, image, 340, 100, 400, 320);
           }
 
-          ctx.fillStyle = palette.sage;
-          drawRoundedRect(ctx, 92, 448, 250, 50, 24);
-          ctx.fill();
-          ctx.fillStyle = palette.ink;
-          ctx.textAlign = "left";
-          ctx.font = "bold 22px Fredoka, sans-serif";
-          ctx.fillText("SLIDE 2 · THE STORY", 120, 480);
-
-          ctx.textAlign = "center";
-          ctx.font = "bold 40px Fredoka, sans-serif";
-          wrapText(ctx, question.metaphor_title, 540, 580, 800, 48, 3);
-          ctx.font = "400 28px Nunito, sans-serif";
-          ctx.fillStyle = palette.ink;
-          wrapParagraphs(ctx, question.metaphor_answer, 118, 704, 844, 38, 7);
-        },
-      },
-      {
-        name: "slide3",
-        draw: (ctx) => {
-          ctx.fillStyle = palette.paper;
-          drawRoundedRect(ctx, 60, 60, 960, 960, 42);
-          ctx.fill();
-          ctx.strokeStyle = palette.border;
-          ctx.lineWidth = 3;
+          // Flourish
+          ctx.strokeStyle = palette.gold;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(280, 460);
+          ctx.bezierCurveTo(400, 440, 680, 440, 800, 460);
           ctx.stroke();
 
-          ctx.fillStyle = palette.blue;
-          drawRoundedRect(ctx, 92, 92, 270, 50, 24);
-          ctx.fill();
-          ctx.fillStyle = palette.ink;
-          ctx.textAlign = "left";
-          ctx.font = "bold 22px Fredoka, sans-serif";
-          ctx.fillText("SLIDE 3 · FOR PARENTS", 120, 124);
-
-          ctx.fillStyle = palette.ink;
+          // Title
           ctx.textAlign = "center";
-          ctx.font = "bold 44px Fredoka, sans-serif";
-          ctx.fillText("Why this story helps", 540, 240);
+          ctx.fillStyle = palette.ink;
+          ctx.font = "bold 52px Fredoka, sans-serif";
+          wrapText(ctx, question.metaphor_title, 540, 540, 800, 62, 3);
 
-          ctx.fillStyle = palette.paperSoft;
-          drawRoundedRect(ctx, 92, 292, 896, 310, 32);
-          ctx.fill();
+          // Opening paragraph
+          ctx.fillStyle = palette.muted;
+          ctx.font = "italic 28px Nunito, sans-serif";
+          wrapText(ctx, `"${question.question_text}"`, 540, 720, 780, 38, 2);
+
+          drawDivider(ctx, 810, palette.sage);
+
           ctx.fillStyle = palette.ink;
           ctx.textAlign = "left";
-          ctx.font = "400 32px Nunito, sans-serif";
-          wrapParagraphs(ctx, question.parent_explanation, 132, 360, 820, 42, 5);
-
-          ctx.fillStyle = palette.coralSoft;
-          drawRoundedRect(ctx, 92, 650, 896, 180, 32);
-          ctx.fill();
-          ctx.fillStyle = palette.ink;
-          ctx.font = "bold 30px Fredoka, sans-serif";
-          ctx.fillText("Better than a screenshot", 132, 712);
           ctx.font = "400 26px Nunito, sans-serif";
-          wrapParagraphs(ctx, "Designed with image-first layout, readable story pacing, and a clean branded finish so every post feels intentional.", 132, 760, 820, 34, 4);
+          wrapParagraphs(ctx, storyPart1, 120, 850, 840, 34, 5);
         },
       },
+      // SLIDE 3: Story continuation — different background
       {
-        name: "slide4",
+        bg: palette.blueSoft, variant: 2, name: "slide3-story",
+        draw: (ctx) => {
+          // Inner card
+          ctx.fillStyle = palette.paper;
+          drawRoundedRect(ctx, 60, 60, 960, 960, 40);
+          ctx.fill();
+
+          // Label
+          ctx.fillStyle = palette.blue;
+          drawRoundedRect(ctx, 100, 90, 220, 44, 22);
+          ctx.fill();
+          ctx.fillStyle = palette.ink;
+          ctx.font = "bold 20px Fredoka, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("THE STORY", 210, 118);
+
+          // Story continuation
+          ctx.textAlign = "left";
+          ctx.fillStyle = palette.ink;
+          ctx.font = "400 28px Nunito, sans-serif";
+          wrapParagraphs(ctx, storyPart2 || storyPart1, 120, 200, 840, 38, 18);
+
+          // Pull quote at bottom
+          if (image) {
+            ctx.globalAlpha = 0.15;
+            drawImageContain(ctx, image, 700, 780, 280, 220);
+            ctx.globalAlpha = 1;
+          }
+        },
+      },
+      // SLIDE 4: For Parents — insight card
+      {
+        bg: palette.coralSoft, variant: 3, name: "slide4-parents",
         draw: (ctx) => {
           ctx.fillStyle = palette.paper;
-          drawRoundedRect(ctx, 60, 60, 960, 960, 42);
+          drawRoundedRect(ctx, 60, 60, 960, 960, 40);
           ctx.fill();
-          ctx.strokeStyle = palette.border;
-          ctx.lineWidth = 3;
-          ctx.stroke();
+
+          // Header
+          ctx.fillStyle = palette.coral;
+          drawRoundedRect(ctx, 100, 100, 260, 48, 24);
+          ctx.fill();
+          ctx.fillStyle = "white";
+          ctx.font = "bold 22px Fredoka, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("FOR PARENTS", 230, 130);
+
+          ctx.textAlign = "center";
+          ctx.fillStyle = palette.ink;
+          ctx.font = "bold 44px Fredoka, sans-serif";
+          ctx.fillText("Why this story helps", 540, 230);
+
+          drawDivider(ctx, 270, palette.coral);
+
+          // Parent explanation
+          ctx.textAlign = "left";
+          ctx.fillStyle = palette.ink;
+          ctx.font = "400 30px Nunito, sans-serif";
+          wrapParagraphs(ctx, question.parent_explanation, 120, 330, 840, 40, 12);
+
+          // Small image
+          if (image) {
+            ctx.globalAlpha = 0.2;
+            drawImageContain(ctx, image, 380, 820, 320, 200);
+            ctx.globalAlpha = 1;
+          }
+        },
+      },
+      // SLIDE 5: CTA — branding + call to action
+      {
+        bg: palette.goldSoft, variant: 4, name: "slide5-cta",
+        draw: (ctx) => {
+          ctx.fillStyle = palette.paper;
+          drawRoundedRect(ctx, 60, 60, 960, 960, 40);
+          ctx.fill();
 
           if (image) {
-            ctx.globalAlpha = 0.16;
-            drawImageContain(ctx, image, 180, 120, 720, 420);
+            ctx.globalAlpha = 0.14;
+            drawImageContain(ctx, image, 180, 80, 720, 460);
             ctx.globalAlpha = 1;
           }
 
-          ctx.fillStyle = palette.ink;
           ctx.textAlign = "center";
-          ctx.font = "bold 58px Fredoka, sans-serif";
-          ctx.fillText("Ask a big question", 540, 620);
-          ctx.fillText("and share it beautifully.", 540, 690);
-
-          ctx.fillStyle = palette.gold;
-          drawRoundedRect(ctx, 278, 770, 524, 90, 45);
-          ctx.fill();
           ctx.fillStyle = palette.ink;
+          ctx.font = "bold 56px Fredoka, sans-serif";
+          ctx.fillText("Every big question", 540, 580);
+          ctx.fillText("deserves a gentle story.", 540, 650);
+
+          // CTA button
+          ctx.fillStyle = palette.coral;
+          drawRoundedRect(ctx, 260, 730, 560, 90, 45);
+          ctx.fill();
+          ctx.fillStyle = "white";
           ctx.font = "bold 30px Fredoka, sans-serif";
-          ctx.fillText("littlemindsbigquestions.com", 540, 827);
+          ctx.fillText("littlemindsbigquestions.com", 540, 785);
 
           ctx.fillStyle = palette.muted;
           ctx.font = "500 24px Nunito, sans-serif";
-          ctx.fillText("Ready-made posts, keepsake cards, and swipeable story slides.", 540, 916);
+          ctx.fillText("Bedtime stories that answer life's biggest little questions.", 540, 890);
+
+          // Decorative dots
+          ctx.fillStyle = palette.gold;
+          ctx.globalAlpha = 0.3;
+          for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.arc(380 + i * 75, 950, 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
         },
       },
     ];
 
-    slides.forEach((slide) => {
-      const { canvas, ctx } = createBaseCanvas();
+    for (const slide of slides) {
+      const { canvas, ctx } = createSlideCanvas(slide.bg);
+      drawDecorCircles(ctx, slide.variant);
       slide.draw(ctx);
-      drawFooter(ctx);
+      drawBrandFooter(ctx);
       downloadCanvas(canvas, `${slide.name}-${question.child_name.toLowerCase()}.png`);
-    });
+    }
     setDownloading(null);
   }, [question]);
 
@@ -484,24 +541,27 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       title: "Question Card",
       description: "A polished teaser poster with the question, artwork, and story hook.",
       accent: "bg-peach/15 border-peach/40",
-      cta: isMember ? "Download question card" : "Download question card",
+      cta: "Download question card",
       action: generateQuestionCard,
+      free: true,
     },
     {
       key: "story" as const,
       title: "Story Card",
-      description: "A keepsake story poster with the title, artwork, and a curated excerpt.",
+      description: "A keepsake poster with full-bleed artwork, story title, and curated excerpt.",
       accent: "bg-sage/15 border-sage/40",
       cta: isMember ? "Download story card" : "Unlock story card",
       action: isMember ? generateStoryCard : handleUpgrade,
+      free: false,
     },
     {
       key: "carousel" as const,
       title: "Instagram Carousel",
-      description: "A 4-slide share sequence built for swiping, storytelling, and saves.",
+      description: "A 5-slide editorial sequence — cover, story pages, parent insight, and CTA.",
       accent: "bg-accent/15 border-accent/40",
-      cta: isMember ? "Download carousel" : "Unlock carousel",
+      cta: isMember ? "Download 5 slides" : "Unlock carousel",
       action: isMember ? generateCarousel : handleUpgrade,
+      free: false,
     },
   ];
 
@@ -510,7 +570,7 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       <div>
         <h3 className="font-display font-bold text-lg">Download & Share</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          These are designed to beat a screenshot: cleaner pacing, bigger artwork, and layouts made for sharing.
+          Editorial-quality posts designed to look better than a screenshot — with artwork, story pacing, and branded layouts.
         </p>
       </div>
 
@@ -524,15 +584,21 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
                   <p className="text-xs text-muted-foreground">{card.description}</p>
                 </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background/80">
-                  <Sparkles className="h-4 w-4 text-primary" />
+                  {card.free || isMember ? (
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  ) : (
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                  )}
                 </div>
               </div>
 
               <div className="overflow-hidden rounded-[1.5rem] border border-border bg-background">
                 <div className="flex min-h-[260px] flex-col justify-between p-4">
                   <div>
-                    <p className="text-[10px] font-display uppercase tracking-[0.24em] text-muted-foreground">{card.key === "carousel" ? "Swipe story sequence" : card.key === "story" ? "Keepsake share card" : "Question-led teaser"}</p>
-                    <p className="mt-3 font-display text-lg font-bold leading-tight">“{question.question_text}”</p>
+                    <p className="text-[10px] font-display uppercase tracking-[0.24em] text-muted-foreground">
+                      {card.key === "carousel" ? "5-slide editorial sequence" : card.key === "story" ? "Full-bleed keepsake card" : "Question-led teaser"}
+                    </p>
+                    <p className="mt-3 font-display text-lg font-bold leading-tight">"{question.question_text}"</p>
                     <p className="mt-1 text-xs text-muted-foreground">{question.child_name}, age {question.child_age}</p>
                   </div>
 
@@ -545,9 +611,13 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
                   </div>
 
                   <div>
-                    <p className="font-display text-sm font-semibold">{card.key === "story" ? question.metaphor_title : card.key === "carousel" ? "Built as a 4-slide swipe-through" : "A soft hook into the full story"}</p>
+                    <p className="font-display text-sm font-semibold">
+                      {card.key === "story" ? question.metaphor_title : card.key === "carousel" ? "Cover → Story → Parents → CTA" : "A soft hook into the full story"}
+                    </p>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      {card.key === "story" ? excerpt : card.key === "carousel" ? parentSnippet : excerpt}
+                      {card.key === "carousel"
+                        ? "Each slide has a unique layout, colour palette, and editorial treatment."
+                        : excerpt}
                     </p>
                   </div>
                 </div>
@@ -561,7 +631,7 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
                 className="mt-4 w-full gap-2"
               >
                 {downloading === card.key ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                {downloading === card.key ? "Preparing download..." : card.cta}
+                {downloading === card.key ? "Preparing download…" : card.cta}
               </Button>
             </div>
           </div>
@@ -569,7 +639,7 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        All downloads are 1080×1080px. Members get the keepsake story card and full Instagram carousel export.
+        All downloads are 1080×1080px. Members get the keepsake story card and full 5-slide Instagram carousel.
       </p>
     </div>
   );

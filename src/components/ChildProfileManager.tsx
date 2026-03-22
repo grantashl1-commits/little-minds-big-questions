@@ -100,13 +100,18 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
 
   const handleDelete = async (id: string, name: string) => {
     setSaving("delete");
-    const { error } = await supabase.from("child_profiles").delete().eq("id", id);
-    if (error) toast.error(error.message || "Could not delete");
-    else {
-      toast.success(`${name}'s profile removed`);
-      await onRefresh();
+    try {
+      const { error } = await supabase.from("child_profiles").delete().eq("id", id);
+      if (error) toast.error(error.message || "Could not delete");
+      else {
+        toast.success(`${name}'s profile removed`);
+        await onRefresh();
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSaving(null);
     }
-    setSaving(null);
   };
 
   const startEdit = (p: ChildProfile) => {

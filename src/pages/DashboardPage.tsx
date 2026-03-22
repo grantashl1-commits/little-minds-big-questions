@@ -457,7 +457,7 @@ const DashboardPage = () => {
                 onClick={() => setActiveTab("book")}
                 size="sm"
               >
-                <BookOpen className="h-4 w-4 mr-1" /> Create Your Book
+                <img src={iconBook} alt="" className="h-4 w-4 mr-1 object-contain" /> Create Your Book
               </Button>
               <Button
                 variant={activeTab === "children" ? "default" : "outline"}

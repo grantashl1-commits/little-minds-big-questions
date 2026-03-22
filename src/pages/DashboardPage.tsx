@@ -647,7 +647,7 @@ const DashboardPage = () => {
                       return (
                         <Card key={c.id}>
                           <CardContent className="p-4 flex items-center gap-4">
-                            <Star className="h-6 w-6 text-accent shrink-0" />
+                            <img src={iconCollections} alt="" className="h-6 w-6 shrink-0 object-contain" />
                             <div className="flex-1 min-w-0">
                               {editingCollection === c.id ? (
                                 <div className="flex items-center gap-2">

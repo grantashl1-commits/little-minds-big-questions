@@ -7,10 +7,13 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
+  Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
   ChevronDown, ChevronUp, Baby, ExternalLink
 } from "lucide-react";
+import iconLibrary from "@/assets/icon-library.png";
+import iconBook from "@/assets/icon-book.png";
+import iconCollections from "@/assets/icon-collections.png";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ChildProfileManager from "@/components/ChildProfileManager";

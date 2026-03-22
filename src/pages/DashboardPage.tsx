@@ -392,7 +392,7 @@ const DashboardPage = () => {
           <div className="grid md:grid-cols-3 gap-4 mb-8">
             <Card className="opacity-60">
               <CardHeader>
-                <Library className="h-8 w-8 text-primary mb-2" />
+                <img src={iconLibrary} alt="Library" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">My Library</CardTitle>
               </CardHeader>
               <CardContent>
@@ -401,7 +401,7 @@ const DashboardPage = () => {
             </Card>
             <Card className="opacity-60">
               <CardHeader>
-                <BookOpen className="h-8 w-8 text-secondary mb-2" />
+                <img src={iconBook} alt="Create a Book" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">Create a Book</CardTitle>
               </CardHeader>
               <CardContent>
@@ -410,7 +410,7 @@ const DashboardPage = () => {
             </Card>
             <Card className="opacity-60">
               <CardHeader>
-                <Star className="h-8 w-8 text-accent mb-2" />
+                <img src={iconCollections} alt="Collections" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">Collections</CardTitle>
               </CardHeader>
               <CardContent>

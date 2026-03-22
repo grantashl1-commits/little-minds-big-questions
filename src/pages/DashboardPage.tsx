@@ -17,6 +17,7 @@ import ChildProfileManager from "@/components/ChildProfileManager";
 import type { ChildProfile } from "@/components/ChildProfileManager";
 import { Checkbox } from "@/components/ui/checkbox";
 import BookCoverGenerator from "@/components/BookCoverGenerator";
+import dashboardOwl from "@/assets/dashboard-owl.png";
 import {
   Select,
   SelectContent,
@@ -516,7 +517,7 @@ const DashboardPage = () => {
                 ) : filteredQuestions.length === 0 ? (
                   <Card className="text-center py-12">
                     <CardContent>
-                      <img src="/metaphor-images/owl.png" alt="" className="w-20 h-20 mx-auto mb-4 opacity-60 object-contain" />
+                      <img src={dashboardOwl} alt="Watercolor owl illustration" className="w-20 h-20 mx-auto mb-4 opacity-60 object-contain" />
                       <p className="font-display text-lg font-semibold mb-1">No saved stories yet</p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Generate a story and click "Save to Library" to see it here.

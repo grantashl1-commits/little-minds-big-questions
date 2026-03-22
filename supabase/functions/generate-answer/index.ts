@@ -6,6 +6,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function fetchWithTimeout(input: string, init: RequestInit, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -77,7 +88,7 @@ Question: ${question_text}
 ${context ? `Context: ${context}` : ""}
 ${parent_note ? `Parent note: ${parent_note}` : ""}`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -126,7 +137,7 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
         ],
         tool_choice: { type: "function", function: { name: "generate_story_answer" } },
       }),
-    });
+    }, 45000);
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -168,7 +179,7 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
 
       // Try keyword match from existing images
       const keywords = result.image_prompt.toLowerCase().split(/\s+/).filter((w: string) => w.length > 3);
-      const { data: existingImages } = await supabase
+        const { data: existingImages } = await supabase
         .from("metaphor_images")
         .select("public_url, keywords")
         .limit(20);
@@ -188,7 +199,7 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
       }
 
       if (!image_url) {
-        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const imageResponse = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -204,7 +215,7 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
             ],
             modalities: ["image", "text"],
           }),
-        });
+        }, 18000);
 
         if (imageResponse.ok) {
           const imageData = await imageResponse.json();
@@ -232,6 +243,8 @@ ${parent_note ? `Parent note: ${parent_note}` : ""}`;
               });
             }
           }
+        } else {
+          console.error("Image generation skipped:", imageResponse.status, await imageResponse.text());
         }
       }
     } catch (imgErr) {

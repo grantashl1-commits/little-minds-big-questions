@@ -46,21 +46,26 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
     }
 
     setSaving("create");
-    const { error } = await supabase.from("child_profiles").insert({
-      user_id: user.id,
-      name: form.name.trim(),
-      age: parsedAge,
-      avatar_emoji: form.emoji,
-    });
+    try {
+      const { error } = await supabase.from("child_profiles").insert({
+        user_id: user.id,
+        name: form.name.trim(),
+        age: parsedAge,
+        avatar_emoji: form.emoji,
+      });
 
-    if (error) {
-      toast.error(error.message || "Could not create profile");
-    } else {
-      toast.success(`${form.name}'s profile saved!`);
-      resetForm();
-      await onRefresh();
+      if (error) {
+        toast.error(error.message || "Could not create profile");
+      } else {
+        toast.success(`${form.name}'s profile saved!`);
+        resetForm();
+        await onRefresh();
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSaving(null);
     }
-    setSaving(null);
   };
 
   const handleUpdate = async (id: string) => {

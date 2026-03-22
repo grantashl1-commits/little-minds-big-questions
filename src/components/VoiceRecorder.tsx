@@ -181,7 +181,7 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
           </div>
 
           <p className="font-display text-base text-muted-foreground mt-6 font-semibold">
-            {state === "idle" ? "Tap the microphone to start! 🎙️" : "Recording... tap to stop! 🛑"}
+            {state === "idle" ? "Tap the microphone to start." : "Recording... tap to stop."}
           </p>
         </>
       )}
@@ -231,6 +231,13 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
             )}
           </div>
 
+          <div className="flex justify-center">
+            <Button variant="ghost" size="sm" type="button" onClick={reRecord} className="gap-2">
+              <RotateCcw className="w-4 h-4" />
+              Re-record
+            </Button>
+          </div>
+
           {/* Confirm / Correct */}
           {!transcribing && (
             <div className="space-y-4">
@@ -276,10 +283,6 @@ const VoiceRecorder = ({ onConfirmed }: VoiceRecorderProps) => {
               )}
 
               <div className="flex gap-3 justify-center pt-2">
-                <Button variant="ghost" size="sm" onClick={reRecord} className="gap-2">
-                  <RotateCcw className="w-4 h-4" />
-                  Re-record
-                </Button>
                 <Button
                   size="lg"
                   onClick={handleConfirm}

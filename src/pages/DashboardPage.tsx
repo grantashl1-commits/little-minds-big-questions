@@ -75,39 +75,63 @@ const DashboardPage = () => {
   const [previewOpen, setPreviewOpen] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    setLoadingData(true);
+
     if (!user) {
+      setSavedQuestions([]);
+      setCollections([]);
+      setChildProfiles([]);
       setLoadingData(false);
       return;
     }
 
-    // Always fetch child profiles for any logged-in user
-    const cpRes = await supabase
-      .from("child_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at");
-    if (cpRes.data) setChildProfiles(cpRes.data as ChildProfile[]);
+    try {
+      if (!isMember) {
+        const cpRes = await supabase
+          .from("child_profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at");
 
-    if (!isMember) {
+        if (cpRes.error) throw cpRes.error;
+
+        setChildProfiles((cpRes.data || []) as ChildProfile[]);
+        setSavedQuestions([]);
+        setCollections([]);
+        return;
+      }
+
+      const [cpRes, sqRes, colRes] = await Promise.all([
+        supabase
+          .from("child_profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at"),
+        supabase
+          .from("saved_questions")
+          .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("collections")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      if (cpRes.error) throw cpRes.error;
+      if (sqRes.error) throw sqRes.error;
+      if (colRes.error) throw colRes.error;
+
+      setChildProfiles((cpRes.data || []) as ChildProfile[]);
+      setSavedQuestions((sqRes.data || []) as unknown as SavedQuestion[]);
+      setCollections(colRes.data || []);
+    } catch (error) {
+      console.error("Failed to load dashboard data:", error);
+      toast.error("Couldn't load your dashboard properly. Please refresh and try again.");
+    } finally {
       setLoadingData(false);
-      return;
     }
-
-    const [sqRes, colRes] = await Promise.all([
-      supabase
-        .from("saved_questions")
-        .select("id, question_id, collection_id, created_at, questions(id, question_text, metaphor_title, metaphor_answer, child_name, child_age, is_public, image_url, image_prompt, child_profile_id)")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("collections")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false }),
-    ]);
-    if (sqRes.data) setSavedQuestions(sqRes.data as unknown as SavedQuestion[]);
-    if (colRes.data) setCollections(colRes.data);
-    setLoadingData(false);
   }, [user, isMember]);
 
   useEffect(() => {
@@ -330,7 +354,7 @@ const DashboardPage = () => {
       <Navbar />
       <main className="flex-1 container max-w-5xl mx-auto px-6 py-10">
         <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-          Welcome back{user.user_metadata?.display_name ? `, ${user.user_metadata.display_name}` : ""} ✨
+          Welcome back{user.user_metadata?.display_name ? `, ${user.user_metadata.display_name}` : ""}
         </h1>
         <p className="text-muted-foreground mb-8">
           {isMember
@@ -474,7 +498,7 @@ const DashboardPage = () => {
                         <SelectItem value="all">All children</SelectItem>
                         {childProfiles.map((cp) => (
                           <SelectItem key={cp.id} value={cp.id}>
-                            {cp.avatar_emoji} {cp.name}'s Stories
+                            {cp.name}'s Stories
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -762,7 +786,7 @@ const DashboardPage = () => {
                       asChild
                     >
                       <a
-                        href="https://www.canva.com/design/DAGpzExample/view"
+                        href="https://www.canva.com/design/DAHEeuyye1w/l4IsizK5WOJ5Kq0vy17mqg/view?utm_content=DAHEeuyye1w&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -891,8 +915,7 @@ const DashboardPage = () => {
                               Ready to create your book?
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              Your export will include each story's question, narrative, child info, 
-                              and illustration prompts — formatted for easy pasting into a Canva book template.
+                              Your export includes each story's question, full story, child name, and age so you can copy and paste straight into your Canva template.
                             </p>
                           </div>
                           <Button

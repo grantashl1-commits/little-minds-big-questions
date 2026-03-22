@@ -145,12 +145,11 @@ const AskChildPage = () => {
       <section className="py-12 md:py-16 px-6">
         <div className="container max-w-2xl mx-auto">
           <div className="text-center mb-10">
-            <span className="text-4xl md:text-5xl block mb-3">🎤✨</span>
             <h1 className="text-3xl md:text-4xl font-bold font-display bg-gradient-to-r from-coral to-primary bg-clip-text text-transparent">
               Got a Big Question?
             </h1>
             <p className="text-muted-foreground mt-2 text-lg font-display">
-              Press the button and ask it out loud!
+              Press the button and ask it out loud. If we miss it, you can re-record.
             </p>
           </div>
 

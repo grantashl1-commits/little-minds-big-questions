@@ -12,11 +12,9 @@ export interface ChildProfile {
   user_id: string;
   name: string;
   age: number | null;
-  avatar_emoji: string;
-  created_at: string;
+  avatar_emoji: string | null;
+  created_at: string | null;
 }
-
-const EMOJI_OPTIONS = ["🦋", "🌟", "🐰", "🦊", "🐢", "🐳", "🦉", "🌈", "🚀", "🎨"];
 
 interface Props {
   profiles: ChildProfile[];
@@ -28,14 +26,22 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
   const { user } = useAuth();
   const [showAdd, setShowAdd] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", age: "", emoji: "🦋" });
+  const [form, setForm] = useState({ name: "", age: "" });
   const [saving, setSaving] = useState<"create" | "update" | "delete" | null>(null);
 
   const resetForm = () => {
-    setForm({ name: "", age: "", emoji: "🦋" });
+    setForm({ name: "", age: "" });
     setShowAdd(false);
     setEditingId(null);
   };
+
+  const getInitials = (name: string) =>
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() || "")
+      .join("") || "C";
 
   const handleCreate = async () => {
     if (!form.name.trim() || !user) return;
@@ -51,7 +57,6 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
         user_id: user.id,
         name: form.name.trim(),
         age: parsedAge,
-        avatar_emoji: form.emoji,
       });
 
       if (error) {
@@ -59,7 +64,11 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
       } else {
         toast.success(`${form.name}'s profile saved!`);
         resetForm();
-        await onRefresh();
+        try {
+          await onRefresh();
+        } catch {
+          toast.error("Profile saved, but the dashboard did not refresh. Please reload once.");
+        }
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -81,7 +90,6 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
       const { error } = await supabase.from("child_profiles").update({
         name: form.name.trim(),
         age: parsedAge,
-        avatar_emoji: form.emoji,
       }).eq("id", id);
 
       if (error) {
@@ -89,7 +97,11 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
       } else {
         toast.success(`${form.name}'s profile updated`);
         resetForm();
-        await onRefresh();
+        try {
+          await onRefresh();
+        } catch {
+          toast.error("Profile updated, but the dashboard did not refresh. Please reload once.");
+        }
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -105,7 +117,11 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
       if (error) toast.error(error.message || "Could not delete");
       else {
         toast.success(`${name}'s profile removed`);
-        await onRefresh();
+        try {
+          await onRefresh();
+        } catch {
+          toast.error("Profile removed, but the dashboard did not refresh. Please reload once.");
+        }
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -116,7 +132,7 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
 
   const startEdit = (p: ChildProfile) => {
     setEditingId(p.id);
-    setForm({ name: p.name, age: p.age?.toString() || "", emoji: p.avatar_emoji || "🦋" });
+    setForm({ name: p.name, age: p.age?.toString() || "" });
     setShowAdd(false);
   };
 
@@ -155,20 +171,6 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
                 max={18}
               />
             </div>
-            <div className="flex gap-1.5 flex-wrap">
-              {EMOJI_OPTIONS.map((e) => (
-                <button
-                  key={e}
-                  type="button"
-                  onClick={() => setForm(f => ({ ...f, emoji: e }))}
-                  className={`text-xl w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
-                    form.emoji === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
-                  }`}
-                >
-                  {e}
-                </button>
-              ))}
-            </div>
             <div className="flex gap-2">
               <Button size="sm" disabled={saving !== null} onClick={() => editingId ? handleUpdate(editingId) : handleCreate()}>
                 {saving === "create" || saving === "update" ? (
@@ -203,7 +205,9 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
           {profiles.map((p) => (
             <Card key={p.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex items-center gap-4">
-                <span className="text-3xl">{p.avatar_emoji || "🦋"}</span>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 font-display text-sm font-bold text-primary">
+                  {getInitials(p.name)}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-display font-semibold text-sm">{p.name}</p>
                   <p className="text-xs text-muted-foreground">

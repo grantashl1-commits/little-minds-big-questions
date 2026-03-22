@@ -366,7 +366,7 @@ const ResultPage = () => {
                   <SelectItem value="general">General Library</SelectItem>
                   {childProfiles.map(cp => (
                     <SelectItem key={cp.id} value={cp.id}>
-                      {cp.avatar_emoji} {cp.name}
+                      {cp.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

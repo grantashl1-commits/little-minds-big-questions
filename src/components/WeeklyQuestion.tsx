@@ -83,7 +83,7 @@ function drawFooter(ctx: CanvasRenderingContext2D) {
   ctx.globalAlpha = 0.4;
   ctx.font = "500 22px Fredoka, Nunito, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("🌱 Little Minds Big Questions", 540, 1040);
+  ctx.fillText("Little Minds Big Questions", 540, 1040);
   ctx.globalAlpha = 1;
 }
 
@@ -129,7 +129,7 @@ const WeeklyQuestion = () => {
           ctx.fillStyle = "#2D2A26";
           ctx.font = "bold 36px Fredoka, sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("✨ Question of the Week", 540, 250);
+          ctx.fillText("Question of the Week", 540, 250);
           ctx.font = "bold 48px Fredoka, sans-serif";
           wrapText(ctx, `"${wq.question}"`, 540, 420, 800, 62, 5);
           ctx.globalAlpha = 0.5;
@@ -152,7 +152,7 @@ const WeeklyQuestion = () => {
           ctx.font = "400 30px Nunito, sans-serif";
           ctx.fillStyle = "#2D2A26";
           ctx.globalAlpha = 0.7;
-          ctx.fillText("🎨", 540, 550);
+          ctx.fillText("Illustration", 540, 550);
           ctx.font = "italic 26px Nunito, sans-serif";
           ctx.fillText("See the full illustration at", 540, 650);
           ctx.font = "500 26px Nunito, sans-serif";
@@ -166,7 +166,7 @@ const WeeklyQuestion = () => {
           ctx.fillStyle = "#2D2A26";
           ctx.font = "bold 40px Fredoka, sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("📖 The Story", 540, 150);
+          ctx.fillText("The Story", 540, 150);
           ctx.font = "400 28px Nunito, sans-serif";
           const excerpt = wq.story.length > 500 ? wq.story.slice(0, 500) + "…" : wq.story;
           wrapText(ctx, excerpt, 540, 260, 860, 40, 16);
@@ -178,7 +178,6 @@ const WeeklyQuestion = () => {
           ctx.fillStyle = "#2D2A26";
           ctx.font = "bold 44px Fredoka, sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("🌙", 540, 280);
           ctx.fillText("Ask your child", 540, 400);
           ctx.fillText("a question tonight.", 540, 460);
 

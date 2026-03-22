@@ -7,10 +7,13 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  BookOpen, Library, Star, Loader2, Sparkles, Plus, Trash2,
+  Loader2, Sparkles, Plus, Trash2,
   Eye, EyeOff, FolderPlus, X, Pencil, Check, Download,
   ChevronDown, ChevronUp, Baby, ExternalLink
 } from "lucide-react";
+import iconLibrary from "@/assets/icon-library.png";
+import iconBook from "@/assets/icon-book.png";
+import iconCollections from "@/assets/icon-collections.png";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ChildProfileManager from "@/components/ChildProfileManager";
@@ -389,7 +392,7 @@ const DashboardPage = () => {
           <div className="grid md:grid-cols-3 gap-4 mb-8">
             <Card className="opacity-60">
               <CardHeader>
-                <Library className="h-8 w-8 text-primary mb-2" />
+                <img src={iconLibrary} alt="Library" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">My Library</CardTitle>
               </CardHeader>
               <CardContent>
@@ -398,7 +401,7 @@ const DashboardPage = () => {
             </Card>
             <Card className="opacity-60">
               <CardHeader>
-                <BookOpen className="h-8 w-8 text-secondary mb-2" />
+                <img src={iconBook} alt="Create a Book" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">Create a Book</CardTitle>
               </CardHeader>
               <CardContent>
@@ -407,7 +410,7 @@ const DashboardPage = () => {
             </Card>
             <Card className="opacity-60">
               <CardHeader>
-                <Star className="h-8 w-8 text-accent mb-2" />
+                <img src={iconCollections} alt="Collections" className="h-10 w-10 object-contain mb-2" />
                 <CardTitle className="text-lg font-display">Collections</CardTitle>
               </CardHeader>
               <CardContent>
@@ -440,21 +443,21 @@ const DashboardPage = () => {
                 onClick={() => setActiveTab("library")}
                 size="sm"
               >
-                <Library className="h-4 w-4 mr-1" /> My Library
+                <img src={iconLibrary} alt="" className="h-4 w-4 mr-1 object-contain" /> My Library
               </Button>
               <Button
                 variant={activeTab === "collections" ? "default" : "outline"}
                 onClick={() => setActiveTab("collections")}
                 size="sm"
               >
-                <Star className="h-4 w-4 mr-1" /> Collections
+                <img src={iconCollections} alt="" className="h-4 w-4 mr-1 object-contain" /> Collections
               </Button>
               <Button
                 variant={activeTab === "book" ? "default" : "outline"}
                 onClick={() => setActiveTab("book")}
                 size="sm"
               >
-                <BookOpen className="h-4 w-4 mr-1" /> Create Your Book
+                <img src={iconBook} alt="" className="h-4 w-4 mr-1 object-contain" /> Create Your Book
               </Button>
               <Button
                 variant={activeTab === "children" ? "default" : "outline"}
@@ -644,7 +647,7 @@ const DashboardPage = () => {
                       return (
                         <Card key={c.id}>
                           <CardContent className="p-4 flex items-center gap-4">
-                            <Star className="h-6 w-6 text-accent shrink-0" />
+                            <img src={iconCollections} alt="" className="h-6 w-6 shrink-0 object-contain" />
                             <div className="flex-1 min-w-0">
                               {editingCollection === c.id ? (
                                 <div className="flex items-center gap-2">
@@ -804,7 +807,7 @@ const DashboardPage = () => {
                 {savedQuestions.length === 0 ? (
                   <Card className="text-center py-12">
                     <CardContent>
-                      <BookOpen className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                      <img src={iconBook} alt="" className="h-12 w-12 mx-auto mb-4 opacity-40 object-contain" />
                       <p className="font-display text-lg font-semibold mb-1">No stories to include</p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Save some stories to your library first, then come back here to create your book.

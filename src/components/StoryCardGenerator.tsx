@@ -1,10 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
-import { Download, Loader2, Sparkles, Lock } from "lucide-react";
+import { Download, Loader2, Sparkles, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { QuestionEntry } from "@/lib/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface StoryCardGeneratorProps {
   question: QuestionEntry;
@@ -195,6 +202,7 @@ function drawImageContain(
 const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
   const { user, isMember } = useAuth();
   const [downloading, setDownloading] = useState<"question" | "story" | "carousel" | null>(null);
+  const [previewType, setPreviewType] = useState<"story" | "carousel" | null>(null);
 
   const excerpt = useMemo(() => {
     const first = question.metaphor_answer.split(/\n+/)[0] || question.metaphor_answer;
@@ -550,8 +558,8 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       title: "Story Card",
       description: "A keepsake poster with full-bleed artwork, story title, and curated excerpt.",
       accent: "bg-sage/15 border-sage/40",
-      cta: isMember ? "Download story card" : "Unlock story card",
-      action: isMember ? generateStoryCard : handleUpgrade,
+      cta: isMember ? "Download story card" : "Preview story card",
+      action: isMember ? generateStoryCard : () => setPreviewType("story"),
       free: false,
     },
     {
@@ -559,14 +567,14 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       title: "Instagram Carousel",
       description: "A 5-slide editorial sequence — cover, story pages, parent insight, and CTA.",
       accent: "bg-accent/15 border-accent/40",
-      cta: isMember ? "Download 5 slides" : "Unlock carousel",
-      action: isMember ? generateCarousel : handleUpgrade,
+      cta: isMember ? "Download 5 slides" : "Preview carousel",
+      action: isMember ? generateCarousel : () => setPreviewType("carousel"),
       free: false,
     },
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
         <h3 className="font-display font-bold text-lg">Download & Share</h3>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -574,39 +582,46 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3">
         {previewCards.map((card) => (
-          <div key={card.key} className={`rounded-3xl border p-4 storybook-shadow ${card.accent}`}>
-            <div className="rounded-[1.75rem] border border-border bg-card p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
+          <div key={card.key} className={`rounded-3xl border p-3 storybook-shadow ${card.accent}`}>
+            <div className="rounded-[1.5rem] border border-border bg-card p-5 flex flex-col h-full">
+              <div className="flex items-start justify-between gap-2 mb-4">
                 <div>
                   <p className="font-display text-base font-bold">{card.title}</p>
-                  <p className="text-xs text-muted-foreground">{card.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{card.description}</p>
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background/80">
-                  {card.free || isMember ? (
-                    <Sparkles className="h-4 w-4 text-primary" />
-                  ) : (
-                    <Lock className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
+                {!card.free && !isMember && (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted shrink-0">
+                    <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                )}
               </div>
 
-              <div className="overflow-hidden rounded-[1.5rem] border border-border bg-background">
-                <div className="flex min-h-[260px] flex-col justify-between p-4">
+              <div className="overflow-hidden rounded-2xl border border-border bg-background flex-1">
+                <div className="relative flex flex-col justify-between p-5 min-h-[280px]">
+                  {/* Blur overlay for locked cards */}
+                  {!card.free && !isMember && (
+                    <div className="absolute inset-0 z-10 backdrop-blur-[6px] bg-background/30 rounded-2xl flex flex-col items-center justify-center gap-3 p-6">
+                      <Lock className="h-8 w-8 text-muted-foreground/60" />
+                      <p className="font-display text-sm font-semibold text-center">Member-only download</p>
+                      <p className="text-xs text-muted-foreground text-center">Tap below to see a full preview</p>
+                    </div>
+                  )}
+
                   <div>
                     <p className="text-[10px] font-display uppercase tracking-[0.24em] text-muted-foreground">
                       {card.key === "carousel" ? "5-slide editorial sequence" : card.key === "story" ? "Full-bleed keepsake card" : "Question-led teaser"}
                     </p>
-                    <p className="mt-3 font-display text-lg font-bold leading-tight">"{question.question_text}"</p>
+                    <p className="mt-3 font-display text-base font-bold leading-snug">"{question.question_text}"</p>
                     <p className="mt-1 text-xs text-muted-foreground">{question.child_name}, age {question.child_age}</p>
                   </div>
 
-                  <div className="my-5 flex justify-center">
+                  <div className="my-4 flex justify-center">
                     {question.image_url ? (
-                      <img src={question.image_url} alt={question.metaphor_title} className={`object-contain ${card.key === "carousel" ? "h-32 w-32" : "h-28 w-28"}`} />
+                      <img src={question.image_url} alt={question.metaphor_title} className="object-contain h-24 w-24" />
                     ) : (
-                      <div className="h-28 w-28 rounded-full bg-primary/20" />
+                      <div className="h-24 w-24 rounded-full bg-primary/20" />
                     )}
                   </div>
 
@@ -614,7 +629,7 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
                     <p className="font-display text-sm font-semibold">
                       {card.key === "story" ? question.metaphor_title : card.key === "carousel" ? "Cover → Story → Parents → CTA" : "A soft hook into the full story"}
                     </p>
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-3">
                       {card.key === "carousel"
                         ? "Each slide has a unique layout, colour palette, and editorial treatment."
                         : excerpt}
@@ -641,6 +656,64 @@ const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
       <p className="text-xs text-muted-foreground">
         All downloads are 1080×1080px. Members get the keepsake story card and full 5-slide Instagram carousel.
       </p>
+
+      {/* Blurred Preview Modal */}
+      <Dialog open={previewType !== null} onOpenChange={(open) => !open && setPreviewType(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display">
+              {previewType === "story" ? "Story Card Preview" : "Instagram Carousel Preview"}
+            </DialogTitle>
+            <DialogDescription>
+              Here's what your {previewType === "story" ? "keepsake story card" : "5-slide Instagram carousel"} will look like. Upgrade to download.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="relative rounded-2xl overflow-hidden border border-border">
+            {/* Simulated preview with blur */}
+            <div className="bg-gradient-to-b from-[hsl(34_58%_89%)] to-[hsl(36_50%_95%)] p-6 min-h-[360px] flex flex-col items-center justify-center gap-4 select-none">
+              {question.image_url && (
+                <img src={question.image_url} alt="" className="h-28 w-28 object-contain blur-[2px]" />
+              )}
+              <p className="font-display text-xl font-bold text-center leading-snug blur-[3px] max-w-xs">
+                "{question.question_text}"
+              </p>
+              <p className="text-sm text-muted-foreground blur-[2px]">{question.child_name}, age {question.child_age}</p>
+              <p className="font-display font-semibold blur-[3px]">{question.metaphor_title}</p>
+              <p className="text-xs text-center leading-relaxed max-w-sm blur-[4px]">{excerpt}</p>
+              
+              {previewType === "carousel" && (
+                <div className="flex gap-2 mt-2">
+                  {["Cover", "Story", "Cont.", "Parents", "CTA"].map((s) => (
+                    <div key={s} className="w-12 h-12 rounded-lg bg-muted/60 flex items-center justify-center text-[9px] font-display font-semibold text-muted-foreground blur-[1px]">
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Overlay CTA */}
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] flex flex-col items-center justify-center gap-4 p-6">
+              <div className="bg-card rounded-2xl p-6 text-center shadow-lg border border-border max-w-xs">
+                <Sparkles className="h-8 w-8 text-accent mx-auto mb-3" />
+                <p className="font-display font-bold text-lg mb-1">Unlock this download</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Become a Founding Member to download beautiful, shareable story cards and carousels.
+                </p>
+                <div className="mb-3">
+                  <span className="line-through text-muted-foreground text-sm mr-2">$20 NZD</span>
+                  <span className="text-xl font-bold text-foreground">$10 NZD</span>
+                  <span className="text-xs text-muted-foreground ml-1">one-time</span>
+                </div>
+                <Button variant="coral" className="w-full" onClick={handleUpgrade}>
+                  Become a Member
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

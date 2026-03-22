@@ -77,20 +77,25 @@ const ChildProfileManager = ({ profiles, onRefresh, storyCounts = {} }: Props) =
     }
 
     setSaving("update");
-    const { error } = await supabase.from("child_profiles").update({
-      name: form.name.trim(),
-      age: parsedAge,
-      avatar_emoji: form.emoji,
-    }).eq("id", id);
+    try {
+      const { error } = await supabase.from("child_profiles").update({
+        name: form.name.trim(),
+        age: parsedAge,
+        avatar_emoji: form.emoji,
+      }).eq("id", id);
 
-    if (error) {
-      toast.error(error.message || "Could not update");
-    } else {
-      toast.success(`${form.name}'s profile updated`);
-      resetForm();
-      await onRefresh();
+      if (error) {
+        toast.error(error.message || "Could not update");
+      } else {
+        toast.success(`${form.name}'s profile updated`);
+        resetForm();
+        await onRefresh();
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSaving(null);
     }
-    setSaving(null);
   };
 
   const handleDelete = async (id: string, name: string) => {

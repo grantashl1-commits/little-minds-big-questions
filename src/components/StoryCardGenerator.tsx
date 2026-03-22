@@ -202,6 +202,7 @@ function drawImageContain(
 const StoryCardGenerator = ({ question }: StoryCardGeneratorProps) => {
   const { user, isMember } = useAuth();
   const [downloading, setDownloading] = useState<"question" | "story" | "carousel" | null>(null);
+  const [previewType, setPreviewType] = useState<"story" | "carousel" | null>(null);
 
   const excerpt = useMemo(() => {
     const first = question.metaphor_answer.split(/\n+/)[0] || question.metaphor_answer;

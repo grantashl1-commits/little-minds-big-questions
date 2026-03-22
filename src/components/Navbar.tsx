@@ -11,6 +11,16 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } finally {
+      setOpen(false);
+      navigate("/", { replace: true });
+      window.location.assign("/");
+    }
+  };
+
   // Close on route change or escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -40,7 +50,7 @@ const Navbar = () => {
           Dashboard
         </Link>
       </Button>
-      <Button variant="ghost" size="icon" onClick={async () => { await signOut(); navigate("/"); }} title="Log out">
+      <Button variant="ghost" size="icon" type="button" onClick={handleSignOut} title="Log out" aria-label="Log out">
         <LogOut className="h-4 w-4" />
       </Button>
     </>
@@ -108,7 +118,8 @@ const Navbar = () => {
               <>
                 {mobileLink("/dashboard", "Dashboard", <User className="h-4 w-4" />)}
                 <button
-                  onClick={async () => { await signOut(); setOpen(false); navigate("/"); }}
+                  type="button"
+                  onClick={handleSignOut}
                   className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-display font-semibold text-foreground hover:bg-muted transition-colors w-full text-left"
                 >
                   <LogOut className="h-4 w-4" />

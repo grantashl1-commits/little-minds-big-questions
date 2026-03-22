@@ -285,10 +285,7 @@ const DashboardPage = () => {
       return;
     }
 
-    const bookTitle = `Stories for ${selected[0].questions.child_name}`;
-
-    // CSV header — matches Canva Bulk Create field mapping
-    const headers = ["child_name", "question", "story_title", "story_text", "theme"];
+    const headers = ["Question", "Answer", "Child Name", "Age"];
     
     const escCsv = (val: string) => {
       if (!val) return "";
@@ -301,11 +298,10 @@ const DashboardPage = () => {
     const rows = selected.map((sq) => {
       const q = sq.questions;
       return [
-        escCsv(q.child_name),
         escCsv(q.question_text),
-        escCsv(q.metaphor_title),
-        escCsv(q.metaphor_answer),
-        escCsv(""),
+        escCsv(`${q.metaphor_title}\n\n${q.metaphor_answer}`),
+        escCsv(q.child_name),
+        escCsv(`Age ${q.child_age}`),
       ].join(",");
     });
 
@@ -318,7 +314,7 @@ const DashboardPage = () => {
     a.click();
     URL.revokeObjectURL(url);
 
-    toast.success(`Exported ${selected.length} stories as CSV! Open Canva → Bulk Create → Upload CSV → Map fields.`);
+    toast.success(`Exported ${selected.length} stories! Open the CSV and copy-paste into your Canva template.`);
 
     // Log export event
     if (user) {

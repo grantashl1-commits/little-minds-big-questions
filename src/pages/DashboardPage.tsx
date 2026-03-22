@@ -807,7 +807,7 @@ const DashboardPage = () => {
                 {savedQuestions.length === 0 ? (
                   <Card className="text-center py-12">
                     <CardContent>
-                      <BookOpen className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                      <img src={iconBook} alt="" className="h-12 w-12 mx-auto mb-4 opacity-40 object-contain" />
                       <p className="font-display text-lg font-semibold mb-1">No stories to include</p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Save some stories to your library first, then come back here to create your book.
